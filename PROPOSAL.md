@@ -14,6 +14,18 @@ Implementation of git:
 
 This project will behave very similarly to git-hub. DIT will be used to store work remotly, track changes, and push work to be acceced remotly.
 
+`dit add`: adds files to track list + generate diff/patch -- [lenny]
+ - possible extension `dit status`: scans for diffs in all previously tracked files -- [Mathew]
+`dit commit`: move all open diffs to a commit_n folder -- [lenny]
+
+`dit push`: push .dit folder to server -- [Abel]
+`dit download`: downloads .dit folder from server -- [Abel]
+
+`dit build`: build diffs from start -- Mathew
+
+`dit clone`
+
+
 # Technical Details:
 
 ## FILE TRANSFER (Abel)
@@ -26,6 +38,7 @@ This project will behave very similarly to git-hub. DIT will be used to store wo
 - server adds/overwrites previous files
 
 ## TRACKING DIFF (Lenny)
+
 
 ## CONSTRUCTING INTO FINAL FILE (Mathew)
 A description of your technical design. This should include:
