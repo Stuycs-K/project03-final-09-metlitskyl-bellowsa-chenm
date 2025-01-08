@@ -60,6 +60,23 @@ int setup_server(){
 
     return server_fd;
 }
+
+int server_action(int new_socket){
+    while(1){
+        char buffer[1024];
+        ssize_t valread;
+        valread = read(new_socket, buffer,
+                    1024); // subtract 1 for the null
+                                // terminator at the end
+        printf("recieved %s\n", buffer);
+        char * hello = "<html><body><p>test</p></body></html>";
+        write(new_socket, hello, strlen(hello));
+        printf("Hello message sent\n");
+        sleep(1);
+    }
+    return 0;
+}
+
 int main(int argc, char const* argv[]){
     signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
@@ -79,19 +96,7 @@ int main(int argc, char const* argv[]){
         printf("forking...\n");
         if(fork()==0){//if fork is child
             // do what the server should do
-
-            while(1){
-                char buffer[1024];
-                ssize_t valread;
-                valread = read(new_socket, buffer,
-                            1024); // subtract 1 for the null
-                                        // terminator at the end
-                printf("recieved %s\n", buffer);
-                char * hello = "<html><body><p>test</p></body></html>";
-                send(new_socket, hello, strlen(hello), 0);
-                printf("Hello message sent\n");
-                sleep(1);
-            }
+            server_action(new_socket); 
             // closing the connected socket
             close(new_socket);
             // closing the listening socket
