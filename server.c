@@ -39,11 +39,11 @@ int setup_server(){
 
     struct addrinfo * results;//results is allocated in getaddrinfo
     struct addrinfo hints; 
-    
+    memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM; //TCP socket
     hints.ai_flags = AI_PASSIVE; //only needed on server
-    int addr_return = getaddrinfo(NULL, "9845", &hints, &results);  //Server sets node to NULL
+    int addr_return = getaddrinfo("127.0.0.1", "9845", &hints, &results);  //Server sets node to NULL
     v_err(addr_return, "getaddrinfo", 1);
 
     // create Socket stream socket
