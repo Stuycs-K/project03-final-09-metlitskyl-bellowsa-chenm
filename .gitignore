@@ -12,6 +12,7 @@ push
 server
 client
 
+.nfs*
 # Prerequisites
 *.d
 
