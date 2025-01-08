@@ -1,20 +1,45 @@
-compile: client server
+compile: dit server download commit clone add push 
 
-client: basic_client.o pipe_networking.o
-	gcc -o client -g basic_client.o pipe_networking.o
+utils.o: utils.c
+	gcc -c -g utils.c
 
-server: forking_server.o pipe_networking.o
-	gcc -o server -g forking_server.o pipe_networking.o
+# dit
+dit: dit.o utils.o
+	gcc -o dit -g dit.o utils.o
 
-basic_client.o: basic_client.c pipe_networking.h
-	gcc -c -g basic_client.c
+dit.o: dit.c utils.h
+	gcc -c -g dit.c
 
-forking_server.o: forking_server.c pipe_networking.h
-	gcc -c -g forking_server.c
+# Server
+server: server.o utils.o
+	gcc -o server -g server.o utils.o
 
-pipe_networking.o: pipe_networking.c pipe_networking.h
-	gcc -c -g pipe_networking.c
+server.o: server.c utils.h
+	gcc -c -g server.c
 
-clean:
-	rm *.o
-	rm client server
+# Download
+commit: commit.o utils.o
+	gcc -o commit -g commit.o utils.o
+
+commit.o: commit.c utils.h
+	gcc -c -g commit.c
+
+# clone
+clone: clone.o utils.o
+	gcc -o clone -g clone.o utils.o
+
+clone.o: clone.c utils.h
+	gcc -c -g clone.c
+
+# add
+add: add.o utils.o
+	gcc -o add -g add.o utils.o
+
+add.o: add.c utils.h
+	gcc -c -g add.c
+# push
+push: push.o utils.o
+	gcc -o push -g push.o utils.o
+
+push.o: push.c utils.h
+	gcc -c -g push.c
