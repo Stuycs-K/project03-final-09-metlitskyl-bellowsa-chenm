@@ -26,12 +26,12 @@ void sighandler(int signo){
 
 }
 
-int main(int argc, char const* argv[]){
-    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
-
-    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
-    //set up server listening ...
-    int server_fd; //server_fd is analogous to WKP
+/*================SETUP SERVER===============
+This method sets up the socket to be a SOCK_STREAM socket
+It then binds it to port 8000 and sets ups the required address
+and sets the socket to listen. It returns the server socket fd.*/
+int setup_server(){
+      int server_fd; //server_fd is analogous to WKP
     struct sockaddr_in address;
     int opt = 1;
     socklen_t addrlen = sizeof(address);
@@ -58,13 +58,21 @@ int main(int argc, char const* argv[]){
     v_err(listen_result,"listen",1); 
     //end server_fd setup
 
+    return server_fd;
+}
+int main(int argc, char const* argv[]){
+    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
+
+    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
+    //set up server listening ...
+    int server_fd = setup_server();
     //server loop
     while(1){ 
         //main server loop
         printf("establishing connection to client...\n");
     
         int new_socket;
-        new_socket = accept(server_fd, (struct sockaddr*)&address,&addrlen); //block until a client tries to connect
+        new_socket = accept(server_fd, NULL,NULL); //block until a client tries to connect
         v_err(new_socket,"accept",1);
         
         printf("recived client...\n");
