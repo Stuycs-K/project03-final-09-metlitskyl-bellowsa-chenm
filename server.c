@@ -29,7 +29,7 @@ void sighandler(int signo){
 int main(int argc, char const* argv[]){
     signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
-    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html
+    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
     //set up server listening ...
     int server_fd; //server_fd is analogous to WKP
     struct sockaddr_in address;

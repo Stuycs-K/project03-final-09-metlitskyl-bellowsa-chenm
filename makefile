@@ -43,3 +43,8 @@ push: push.o utils.o
 
 push.o: push.c utils.h
 	gcc -c -g push.c
+
+clean_p:
+	rm -f dit server download commit clone add push client
+clean_o:
+	rm -f *.o

@@ -2,6 +2,15 @@
 .dit/
 .dit*/
 
+dit
+server
+download
+commit
+clone
+add
+push 
+server
+
 # Prerequisites
 *.d
 
