@@ -48,3 +48,4 @@ clean_p:
 	rm -f dit server download commit clone add push client
 clean_o:
 	rm -f *.o
+clean: clean_p clean_o
