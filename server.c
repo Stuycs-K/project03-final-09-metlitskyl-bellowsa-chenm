@@ -63,19 +63,7 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
-    while(1){
-        char buffer[1024];
-        ssize_t valread;
-        valread = read(new_socket, buffer,
-                    1024); // subtract 1 for the null
-                                // terminator at the end
-        printf("recieved %s\n", buffer);
-        char * hello = "<html><body><p>test</p></body></html>";
-        write(new_socket, hello, strlen(hello));
-        printf("Hello message sent\n");
-        sleep(1);
-    }
-    return 0;
+  tree_transmit("./test_dir", new_socket);
 }
 
 int main(int argc, char const* argv[]){

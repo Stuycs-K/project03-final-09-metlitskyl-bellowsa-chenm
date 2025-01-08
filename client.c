@@ -38,15 +38,12 @@ int main(int argc, char const* argv[]){
     int status = connect(client_fd, results->ai_addr, results->ai_addrlen); 
     v_err(status, "connection err", EXIT);
         
+        printf("connected...\n");
     while(1){
         //what the client actually does
-        char* hello = "Hello from client";
-        char buffer[1024] = { 0 };
-
-        write(client_fd, hello, strlen(hello));
-        printf("Hello message sent\n");
-        int valread;
-        valread = read(client_fd, buffer,
+        char buffer[1024];
+        memset(buffer,0,sizeof(buffer));
+        read(client_fd, buffer,
                     1024 - 1); // subtract 1 for the null
                                 // terminator at the end
         printf("%s\n", buffer);
