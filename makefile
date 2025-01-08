@@ -1,7 +1,14 @@
-compile: dit server download commit clone add push 
+compile: dit server download commit clone add push client
 
 utils.o: utils.c
 	gcc -c -g utils.c
+
+# dit
+client: client.o utils.o
+	gcc -o client -g client.o utils.o
+
+client.o: client.c utils.h
+	gcc -c -g client.c
 
 # dit
 dit: dit.o utils.o

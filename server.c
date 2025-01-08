@@ -1,9 +1,13 @@
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
+
+//socket stuff
+#include <sys/socket.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <netdb.h>
 
 //signal stuff
 #include <signal.h>
@@ -31,26 +35,22 @@ This method sets up the socket to be a SOCK_STREAM socket
 It then binds it to port 8000 and sets ups the required address
 and sets the socket to listen. It returns the server socket fd.*/
 int setup_server(){
-      int server_fd; //server_fd is analogous to WKP
-    struct sockaddr_in address;
-    int opt = 1;
-    socklen_t addrlen = sizeof(address);
+    int server_fd; //server_fd is analogous to WKP
+
+    struct addrinfo * results;//results is allocated in getaddrinfo
+    struct addrinfo hints; 
     
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; //TCP socket
+    hints.ai_flags = AI_PASSIVE; //only needed on server
+    int addr_return = getaddrinfo(NULL, "9845", &hints, &results);  //Server sets node to NULL
+    v_err(addr_return, "getaddrinfo", 1);
+
     // create Socket stream socket
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
     v_err(server_fd, "socket creation err: ", 1);
 
-    // configure socket
-    v_err(setsockopt(server_fd, SOL_SOCKET,
-                   SO_REUSEADDR | SO_REUSEPORT, &opt,
-                   sizeof(opt)),"setsocketopt", 1);
-        
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
-
-    // Forcefully attaching socket to the port 8080
-    int bind_result = bind(server_fd, (struct sockaddr*)&address,sizeof(address));
+    int bind_result = bind(server_fd, results->ai_addr, results->ai_addrlen);
     v_err(bind_result,"binding socket",1);
         
     //set server_fd to listen and set max number of waiting connections to 3
@@ -58,6 +58,7 @@ int setup_server(){
     v_err(listen_result,"listen",1); 
     //end server_fd setup
 
+    freeaddrinfo(results);
     return server_fd;
 }
 
@@ -108,6 +109,7 @@ int main(int argc, char const* argv[]){
         
     
   }
-        return 0;
+
+  return 0;
     
 }

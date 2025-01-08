@@ -3,8 +3,14 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
+
+
+//socket stuff
+#include <sys/socket.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <netdb.h>
 
 #include "utils.h"
 
@@ -12,22 +18,23 @@
 
 int main(int argc, char const* argv[]){
     
+    
+    struct addrinfo * results;//results is allocated in getaddrinfo
+    struct addrinfo hints; 
+    
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; //TCP socket
+    hints.ai_flags = AI_PASSIVE; //only needed on server
+    int addr_return = getaddrinfo(NULL, "9845", &hints, &results);  //Server sets node to NULL
+    v_err(addr_return, "getaddrinfo", 1);
+
 
     //create socket
-    int client_fd = socket(AF_INET, SOCK_STREAM, 0);
+    int client_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
     v_err(client_fd, "socket creation err", EXIT);
 
-    //create sockaddr_in for serv_addr
-    struct sockaddr_in serv_addr;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-    // Convert IPv4 and IPv6 addresses from text to binary form
-    int conversion = inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
-    v_err(conversion, "conversion of ip addr err", EXIT);
-
     //attatch client_fd to server
-    int status = connect(client_fd, (struct sockaddr*)&serv_addr,sizeof(serv_addr)); 
+    int status = connect(client_fd, results->ai_addr, results->ai_addrlen); 
     v_err(status, "connection err", EXIT);
         
     while(1){
@@ -45,5 +52,6 @@ int main(int argc, char const* argv[]){
     }
     // closing the connected socket
     close(client_fd);
+    freeaddrinfo(results);
     return 0;
 }

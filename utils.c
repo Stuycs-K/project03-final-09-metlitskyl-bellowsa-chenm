@@ -11,3 +11,4 @@ int v_err(int sigerr, char * msg, int _exit){
     }
     return sigerr;
 }
+
