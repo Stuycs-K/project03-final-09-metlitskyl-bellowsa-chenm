@@ -38,16 +38,14 @@ int main(int argc, char const* argv[]){
     int status = connect(client_fd, results->ai_addr, results->ai_addrlen); 
     v_err(status, "connection err", EXIT);
         
-        printf("connected...\n");
-    while(1){
-        //what the client actually does
-        char buffer[1024];
-        memset(buffer,0,sizeof(buffer));
-        read(client_fd, buffer,
-                    1024 - 1); // subtract 1 for the null
-                                // terminator at the end
+    printf("connected...\n");
+    char buffer[1024];
+   
+    while(read(client_fd, buffer,sizeof(buffer))){
         printf("%s\n", buffer);
     }
+        
+    
     // closing the connected socket
     close(client_fd);
     freeaddrinfo(results);

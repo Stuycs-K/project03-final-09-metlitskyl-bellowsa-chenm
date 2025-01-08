@@ -29,8 +29,13 @@ int tree_transmit(char * path, int transmit_fd){
     struct stat * stat_buffer = malloc(sizeof(struct stat));
 
     while(entry = readdir(d)){
-        
+        sleep(1);
         printf("%s\n",entry->d_name);
+        
+        char buffer[strlen(entry->d_name)*sizeof(char) + 2];
+        sprintf(buffer, "%s\n", entry->d_name);
+        write(transmit_fd, buffer, sizeof(buffer));
+        
         if (entry->d_type == DT_DIR ){
             if(strcmp(entry -> d_name, ".") && strcmp(entry -> d_name, "..")){
                 char new_path[(strlen(path) + 2 + strlen(entry->d_name))*sizeof(char)];
@@ -38,9 +43,6 @@ int tree_transmit(char * path, int transmit_fd){
                 tree_transmit(new_path, transmit_fd);
             }
         }
-        else{
-            printf("transing...\n");
-            write(transmit_fd, path, sizeof(path));
-        }
+        
     }
 }

@@ -46,9 +46,15 @@ int setup_server(){
     int addr_return = getaddrinfo("127.0.0.1", "9845", &hints, &results);  //Server sets node to NULL
     v_err(addr_return, "getaddrinfo", 1);
 
+
     // create Socket stream socket
     server_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
     v_err(server_fd, "socket creation err: ", 1);
+
+    int opt=1;
+    v_err(setsockopt(server_fd, SOL_SOCKET,
+                   SO_REUSEADDR | SO_REUSEPORT, &opt,
+                   sizeof(opt)),"setsocketopt", 1);
 
     int bind_result = bind(server_fd, results->ai_addr, results->ai_addrlen);
     v_err(bind_result,"binding socket",1);
@@ -63,6 +69,7 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
+  sleep(1);
   tree_transmit("./test_dir", new_socket);
 }
 
@@ -75,8 +82,8 @@ int main(int argc, char const* argv[]){
     //server loop
     while(1){ 
         //main server loop
-        printf("establishing connection to client...\n");
     
+        printf("establishing connection to client...\n");
         int new_socket;
         new_socket = accept(server_fd, NULL,NULL); //block until a client tries to connect
         v_err(new_socket,"accept",1);
@@ -89,13 +96,11 @@ int main(int argc, char const* argv[]){
             // closing the connected socket
             close(new_socket);
             // closing the listening socket
-            close(server_fd);
+            // close(server_fd);
             exit(0);
         }
 
         close(new_socket);
-        
-    
   }
 
   return 0;
