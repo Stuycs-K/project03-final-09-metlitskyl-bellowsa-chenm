@@ -4,14 +4,34 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+//signal stuff
+#include <signal.h>
+
+//reap children
+#include <sys/wait.h>
+
 #include "utils.h"
 #define PORT 8080
 
+void sighandler(int signo){
+  switch(signo){ //child 
+    case SIGCHLD:
+      {
+        printf("reaping child...\n");
+        while(waitpid(-1,NULL,0));
+      }
+    // cleanup();
+  }
+
+}
 
 int main(int argc, char const* argv[]){
-    //good resource: https://man7.org/linux/man-pages/man7/ip.7.html
-    int server_fd;
-    ssize_t valread;
+    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
+
+    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html
+    //set up server listening ...
+    int server_fd; //server_fd is analogous to WKP
     struct sockaddr_in address;
     int opt = 1;
     socklen_t addrlen = sizeof(address);
@@ -36,25 +56,45 @@ int main(int argc, char const* argv[]){
     //set server_fd to listen and set max number of waiting connections to 3
     int listen_result = listen(server_fd, 3);
     v_err(listen_result,"listen",1); 
+    //end server_fd setup
 
-    int new_socket;
-    new_socket = accept(server_fd, (struct sockaddr*)&address,&addrlen); //block until a client tries to connect
-    v_err(new_socket,"accept",1);
+    //server loop
+    while(1){ 
+        //main server loop
+        printf("establishing connection to client...\n");
     
-    char buffer[1024];
-    valread = read(new_socket, buffer,
-                   1024); // subtract 1 for the null
-                              // terminator at the end
-    printf("%s\n", buffer);
-    char * hello = "<html><body><p>test</p></body></html>";
-    send(new_socket, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
+        int new_socket;
+        new_socket = accept(server_fd, (struct sockaddr*)&address,&addrlen); //block until a client tries to connect
+        v_err(new_socket,"accept",1);
+        
+        printf("recived client...\n");
+        printf("forking...\n");
+        if(fork()==0){//if fork is child
+            // do what the server should do
 
+            while(1){
+                char buffer[1024];
+                ssize_t valread;
+                valread = read(new_socket, buffer,
+                            1024); // subtract 1 for the null
+                                        // terminator at the end
+                printf("recieved %s\n", buffer);
+                char * hello = "<html><body><p>test</p></body></html>";
+                send(new_socket, hello, strlen(hello), 0);
+                printf("Hello message sent\n");
+                sleep(1);
+            }
+            // closing the connected socket
+            close(new_socket);
+            // closing the listening socket
+            close(server_fd);
+            exit(0);
+        }
 
-
-    // closing the connected socket
-    close(new_socket);
-    // closing the listening socket
-    close(server_fd);
-    return 0;
+        close(new_socket);
+        
+    
+  }
+        return 0;
+    
 }
