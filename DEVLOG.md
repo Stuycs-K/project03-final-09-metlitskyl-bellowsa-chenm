@@ -9,6 +9,13 @@ DEVLOG.md file format established
 PROPOSAL updated to reflect class discussion
 first commits made
 
+### 2024-01-07 - makefile forking server client filesetup
+setup files
+built makefile
+researched to find example code for sockets + examined linux documentation to understand
+used lab15 logic + example code + man pages to build functional forking server for sockets
+total: abt 1.5hr
+
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
 
