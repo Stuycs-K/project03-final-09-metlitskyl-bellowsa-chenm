@@ -42,23 +42,19 @@ int main(int argc, char const* argv[]){
     v_err(status, "connection err", EXIT);
         
     printf("connected...\n");
-    char buffer[1024 + sizeof(int)];
    
-    // int mode = -1;
-    // read(client_fd, &mode, sizeof(int));
-    while(read(client_fd, buffer,sizeof(buffer))){
-        int mode = (int)(buffer[0]);
-        if (mode == TR_FILE){
-            printf("creating FILE: %s\n", buffer+4);
-            int fd = open(buffer +4, O_CREAT, 0644);
+    struct file_transfer ft;
+    while(read(client_fd, &ft,sizeof(ft))){
+        if (ft.mode == TR_FILE){
+            printf("creating FILE: %s\n", ft.path);
+            int fd = open(ft.path, O_CREAT, 0644);
             v_err(fd, "CREAT file failed", 0);
             close(fd);
         }
         else{
-            printf("creating DIR: %s\n", buffer+4);
-            int r = mkdir(buffer+4,0744);
+            printf("creating DIR: %s\n", ft.path);
+            int r = mkdir(ft.path,0744);
             v_err(r, "mkdir failed", 0);
-
         }
     }
         

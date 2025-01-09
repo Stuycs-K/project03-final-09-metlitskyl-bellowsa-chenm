@@ -21,20 +21,18 @@ int v_err(int sigerr, char * msg, int _exit){
 
 /*Transmit a file*/
 int transmit_file(int transmit_fd, char * path, struct dirent * entry){
-    char buffer[1024];
-    int mode;
+    struct file_transfer ft;
     if(entry){
-        sprintf(buffer, "%s/%s", path, entry->d_name);
-        mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;
+        ft.mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;
+        sprintf(ft.path, "%s/%s", path, entry->d_name);
     }
     else{
-        sprintf(buffer, "%s", path);
-        mode = TR_DIR;
+        ft.mode = TR_DIR;
+        sprintf(ft.path, "%s", path);
     }
-    printf("sending %s\n",buffer);
+    printf("sending %s\n",ft.path);
     // printf("mode: %d\n", mode);
-    write(transmit_fd, &mode, sizeof(int));
-    write(transmit_fd, buffer, sizeof(buffer));
+    write(transmit_fd, &ft, sizeof(struct file_transfer));
     return 0;
 }
 
