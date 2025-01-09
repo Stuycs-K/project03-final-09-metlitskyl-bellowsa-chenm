@@ -10,6 +10,7 @@ Lenny, Abel, Matthew
 Implementation of git:
 
 use diff to track changes from a base of an empty string.
+Implement [Myers diff algorithims](https://ably.com/blog/practical-guide-to-diff-algorithms) to track changes from a previous version (from a base of an empty string).
 
 Recurisvely track and find file names and track them for changes from a store cache in .diy
 
