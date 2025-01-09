@@ -1,7 +1,12 @@
 {
     "files.associations": {
         "wait.h": "c",
-        "socket.h": "c"
+        "socket.h": "c",
+        "array": "c",
+        "memory": "c",
+        "functional": "c",
+        "tuple": "c",
+        "utility": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

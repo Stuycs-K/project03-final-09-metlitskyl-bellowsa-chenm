@@ -16,8 +16,9 @@
 //for mkdir
 #include <sys/stat.h>
 #include "utils.h"
+#include "file_transfer.h"
 
-#define PORT 8080
+#define PORT "9845"
 
 int main(int argc, char const* argv[]){
     
@@ -28,7 +29,7 @@ int main(int argc, char const* argv[]){
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM; //TCP socket
 
-    int addr_return = getaddrinfo("127.0.0.1", "9845", &hints, &results);  //Server sets node to NULL
+    int addr_return = getaddrinfo("127.0.0.1", PORT, &hints, &results);  //Server sets node to NULL
     
     v_err(addr_return, "getaddrinfo", 1);
 
@@ -42,20 +43,15 @@ int main(int argc, char const* argv[]){
     v_err(status, "connection err", EXIT);
         
     printf("connected...\n");
-   
-    struct file_transfer ft;
-    while(read(client_fd, &ft,sizeof(ft))){
-        if (ft.mode == TR_FILE){
-            printf("creating FILE: %s\n", ft.path);
-            int fd = open(ft.path, O_CREAT, 0644);
-            v_err(fd, "CREAT file failed", 0);
-            close(fd);
+    
+    while(1){
+        struct file_transfer ft;
+        int bytes = read(client_fd, &ft,sizeof(ft));
+        v_err(bytes, "read err", 1);
+        if(bytes == 0){
+            break;
         }
-        else{
-            printf("creating DIR: %s\n", ft.path);
-            int r = mkdir(ft.path,0744);
-            v_err(r, "mkdir failed", 0);
-        }
+        recv_file(client_fd, ft);
     }
         
     

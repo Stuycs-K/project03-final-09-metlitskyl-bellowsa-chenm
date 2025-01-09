@@ -16,6 +16,8 @@
 #include <sys/wait.h>
 
 #include "utils.h"
+#include "file_transfer.h"
+
 #define PORT 8080
 
 void sighandler(int signo){
