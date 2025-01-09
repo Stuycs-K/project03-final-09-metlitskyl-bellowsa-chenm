@@ -17,6 +17,12 @@ used lab15 logic + example code + man pages to build functional forking server f
 created branch abel -- slightly late... :)
 total: abt 1.5hr
 
+### 2024-01-08 - K sample code. tree_transmit
+made functional tree_transmit function that trees through a directory and 
+transmits name and type of file to server/client.
+
+total: abt 1.5hr
+
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
 
