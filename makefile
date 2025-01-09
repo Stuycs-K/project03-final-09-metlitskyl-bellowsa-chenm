@@ -31,12 +31,12 @@ clone: clone.o utils.o
 clone.o: clone.c utils.h
 	gcc -c -g clone.c
 
-# add
-add: add.o utils.o
-	gcc -o add -g add.o utils.o
+# patch
+patch: patch.o utils.o
+	gcc -o patch -g patch.o utils.o
 
-add.o: add.c utils.h
-	gcc -c -g add.c
+patch.o: patch.c utils.h
+	gcc -c -g patch.c
 # push
 push: push.o utils.o
 	gcc -o push -g push.o utils.o
