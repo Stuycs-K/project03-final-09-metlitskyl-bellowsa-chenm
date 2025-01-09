@@ -38,13 +38,20 @@ Write patches to disk by dynamically determining their size
 Reading patches from file to buffer struct on heap
 abt 1.5h
 
-## Mathew
+## Matthew
 
-### 2024-01-02 - Brief description
-Expanded description including how much time was spent on task.
+### 2024-01-06 - Planning
+Planned project and decided on its structure with @Abel and @Lenny
+40m during class
 
-### 2024-01-03 - Brief description
-Expanded description including how much time was spent on task.
+### 2024-01-07 - Exploration!
+Fiddled around with diff command and explored .git folder for inspiration
+20m
+
+### 2024-01-08 - Patch planning
+Worked with @Lenny to figure out how to format a patch struct and its members
+Researched the Myer's diff algorithm from its original paper
+1h
 
 ## EXAMPLE
 
