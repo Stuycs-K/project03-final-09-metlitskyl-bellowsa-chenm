@@ -31,6 +31,26 @@ void write_patch(char *filename, struct patch *patch) {
         err();
     }
 }
+struct patch *read_patch(char *filename) {
+    int in_file = open(filename, O_RDONLY);
+    if (in_file == -1) {
+        err();
+    }
+
+    struct stat file_stat;
+    int stat_status = stat(filename, &file_stat);
+    if (stat_status == -1) {
+        err();
+    }
+
+    size_t patch_file_size = file_stat.st_size;
+    struct patch *patch = calloc(1, patch_file_size);
+
+    int read_status = read(in_file, patch, patch_file_size);
+    if (read_status == -1) {
+        err();
+    }
+}
 
 int main() {
     char txt[] = "hi\nline2\nline3";
@@ -41,6 +61,10 @@ int main() {
     printf("Writing patch...\n");
     write_patch(filename, mypatch);
     printf("Patch written!\n");
+
+    struct patch *mypatch2 = read_patch(filename);
+    printf("Patch read!\n");
+    visualize_patch(mypatch);
 
     return 0;
 }
