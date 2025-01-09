@@ -1,5 +1,14 @@
 {
     "files.associations": {
-        "wait.h": "c"
+        "*.css": "css",
+        "wait.h": "c",
+        "stdlib.h": "c",
+        "utils.h": "c",
+        "endian.h": "c",
+        "uintn-identity.h": "c",
+        "byteswap.h": "c",
+        "stdio.h": "c",
+        "stat.h": "c",
+        "string.h": "c"
     }
 }
