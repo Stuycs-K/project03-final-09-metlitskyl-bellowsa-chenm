@@ -39,10 +39,19 @@ int main(int argc, char const* argv[]){
     v_err(status, "connection err", EXIT);
         
     printf("connected...\n");
-    char buffer[1024];
+    char buffer[1024 + sizeof(int)];
    
+    // int mode = -1;
+    // read(client_fd, &mode, sizeof(int));
     while(read(client_fd, buffer,sizeof(buffer))){
-        printf("%s\n", buffer);
+        int mode = (int)(buffer[0]);
+        if (mode == TR_FILE){
+            printf("FILE: %s\n", buffer+4);
+        }
+        else{
+            printf("DIR: %d %s\n",mode, buffer+4);
+
+        }
     }
         
     

@@ -69,12 +69,11 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
-  sleep(1);
   tree_transmit("./test_dir", new_socket);
 }
 
 int main(int argc, char const* argv[]){
-    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
+    // signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
     //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
     //set up server listening ...
@@ -101,6 +100,7 @@ int main(int argc, char const* argv[]){
         }
 
         close(new_socket);
+
   }
 
   return 0;

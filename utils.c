@@ -19,8 +19,11 @@ int v_err(int sigerr, char * msg, int _exit){
     return sigerr;
 }
 
+/*tree transmit goes through the file system at dir path
+and for each file/dir transmits the name to the transmit_fd.
+This serves to provide the info to build the correct file system.
+File contents will also be sent with this fxn.*/
 int tree_transmit(char * path, int transmit_fd){
-    printf(path);
     DIR * d;
     d = opendir( path );
     v_err(d==NULL?-1:0, "could not open dir", 1);
@@ -29,20 +32,24 @@ int tree_transmit(char * path, int transmit_fd){
     struct stat * stat_buffer = malloc(sizeof(struct stat));
 
     while(entry = readdir(d)){
-        sleep(1);
-        printf("%s\n",entry->d_name);
+        usleep(1);
         
-        char buffer[strlen(entry->d_name)*sizeof(char) + 2];
-        sprintf(buffer, "%s\n", entry->d_name);
-        write(transmit_fd, buffer, sizeof(buffer));
-        
-        if (entry->d_type == DT_DIR ){
-            if(strcmp(entry -> d_name, ".") && strcmp(entry -> d_name, "..")){
+        if(strcmp(entry -> d_name, ".") && strcmp(entry -> d_name, "..")){
+            char buffer[1024];
+            sprintf(buffer, "%s", entry->d_name);
+            printf("sending %s\n",entry->d_name);
+            int mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;
+            printf("mode: %d\n", mode);
+            write(transmit_fd, &mode, sizeof(int));
+            write(transmit_fd, buffer, sizeof(buffer));
+            
+            if (entry->d_type == DT_DIR ){
                 char new_path[(strlen(path) + 2 + strlen(entry->d_name))*sizeof(char)];
                 sprintf(new_path, "%s/%s", path, entry->d_name);
                 tree_transmit(new_path, transmit_fd);
             }
         }
-        
     }
+        
+    closedir(d);
 }
