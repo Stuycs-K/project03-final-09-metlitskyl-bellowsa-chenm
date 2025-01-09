@@ -12,6 +12,9 @@
 #include <sys/socket.h> 
 #include <netdb.h>
 
+#include <fcntl.h>
+//for mkdir
+#include <sys/stat.h>
 #include "utils.h"
 
 #define PORT 8080
@@ -46,10 +49,15 @@ int main(int argc, char const* argv[]){
     while(read(client_fd, buffer,sizeof(buffer))){
         int mode = (int)(buffer[0]);
         if (mode == TR_FILE){
-            printf("FILE: %s\n", buffer+4);
+            printf("creating FILE: %s\n", buffer+4);
+            int fd = open(buffer +4, O_CREAT, 0644);
+            v_err(fd, "CREAT file failed", 0);
+            close(fd);
         }
         else{
-            printf("DIR: %d %s\n",mode, buffer+4);
+            printf("creating DIR: %s\n", buffer+4);
+            int r = mkdir(buffer+4,0744);
+            v_err(r, "mkdir failed", 0);
 
         }
     }

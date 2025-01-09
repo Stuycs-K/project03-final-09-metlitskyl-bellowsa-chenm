@@ -69,6 +69,7 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
+  transmit_file(new_socket, "./test_dir",NULL);
   tree_transmit("./test_dir", new_socket);
 }
 
