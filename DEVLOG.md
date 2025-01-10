@@ -53,6 +53,11 @@ Worked with @Lenny to figure out how to format a patch struct and its members
 Researched the Myer's diff algorithm from its original paper
 1h
 
+### 2024-01-09 - Prelim Diff Draft
+Wrote a preliminary diff draft according to its original impl on paper
+Still working on tracking the edits
+1h
+
 ## EXAMPLE
 
 ### 2024-01-02 - Brief description
