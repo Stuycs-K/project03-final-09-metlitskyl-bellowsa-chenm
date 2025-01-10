@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#define BUFFER_SIZE 1
+#define BUFFER_SIZE 512
 
 int new_file_transfer(char * path, struct dirent * entry, struct file_transfer * ft){
     if(entry){
@@ -33,7 +33,16 @@ int new_file_transfer(char * path, struct dirent * entry, struct file_transfer *
 int transmit_file(int transmit_fd, char * path, struct dirent * entry){
     struct file_transfer ft;
     new_file_transfer(path, entry, &ft);
-    printf("sending %s\n",ft.path);
+    // printf("sending %s\n",ft.path);
+    
+    printf("Server line 38 sending %d bytes...\n-----------------------------\n", sizeof(struct file_transfer));
+        // for (int i = 0; i<bytes; i++){
+        //     printf("%c", ((char*)&ft)[i]);
+        // }
+    printf("MODE: %d, size %d, path %s\n", ft.mode, ft.size, ft.path);
+    printf("\n--------------------------------------------\n");
+
+
     write(transmit_fd, &ft, sizeof(struct file_transfer));
     
     if(ft.mode == TR_FILE){
@@ -43,11 +52,16 @@ int transmit_file(int transmit_fd, char * path, struct dirent * entry){
         char buffer[BUFFER_SIZE];
         printf("%d\n",sizeof(buffer));
         memset(buffer,0,sizeof(buffer));
-        while(bytes = read(fd, buffer, sizeof(buffer))){
+        while((bytes = read(fd, buffer, sizeof(buffer)))){
             v_err(bytes, "read err", 1);
-            usleep(1000);
+            // usleep(1000);
             write(transmit_fd, buffer, bytes);
             printf("sent file contents (%d): %s\n", bytes, buffer);
+            printf("BUFFER: \n");
+            for (int i = 0; i<BUFFER_SIZE; i++){
+                printf("%d", buffer[i]);
+            }
+            printf("\n");
             memset(buffer,0,sizeof(buffer));
         }
         close(fd);
@@ -65,19 +79,26 @@ int recv_file(int recv_fd, struct file_transfer * ft){
         
         int bytes_to_read = ft->size;
         printf("cpying %d bytes...\n", bytes_to_read);
-        while (bytes_to_read > 0){
-            // get file contents
-            char buffer[BUFFER_SIZE];
-            memset(buffer, 0, sizeof(buffer));
-            int bytes;
-            while( (bytes = read(recv_fd, &buffer, sizeof(buffer))) && bytes_to_read>0){
-                write(fd, buffer, bytes);
-                printf("recieved buffer with contents:\n    %s\n", buffer);
-                memset(buffer, 0, sizeof(buffer));
-                bytes_to_read -= bytes;
-                printf("recived %d bytes, %d left\n", bytes, bytes_to_read);
+        
+        // get file contents
+        char buffer[BUFFER_SIZE];
+        memset(buffer, 0, sizeof(buffer));
+        int bytes;
+        while( (bytes = read(recv_fd, &buffer, sizeof(buffer))) && bytes_to_read>0){
+            v_err( bytes, "write err", 0);
+            printf("bytres goteen = %d\n", bytes);
+            write(fd, buffer, bytes);
+            // printf("recieved buffer with contents:\n    %s\n", buffer);
+            printf("BUFFER: \n");
+            for (int i = 0; i<BUFFER_SIZE; i++){
+                printf("%d", buffer[i]);
             }
+            printf("\n");
+            memset(buffer, 0, sizeof(buffer));
+            bytes_to_read -= bytes;
+            // printf("recived %d bytes, %d left\n", bytes, bytes_to_read);
         }
+      
         close(fd);
     }
     else if (ft->mode == TR_DIR){
@@ -103,7 +124,7 @@ int tree_transmit(char * path, int transmit_fd){
     struct stat * stat_buffer = malloc(sizeof(struct stat));
 
     while(entry = readdir(d)){
-        usleep(1000);
+        // usleep(1000);
         
         if(strcmp(entry -> d_name, ".") && strcmp(entry -> d_name, "..")){
             transmit_file(transmit_fd, path, entry);

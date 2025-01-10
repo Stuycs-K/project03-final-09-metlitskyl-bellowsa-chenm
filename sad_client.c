@@ -43,17 +43,15 @@ int main(int argc, char const* argv[]){
     printf("connected...\n");
     
     while(1){
-        struct file_transfer ft;
-        memset(&ft, 0, sizeof(struct file_transfer));
-
+        char c;
         int bytes = read(client_fd, &ft,sizeof(ft));
+
         v_err(bytes, "read err", 1);
         
         printf("clinet line 49 recieves %d bytes...\n-----------------------------\n", bytes);
-        // for (int i = 0; i<bytes; i++){
-        //     printf("%c", ((char*)&ft)[i]);
-        // }
-        printf("MODE: %d, size %d, path %s\n", ft.mode, ft.size, ft.path);
+        for (int i = 0; i<bytes; i++){
+            printf("%c", ((char*)&ft)[i]);
+        }
         printf("\n--------------------------------------------\n");
 
         if(bytes == 0){
@@ -65,7 +63,7 @@ int main(int argc, char const* argv[]){
             break;
         }
         recv_file(client_fd, &ft);
-        // sleep(1);
+        sleep(1);
     }
         
     
