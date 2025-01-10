@@ -58,6 +58,10 @@ Wrote a preliminary diff draft according to its original impl on paper
 Still working on tracking the edits
 1h
 
+### 2024-01-10 - Refining Diff
+Using debug statements to figure out how to backtrack the changes to file
+40min
+
 ## EXAMPLE
 
 ### 2024-01-02 - Brief description
