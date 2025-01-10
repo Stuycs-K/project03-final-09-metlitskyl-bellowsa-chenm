@@ -6,7 +6,8 @@
         "memory": "c",
         "functional": "c",
         "tuple": "c",
-        "utility": "c"
+        "utility": "c",
+        "dirent.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

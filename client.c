@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <stdlib.h>
 
 //socket stuff
 #include <sys/socket.h>
@@ -21,8 +21,6 @@
 #define PORT "9845"
 
 int main(int argc, char const* argv[]){
-    
-    
     struct addrinfo * results;//results is allocated in getaddrinfo
     struct addrinfo hints; 
     memset(&hints, 0, sizeof(hints));
@@ -48,10 +46,22 @@ int main(int argc, char const* argv[]){
         struct file_transfer ft;
         int bytes = read(client_fd, &ft,sizeof(ft));
         v_err(bytes, "read err", 1);
+        
+        printf("    clinet line 49 recieves %d bytes...\n", bytes);
+        // for (int i = 0; i<bytes; i++){
+        //     printf("%c", ((char*)&ft)[i]);
+        // }
+        // printf("\n\n");
+
         if(bytes == 0){
+            printf("no more bytes to read...\n");
             break;
         }
-        recv_file(client_fd, ft);
+        if(ft.mode == TR_END){
+            printf("recv exit signal...\n");
+            break;
+        }
+        recv_file(client_fd, &ft);
     }
         
     

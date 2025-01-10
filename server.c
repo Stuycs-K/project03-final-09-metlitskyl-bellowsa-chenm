@@ -73,6 +73,15 @@ int setup_server(){
 int server_action(int new_socket){
   transmit_file(new_socket, "./test_dir",NULL);
   tree_transmit("./test_dir", new_socket);
+
+  struct file_transfer ft;
+  new_file_transfer("/",NULL,&ft);
+  ft.size = -1;
+  ft.mode = TR_END;
+
+  //WEIRD CHECKEAR
+  write(new_socket, &ft, sizeof(struct file_transfer));
+  printf("sending EOF\n");
 }
 
 int main(int argc, char const* argv[]){
@@ -95,10 +104,8 @@ int main(int argc, char const* argv[]){
         if(fork()==0){//if fork is child
             // do what the server should do
             server_action(new_socket); 
-            // closing the connected socket
             close(new_socket);
-            // closing the listening socket
-            // close(server_fd);
+            printf("closing connection to client...\n");
             exit(0);
         }
 

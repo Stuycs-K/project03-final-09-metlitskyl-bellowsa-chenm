@@ -23,6 +23,14 @@ transmits name and type of file to server/client.
 
 total: abt 1.5hr
 
+
+### 2024-01-08 - attempted to get transmit_file fxn to send file contents and not break the system
+Reorganized my functions into a file_transfer c file to improve organization
+
+attempted to debug why the client cannot recieve the struct following a file contents transmission...
+
+total: abt 1.5hr
+
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
 

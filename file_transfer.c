@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#define BUFFER_SIZE 1
+
 int new_file_transfer(char * path, struct dirent * entry, struct file_transfer * ft){
     if(entry){
         ft->mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;
@@ -18,12 +20,12 @@ int new_file_transfer(char * path, struct dirent * entry, struct file_transfer *
         struct stat sb;
         int r = stat(ft->path,&sb);
         v_err(r, "stat err", 1);
-
-        
+        ft->size = sb.st_size;
     }
     else{
         ft->mode = TR_DIR;
         sprintf(ft->path, "%s", path);
+        ft->size = -1;
     }
 }
 
@@ -31,7 +33,6 @@ int new_file_transfer(char * path, struct dirent * entry, struct file_transfer *
 int transmit_file(int transmit_fd, char * path, struct dirent * entry){
     struct file_transfer ft;
     new_file_transfer(path, entry, &ft);
-    
     printf("sending %s\n",ft.path);
     write(transmit_fd, &ft, sizeof(struct file_transfer));
     
@@ -39,40 +40,53 @@ int transmit_file(int transmit_fd, char * path, struct dirent * entry){
         printf("sending file contents...\n");
         int fd = open(ft.path, O_RDONLY, 0);
         int bytes;
-        char buffer[1024];
+        char buffer[BUFFER_SIZE];
+        printf("%d\n",sizeof(buffer));
         memset(buffer,0,sizeof(buffer));
         while(bytes = read(fd, buffer, sizeof(buffer))){
             v_err(bytes, "read err", 1);
-            sleep(1);
+            usleep(1000);
             write(transmit_fd, buffer, bytes);
             printf("sent file contents (%d): %s\n", bytes, buffer);
             memset(buffer,0,sizeof(buffer));
         }
         close(fd);
+        // write(transmit_fd, "", 0);
     }
     return 0;
 }
 
 /*Recv a file*/
-int recv_file(int recv_fd, struct file_transfer ft){
-    if (ft.mode == TR_FILE){
-        printf("creating FILE: %s\n", ft.path);
-        int fd = open(ft.path, O_CREAT | O_WRONLY, 0644);
+int recv_file(int recv_fd, struct file_transfer * ft){
+    if (ft->mode == TR_FILE){
+        printf("creating FILE: %s\n", ft->path);
+        int fd = open(ft->path, O_CREAT | O_WRONLY, 0644);
         v_err(fd, "CREAT file failed", 0);
-
-        // get file contents
-        char buffer[1024];
-        memset(buffer, 0, sizeof(buffer));
-        while(read(recv_fd, &buffer, sizeof(buffer))){
-            write(fd, buffer, sizeof(buffer));
+        
+        int bytes_to_read = ft->size;
+        printf("cpying %d bytes...\n", bytes_to_read);
+        while (bytes_to_read > 0){
+            // get file contents
+            char buffer[BUFFER_SIZE];
             memset(buffer, 0, sizeof(buffer));
+            int bytes;
+            while((bytes = read(recv_fd, &buffer, sizeof(buffer))) && bytes_to_read>0){
+                write(fd, buffer, bytes);
+                printf("recieved buffer with contents:\n    %s\n", buffer);
+                memset(buffer, 0, sizeof(buffer));
+                bytes_to_read -= bytes;
+                printf("recived %d bytes, %d left\n", bytes, bytes_to_read);
+            }
         }
         close(fd);
     }
-    else{
-        printf("creating DIR: %s\n", ft.path);
-        int r = mkdir(ft.path,0744);
+    else if (ft->mode == TR_DIR){
+        printf("creating DIR: %s\n", ft->path);
+        int r = mkdir(ft->path,0744);
         v_err(r, "mkdir failed", 0);
+    }
+    else if(ft->mode == TR_END){
+        printf("exit!!!!\n");
     }
 }
 
@@ -89,7 +103,7 @@ int tree_transmit(char * path, int transmit_fd){
     struct stat * stat_buffer = malloc(sizeof(struct stat));
 
     while(entry = readdir(d)){
-        usleep(1);
+        usleep(1000);
         
         if(strcmp(entry -> d_name, ".") && strcmp(entry -> d_name, "..")){
             transmit_file(transmit_fd, path, entry);
