@@ -70,7 +70,7 @@ int recv_file(int recv_fd, struct file_transfer * ft){
             char buffer[BUFFER_SIZE];
             memset(buffer, 0, sizeof(buffer));
             int bytes;
-            while((bytes = read(recv_fd, &buffer, sizeof(buffer))) && bytes_to_read>0){
+            while( (bytes = read(recv_fd, &buffer, sizeof(buffer))) && bytes_to_read>0){
                 write(fd, buffer, bytes);
                 printf("recieved buffer with contents:\n    %s\n", buffer);
                 memset(buffer, 0, sizeof(buffer));
