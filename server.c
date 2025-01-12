@@ -24,8 +24,7 @@ void sighandler(int signo){
   switch(signo){ //child 
     case SIGCHLD:
       {
-        printf("reaping child...\n");
-        while(waitpid(-1,NULL,0));
+        while(waitpid(-1,NULL,WNOHANG) > 0);
       }
     // cleanup();
   }
@@ -85,7 +84,7 @@ int server_action(int new_socket){
 }
 
 int main(int argc, char const* argv[]){
-    // signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
+    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
     //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
     //set up server listening ...
