@@ -34,12 +34,14 @@ total: abt 1.5hr
 ### 2024-01-10 - attempted to get transmit_file fxn to send file contents and not break the system
 debugging...
 
-### 2024-01-11 - WORKING SEND/RECV FILES + FIXED CHILD ISSUE + ORGANIZATION
+### 2024-01-11 - WORKING SEND/RECV FILES + FIXED CHILD ISSUE + ORGANIZATION + TWO WAY FUNCTIONALITY
 Solved problem with the client getting messed up on read. Issue was is was reading too many bytes -> struct was interupted.
 
 improved h file orgination.
 
-time: 1hr:30min
+"TWO WAY DOWNLOAD?PUSH FROM SERVER NOW WORKSgit add .git add . this is very exciting. to push simply type `./client push <what to push>` to download do `./client download <where to download too>`
+
+time: 2hr:30min
 
 
 ### 2024-01-03 - Brief description
