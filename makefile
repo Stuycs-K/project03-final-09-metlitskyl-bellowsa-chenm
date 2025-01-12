@@ -9,11 +9,14 @@ file_transfer.o: file_transfer.c
 networking.o: networking.c networking.h utils.h 
 	gcc -c networking.c
 
-# dit
-client: client.o utils.o file_transfer.o networking.o
-	gcc -o client -g client.o utils.o file_transfer.o networking.o
+user.o: user.c
+	gcc -c user.c
 
-client.o: client.c utils.h file_transfer.h networking.h
+# dit
+client: client.o utils.o file_transfer.o networking.o user.o
+	gcc -o client -g client.o utils.o file_transfer.o networking.o user.o
+
+client.o: client.c utils.h file_transfer.h networking.h user.h
 	gcc -c -g client.c
 
 # dit
@@ -24,10 +27,10 @@ dit.o: dit.c utils.h
 	gcc -c -g dit.c
 
 # Server
-server: server.o utils.o file_transfer.o networking.o
-	gcc -o server -g server.o utils.o file_transfer.o networking.o
+server: server.o utils.o file_transfer.o networking.o user.o
+	gcc -o server -g server.o utils.o file_transfer.o networking.o user.o
 
-server.o: server.c utils.h file_transfer.h networking.h
+server.o: server.c utils.h file_transfer.h networking.h user.h
 	gcc -c -g server.c
 
 # Download

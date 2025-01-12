@@ -9,13 +9,18 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "user.h"
 
 #define BUFFER_SIZE 512
 
-int new_ft_init(int mode, char * path, struct ft_init * init){
+int new_ft_init(int mode, char * path, struct ft_user * user_in, struct ft_init * init){
     init -> mode = mode;
     memset(init->path, 0, 1024);
     strcpy(init->path, path);
+
+    if (user_in){
+        strcpy(init->user.name, user_in -> name);
+    }
 }
 
 int send_full_directory_contents(int transmit_fd, char * path){

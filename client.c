@@ -33,10 +33,16 @@ int main(int argc, char const* argv[]){
     printf("connected...\n");
 
     struct ft_init init;
+    struct ft_user user;
 
+    char real_path[1000];
+    realpath(argv[0], real_path);
+    printf("%s\n", real_path);
+    return 1;
+    
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
-        new_ft_init(TR_TRSMT, "./test_dir", &init);
+        new_ft_init(TR_TRSMT, "./test_dir", &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
 
         recv_full_directory_contents(client_fd, (char *)argv[2]);
@@ -44,7 +50,7 @@ int main(int argc, char const* argv[]){
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
-        new_ft_init(TR_RECV, "./server_dir", &init);
+        new_ft_init(TR_RECV, "./server_dir", &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
         send_full_directory_contents(client_fd, (char *) argv[2]);

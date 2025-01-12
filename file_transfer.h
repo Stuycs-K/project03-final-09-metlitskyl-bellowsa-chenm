@@ -2,6 +2,7 @@
 #define file_transfer_h
 
 #include <dirent.h>
+#include "user.h"
 
 #define TR_FILE 1
 #define TR_DIR 2
@@ -18,11 +19,12 @@ struct file_transfer{
 
 struct ft_init{
     int mode;
+    struct ft_user user;
     char path[1024];
 };
 
 //create a new ft_init struct
-int new_ft_init(int mode, char * path, struct ft_init * init);
+int new_ft_init(int mode, char * path, struct ft_user * user_in, struct ft_init * init);
 
 // sends the full transmition from init of root to end signal
 int send_full_directory_contents(int transmit_fd, char * path);
