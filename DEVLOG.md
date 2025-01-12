@@ -34,10 +34,12 @@ total: abt 1.5hr
 ### 2024-01-10 - attempted to get transmit_file fxn to send file contents and not break the system
 debugging...
 
-### 2024-01-11 - WORKING SEND/RECV FILES + FIXED CHILD ISSUE
+### 2024-01-11 - WORKING SEND/RECV FILES + FIXED CHILD ISSUE + ORGANIZATION
 Solved problem with the client getting messed up on read. Issue was is was reading too many bytes -> struct was interupted.
 
-time: 30min
+improved h file orgination.
+
+time: 1hr:30min
 
 
 ### 2024-01-03 - Brief description

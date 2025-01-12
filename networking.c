@@ -83,5 +83,8 @@ int setup_server(){
     //end server_fd setup
 
     freeaddrinfo(results);
+
+    v_err(server_fd,"accept",1);
+
     return server_fd;
 }

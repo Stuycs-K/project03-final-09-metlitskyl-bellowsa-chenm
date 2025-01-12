@@ -50,12 +50,10 @@ int main(int argc, char const* argv[]){
         //main server loop
     
         printf("establishing connection to client...\n");
-        int new_socket;
-        new_socket = accept(server_fd, NULL,NULL); //block until a client tries to connect
-        v_err(new_socket,"accept",1);
         
-        printf("recived client...\n");
-        printf("forking...\n");
+        int new_socket = accept(server_fd, NULL,NULL); //block until a client tries to connect
+        
+        printf("client connected. forking...\n");
         if(fork()==0){//if fork is child
             // do what the server should do
             server_action(new_socket); 
@@ -64,9 +62,9 @@ int main(int argc, char const* argv[]){
             exit(0);
         }
 
+        //if we are not the subserver, close the socket to the client
         close(new_socket);
   }
 
   return 0;
-    
 }
