@@ -48,24 +48,18 @@ int main(int argc, char const* argv[]){
 
         int bytes = read(client_fd, &ft,sizeof(ft));
         v_err(bytes, "read err", 1);
-        
-        printf("clinet line 49 recieves %d bytes...\n-----------------------------\n", bytes);
-        // for (int i = 0; i<bytes; i++){
-        //     printf("%c", ((char*)&ft)[i]);
-        // }
-        printf("MODE: %d, size %d, path %s\n", ft.mode, ft.size, ft.path);
-        printf("\n--------------------------------------------\n");
 
         if(bytes == 0){
-            printf("no more bytes to read...\n");
+            printf("transmission ended with no bytes left to read...\n");
             break;
         }
         if(ft.mode == TR_END){
-            printf("recv exit signal...\n");
+            printf("recved exit signal...\n");
             break;
         }
+
+        //if we did not need to exit, recieve the file
         recv_file(client_fd, &ft);
-        // sleep(1);
     }
         
     
