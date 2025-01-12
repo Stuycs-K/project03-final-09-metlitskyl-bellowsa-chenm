@@ -36,7 +36,18 @@ void sighandler(int signo){
 }
 
 int server_action(int new_socket){
-  send_full_directory_contents(new_socket, TARGET_DIR);
+  struct ft_init init;
+  read(new_socket, &init, sizeof(struct ft_init));
+  switch (init.mode){
+    case TR_TRSMT:
+      printf("RECIVED TRANSMIT ORDER\n------------------------------------\n\n");
+      send_full_directory_contents(new_socket, init.path);
+      break;
+    case TR_RECV:
+      printf("RECIEVED RECIEVE REQUEST\n------------------------------------\n\n");
+      recv_full_directory_contents(new_socket, init.path);
+      break;
+  }
 }
 
 int main(int argc, char const* argv[]){
