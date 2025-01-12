@@ -13,6 +13,17 @@ struct file_transfer{
     char path[1024];
 };
 
+#define TR_RECV 1034
+#define TR_TRSMT 5678
+
+struct ft_init{
+    int mode;
+    char path[1024];
+};
+
+//create a new ft_init struct
+int new_ft_init(int mode, char * path, struct ft_init * init);
+
 // sends the full transmition from init of root to end signal
 int send_full_directory_contents(int transmit_fd, char * path);
 

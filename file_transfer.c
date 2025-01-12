@@ -12,6 +12,12 @@
 
 #define BUFFER_SIZE 512
 
+int new_ft_init(int mode, char * path, struct ft_init * init){
+    init -> mode = mode;
+    memset(init->path, 0, 1024);
+    strcpy(init->path, path);
+}
+
 int send_full_directory_contents(int transmit_fd, char * path){
     //send the root of the file sys
   transmit_file(transmit_fd, path,NULL);
@@ -119,7 +125,7 @@ int transmit_file(int transmit_fd, char * path, struct dirent * entry){
     
     //if it is a file
     if(ft.mode == TR_FILE){
-        printf("sending file contents for %s...\n", ft.path);
+        printf("sending file contents for %s\n", ft.path);
         send_file_contents(transmit_fd, &ft);
     }
 
