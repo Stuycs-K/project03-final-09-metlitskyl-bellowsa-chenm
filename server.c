@@ -20,6 +20,8 @@
 
 #define PORT 8080
 
+#define TARGET_DIR "./test_dir"
+
 void sighandler(int signo){
   switch(signo){ //child 
     case SIGCHLD:
@@ -70,15 +72,7 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
-  //send the root of the file sys
-  transmit_file(new_socket, "./test_dir",NULL);
-
-  //send the file system
-  tree_transmit("./test_dir", new_socket);
-
-  //end connection
-  send_end(new_socket);
-  printf("sending exit. closing connection...\n");
+  send_full_directory_contents(new_socket, TARGET_DIR);
 }
 
 int main(int argc, char const* argv[]){

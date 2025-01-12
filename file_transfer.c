@@ -12,6 +12,18 @@
 
 #define BUFFER_SIZE 512
 
+int send_full_directory_contents(int transmit_fd, char * path){
+    //send the root of the file sys
+  transmit_file(transmit_fd, path,NULL);
+
+  //send the file system
+  tree_transmit(path, transmit_fd);
+
+  //end connection
+  send_end(transmit_fd);
+  printf("sending exit. closing connection...\n");
+}
+
 int send_end(int new_socket){
   struct file_transfer ft;
   new_file_transfer("",NULL,&ft);
