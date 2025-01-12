@@ -3,67 +3,61 @@
 #include <string.h>
 
 typedef struct {
-    int x;
-    int y;
+	int x;
+	int y;
+	int t;
 } Point;
 
 void diff(const char *a, const char *b) {
-    const int N = strlen(a);
-    const int M = strlen(b);
-    const int MAX = N+M;
-    int *v = calloc(2*MAX+1, sizeof(int));
-    Point **trace = malloc((MAX+1)*sizeof(Point *));
+	const int N = strlen(a);
+	const int M = strlen(b);
+	const int MAX = N+M;
+	int v[2*MAX+1];
+	Point trace[MAX+1][2*MAX+1];
 
-    for (int d = 0; d <= MAX; d++) {
-        trace[d] = malloc((2*MAX+1)*sizeof(Point));
-	memset(trace[d], 3, (2*MAX+1)*sizeof(Point));
+	for (int d = 0; d <= MAX; d++) {
+		for (int k = -d; k <= d; k += 2) {
+			int x, y, type;
+		
+			if (k == -d || (k != d && v[k-1+MAX] < v[k+1+MAX])) {
+				x = v[k+1+MAX];
+				type = 0; //insertion
+			}
+			else {
+				x = v[k-1+MAX]+1;
+				type = 1; //deletion
+			}
 
-        for (int k = -d; k <= d; k += 2) {
-            int x, y;
+			y = x-k;
+			trace[d][k+MAX] = (Point){x, y, type};
 
-            if (k == -d || (k != d && v[k-1+MAX] < v[k+1+MAX])) {
-                x = v[k+1+MAX];
-            }
-            else {
-                x = v[k-1+MAX]+1;
-            }
+			while (x < N && y < M && a[x] == b[y]) {
+				x++;
+				y++;
+			}
 
-            y = x-k;
-            trace[d][k+MAX] = (Point){x, y};
-            printf("%d: trace: %d %d\n", d, x, y);
-
-            while (x < N && y < M && a[x] == b[y]) {
-                x++;
-                y++;
-            }
-
-            v[k+MAX] = x;
-
-            if (x >= N && y >= M) {
-                //this part doesnt quite work
-                /*for (int d_back = d; d_back >= 0; d_back--) {
-                    Point p = trace[d_back][k+MAX];
-                    printf("(%d, %d)\n", p.x, p.y);
-                }*/
-                for (int i = 0; i <= d; i++) {
-		    for (int j = 0; j <= 2*MAX; j++) {
-			printf("(%d,%d) ", trace[i][j].x, trace[i][j].y);
-		    }
-		    printf("\n");
+			v[k+MAX] = x;
+			
+			if (x >= N && y >= M) {
+				//this part doesnt quite work
+				int c = k+MAX;
+				for (int r = d; r > 0; r--) {
+					printf("(%d,%c,%d) ", trace[r][c].x, b[trace[r][c].y-1], trace[r][c].t);
+					if (trace[r][c].t == 0) c++;
+					else c--;
+				}
+				printf("min edit dist is %d\n", d);
+				return;
+			}
 		}
-                printf("min edit dist is %d\n", d);
-                free(v);
-                return;
-            }
-        }
-    }
+	}
 }
 
 int main() {
 	//gcc -Wall diff.c && ./a.out > out.txt && sed 's/50529027/_/g' out.txt
-    const char *a = "matthew";
-    const char *b = "little";
+	const char *a = "matthew";
+	const char *b = "little";
 
-    diff(a, b);
-    return 0;
+	diff(a, b);
+	return 0;
 }
