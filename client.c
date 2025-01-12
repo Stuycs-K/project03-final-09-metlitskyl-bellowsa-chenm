@@ -3,49 +3,68 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#include <stdlib.h>
 
-int main(int argc, char const* argv[])
-{
-    int status, valread, client_fd;
-    struct sockaddr_in serv_addr;
-    char* hello = "Hello from client";
-    char buffer[1024] = { 0 };
-    if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf("\n Socket creation error \n");
-        return -1;
-    }
+//socket stuff
+#include <sys/socket.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <netdb.h>
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
+#include <fcntl.h>
+//for mkdir
+#include <sys/stat.h>
+#include "utils.h"
+#include "file_transfer.h"
 
-    // Convert IPv4 and IPv6 addresses from text to binary
-    // form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)
-        <= 0) {
-        printf(
-            "\nInvalid address/ Address not supported \n");
-        return -1;
-    }
+#define PORT "9845"
 
-    if ((status
-         = connect(client_fd, (struct sockaddr*)&serv_addr,
-                   sizeof(serv_addr)))
-        < 0) {
-        printf("\nConnection Failed \n");
-        return -1;
-    }
+int main(int argc, char const* argv[]){
+    struct addrinfo * results;//results is allocated in getaddrinfo
+    struct addrinfo hints; 
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; //TCP socket
+
+    int addr_return = getaddrinfo("127.0.0.1", PORT, &hints, &results);  //Server sets node to NULL
+    
+    v_err(addr_return, "getaddrinfo", 1);
+
+
+    //create socket
+    int client_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
+    v_err(client_fd, "socket creation err", EXIT);
+
+    //attatch client_fd to server
+    int status = connect(client_fd, results->ai_addr, results->ai_addrlen); 
+    v_err(status, "connection err", EXIT);
+        
+    printf("connected...\n");
+    
     while(1){
-    send(client_fd, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    valread = read(client_fd, buffer,
-                   1024 - 1); // subtract 1 for the null
-                              // terminator at the end
-    printf("%s\n", buffer);
+        struct file_transfer ft;
+        memset(&ft, 0, sizeof(struct file_transfer));
+
+        int bytes = read(client_fd, &ft,sizeof(ft));
+        v_err(bytes, "read err", 1);
+
+        if(bytes == 0){
+            printf("transmission ended with no bytes left to read...\n");
+            break;
+        }
+        if(ft.mode == TR_END){
+            printf("recved exit signal...\n");
+            break;
+        }
+
+        //if we did not need to exit, recieve the file
+        recv_file(client_fd, &ft);
     }
+        
+    
     // closing the connected socket
     close(client_fd);
+    freeaddrinfo(results);
     return 0;
 }

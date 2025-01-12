@@ -13,7 +13,9 @@ server
 patch
 
 .vscode
+client
 
+.nfs*
 # Prerequisites
 *.d
 

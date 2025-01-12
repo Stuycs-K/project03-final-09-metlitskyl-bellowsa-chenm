@@ -9,7 +9,9 @@
 #ifndef utils_h
 #define utils_h
 
-int v_err(int sigerr, char *msg, int _exit);
+#define EXIT 1
+#define NO_EXIT 0
+int v_err(int sigerr, char * msg, int _exit);
 void err();
 
 #define MAX_FILEPATH 512

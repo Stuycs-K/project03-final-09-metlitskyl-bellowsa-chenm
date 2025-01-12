@@ -14,7 +14,31 @@ setup files
 built makefile
 researched to find example code for sockets + examined linux documentation to understand
 used lab15 logic + example code + man pages to build functional forking server for sockets
+created branch abel -- slightly late... :)
 total: abt 1.5hr
+
+### 2024-01-08 - K sample code. tree_transmit
+made functional tree_transmit function that trees through a directory and 
+transmits name and type of file to server/client.
+
+total: abt 1.5hr
+
+
+### 2024-01-09 - attempted to get transmit_file fxn to send file contents and not break the system
+Reorganized my functions into a file_transfer c file to improve organization
+
+attempted to debug why the client cannot recieve the struct following a file contents transmission...
+
+total: abt 1.5hr
+
+### 2024-01-10 - attempted to get transmit_file fxn to send file contents and not break the system
+debugging...
+
+### 2024-01-11 - WORKING SEND/RECV FILES + FIXED CHILD ISSUE
+Solved problem with the client getting messed up on read. Issue was is was reading too many bytes -> struct was interupted.
+
+time: 30min
+
 
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.

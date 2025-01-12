@@ -1,9 +1,13 @@
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
+
+//socket stuff
+#include <sys/socket.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <netdb.h>
 
 //signal stuff
 #include <signal.h>
@@ -12,45 +16,48 @@
 #include <sys/wait.h>
 
 #include "utils.h"
+#include "file_transfer.h"
+
 #define PORT 8080
 
 void sighandler(int signo){
   switch(signo){ //child 
     case SIGCHLD:
       {
-        printf("reaping child...\n");
-        while(waitpid(-1,NULL,0));
+        while(waitpid(-1,NULL,WNOHANG) > 0);
       }
     // cleanup();
   }
 
 }
 
-int main(int argc, char const* argv[]){
-    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
-
-    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
-    //set up server listening ...
+/*================SETUP SERVER===============
+This method sets up the socket to be a SOCK_STREAM socket
+It then binds it to port 8000 and sets ups the required address
+and sets the socket to listen. It returns the server socket fd.*/
+int setup_server(){
     int server_fd; //server_fd is analogous to WKP
-    struct sockaddr_in address;
-    int opt = 1;
-    socklen_t addrlen = sizeof(address);
-    
+
+    struct addrinfo * results;//results is allocated in getaddrinfo
+    struct addrinfo hints; 
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; //TCP socket
+    hints.ai_flags = AI_PASSIVE; //only needed on server
+    int addr_return = getaddrinfo("127.0.0.1", "9845", &hints, &results);  //Server sets node to NULL
+    v_err(addr_return, "getaddrinfo", 1);
+
+
     // create Socket stream socket
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
     v_err(server_fd, "socket creation err: ", 1);
 
-    // configure socket
+    int opt=1;
     v_err(setsockopt(server_fd, SOL_SOCKET,
                    SO_REUSEADDR | SO_REUSEPORT, &opt,
                    sizeof(opt)),"setsocketopt", 1);
-        
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
 
-    // Forcefully attaching socket to the port 8080
-    int bind_result = bind(server_fd, (struct sockaddr*)&address,sizeof(address));
+    int bind_result = bind(server_fd, results->ai_addr, results->ai_addrlen);
     v_err(bind_result,"binding socket",1);
         
     //set server_fd to listen and set max number of waiting connections to 3
@@ -58,43 +65,53 @@ int main(int argc, char const* argv[]){
     v_err(listen_result,"listen",1); 
     //end server_fd setup
 
+    freeaddrinfo(results);
+    return server_fd;
+}
+
+int server_action(int new_socket){
+  transmit_file(new_socket, "./test_dir",NULL);
+  tree_transmit("./test_dir", new_socket);
+
+  struct file_transfer ft;
+  new_file_transfer("/",NULL,&ft);
+  ft.size = -1;
+  ft.mode = TR_END;
+
+  //WEIRD CHECKEAR
+  write(new_socket, &ft, sizeof(struct file_transfer));
+  printf("sending EOF\n");
+}
+
+int main(int argc, char const* argv[]){
+    signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
+
+    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
+    //set up server listening ...
+    int server_fd = setup_server();
     //server loop
     while(1){ 
         //main server loop
-        printf("establishing connection to client...\n");
     
+        printf("establishing connection to client...\n");
         int new_socket;
-        new_socket = accept(server_fd, (struct sockaddr*)&address,&addrlen); //block until a client tries to connect
+        new_socket = accept(server_fd, NULL,NULL); //block until a client tries to connect
         v_err(new_socket,"accept",1);
         
         printf("recived client...\n");
         printf("forking...\n");
         if(fork()==0){//if fork is child
             // do what the server should do
-
-            while(1){
-                char buffer[1024];
-                ssize_t valread;
-                valread = read(new_socket, buffer,
-                            1024); // subtract 1 for the null
-                                        // terminator at the end
-                printf("recieved %s\n", buffer);
-                char * hello = "<html><body><p>test</p></body></html>";
-                send(new_socket, hello, strlen(hello), 0);
-                printf("Hello message sent\n");
-                sleep(1);
-            }
-            // closing the connected socket
+            server_action(new_socket); 
             close(new_socket);
-            // closing the listening socket
-            close(server_fd);
+            printf("closing connection to client...\n");
             exit(0);
         }
 
         close(new_socket);
-        
-    
+
   }
-        return 0;
+
+  return 0;
     
 }
