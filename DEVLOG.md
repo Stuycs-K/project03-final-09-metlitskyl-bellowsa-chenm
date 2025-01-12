@@ -43,6 +43,10 @@ improved h file orgination.
 
 time: 2hr:30min
 
+### 2024-01-11 - user struct
+created user struct as part of init transmission
+
+time: 1hr
 
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
