@@ -12,6 +12,57 @@
 
 #define BUFFER_SIZE 512
 
+int send_full_directory_contents(int transmit_fd, char * path){
+    //send the root of the file sys
+  transmit_file(transmit_fd, path,NULL);
+
+  //send the file system
+  tree_transmit(path, transmit_fd);
+
+  //end connection
+  send_end(transmit_fd);
+  printf("sending exit. closing connection...\n");
+}
+
+
+// recieves the full transmition from init of root to end signal
+int recv_full_directory_contents(int recv_fd, char * path){
+    char old_path[1000];
+    getcwd(old_path, sizeof(old_path));
+
+    chdir(path);
+    while(1){
+        struct file_transfer ft;
+        memset(&ft, 0, sizeof(struct file_transfer));
+
+        int bytes = read(recv_fd, &ft,sizeof(ft));
+        v_err(bytes, "read err", 1);
+
+        if(bytes == 0){
+            printf("transmission ended with no bytes left to read...\n");
+            break;
+        }
+        if(ft.mode == TR_END){
+            printf("recved exit signal...\n");
+            break;
+        }
+
+        //if we did not need to exit, recieve the file
+        recv_file(recv_fd, &ft);
+    }
+
+    chdir(old_path);
+}
+
+
+int send_end(int new_socket){
+  struct file_transfer ft;
+  new_file_transfer("",NULL,&ft);
+  ft.size = -1;
+  ft.mode = TR_END;
+  write(new_socket, &ft, sizeof(struct file_transfer));
+}
+
 int new_file_transfer(char * path, struct dirent * entry, struct file_transfer * ft){
     if(entry){
         ft->mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;
