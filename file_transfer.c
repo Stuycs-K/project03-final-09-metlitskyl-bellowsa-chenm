@@ -12,6 +12,14 @@
 
 #define BUFFER_SIZE 512
 
+int send_end(int new_socket){
+  struct file_transfer ft;
+  new_file_transfer("",NULL,&ft);
+  ft.size = -1;
+  ft.mode = TR_END;
+  write(new_socket, &ft, sizeof(struct file_transfer));
+}
+
 int new_file_transfer(char * path, struct dirent * entry, struct file_transfer * ft){
     if(entry){
         ft->mode = (entry->d_type == DT_REG) ? TR_FILE : TR_DIR;

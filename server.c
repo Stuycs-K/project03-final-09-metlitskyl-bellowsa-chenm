@@ -70,25 +70,23 @@ int setup_server(){
 }
 
 int server_action(int new_socket){
+  //send the root of the file sys
   transmit_file(new_socket, "./test_dir",NULL);
+
+  //send the file system
   tree_transmit("./test_dir", new_socket);
 
-  struct file_transfer ft;
-  new_file_transfer("/",NULL,&ft);
-  ft.size = -1;
-  ft.mode = TR_END;
-
-  //WEIRD CHECKEAR
-  write(new_socket, &ft, sizeof(struct file_transfer));
-  printf("sending EOF\n");
+  //end connection
+  send_end(new_socket);
+  printf("sending exit. closing connection...\n");
 }
 
 int main(int argc, char const* argv[]){
     signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
-    //good resource for sockets: https://man7.org/linux/man-pages/man7/ip.7.html https://man7.org/linux/man-pages/man2/socket.2.html 
     //set up server listening ...
     int server_fd = setup_server();
+    
     //server loop
     while(1){ 
         //main server loop
@@ -109,7 +107,6 @@ int main(int argc, char const* argv[]){
         }
 
         close(new_socket);
-
   }
 
   return 0;

@@ -13,6 +13,7 @@ struct file_transfer{
     char path[1024];
 };
 
+int send_end(int new_socket);
 int new_file_transfer(char * path, struct dirent * entry, struct file_transfer * ft);
 int transmit_file(int transmit_fd, char * path, struct dirent * entry);
 int recv_file(int recv_fd, struct file_transfer * ft); 
