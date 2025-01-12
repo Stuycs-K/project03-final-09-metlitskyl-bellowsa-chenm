@@ -24,6 +24,37 @@ int send_full_directory_contents(int transmit_fd, char * path){
   printf("sending exit. closing connection...\n");
 }
 
+
+// recieves the full transmition from init of root to end signal
+int recv_full_directory_contents(int recv_fd, char * path){
+    char old_path[1000];
+    getcwd(old_path, sizeof(old_path));
+
+    chdir(path);
+    while(1){
+        struct file_transfer ft;
+        memset(&ft, 0, sizeof(struct file_transfer));
+
+        int bytes = read(recv_fd, &ft,sizeof(ft));
+        v_err(bytes, "read err", 1);
+
+        if(bytes == 0){
+            printf("transmission ended with no bytes left to read...\n");
+            break;
+        }
+        if(ft.mode == TR_END){
+            printf("recved exit signal...\n");
+            break;
+        }
+
+        //if we did not need to exit, recieve the file
+        recv_file(recv_fd, &ft);
+    }
+
+    chdir(old_path);
+}
+
+
 int send_end(int new_socket){
   struct file_transfer ft;
   new_file_transfer("",NULL,&ft);

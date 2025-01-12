@@ -16,6 +16,9 @@ struct file_transfer{
 // sends the full transmition from init of root to end signal
 int send_full_directory_contents(int transmit_fd, char * path);
 
+// recieves the full transmition from init of root to end signal
+int recv_full_directory_contents(int recv_fd, char * path);
+
 //sends the end of transmission struct to new_socket
 int send_end(int new_socket);
 
