@@ -31,6 +31,11 @@ attempted to debug why the client cannot recieve the struct following a file con
 
 total: abt 1.5hr
 
+### 2024-01-10 - attempted to get transmit_file fxn to send file contents and not break the system
+debugging...
+
+
+
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
 
