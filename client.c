@@ -35,11 +35,8 @@ int main(int argc, char const* argv[]){
     struct ft_init init;
     struct ft_user user;
 
-    char real_path[1000];
-    realpath(argv[0], real_path);
-    printf("%s\n", real_path);
-    return 1;
-    
+    init_client_config((char *)argv[0], &user);
+
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
         new_ft_init(TR_TRSMT, "./test_dir", &user, &init);
