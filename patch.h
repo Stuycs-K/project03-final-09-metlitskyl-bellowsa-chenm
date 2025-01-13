@@ -1,3 +1,5 @@
+#include "utils.h"
+
 #ifndef PATCH_H
 #define PATCH_H
 struct patch *create_patch(char *filepath, int mode, size_t memory_size, char *memory);

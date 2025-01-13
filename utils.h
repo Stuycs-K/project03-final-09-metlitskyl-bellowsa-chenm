@@ -21,9 +21,9 @@ void err();
 
 #define MAX_FILEPATH 512
 
-#define MODE_TOUCH 0
-#define MODE_MODIFY 1 // modifying TEXT inside a file
-#define MODE_REMOVE 2
+#define MODE_TOUCH 1
+#define MODE_MODIFY 2 // modifying TEXT inside a file
+#define MODE_REMOVE 3
 
 #define MODE_PLUS '+'
 #define MODE_MINUS '-'
