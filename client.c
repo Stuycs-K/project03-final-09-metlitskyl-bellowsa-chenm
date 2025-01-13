@@ -35,7 +35,12 @@ int main(int argc, char const* argv[]){
     struct ft_init init;
     struct ft_user user;
 
-    init_client_config((char *)argv[0], &user);
+    int made_new_user = init_client_config((char *)argv[0], &user);
+    if(made_new_user){
+        struct ft_init init_usr;
+        new_ft_init(TR_AINIT, "", &user, &init_usr);
+        write(client_fd, &init_usr, sizeof(struct ft_init));
+    }
 
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission

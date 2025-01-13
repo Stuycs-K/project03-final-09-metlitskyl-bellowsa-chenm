@@ -1,5 +1,0 @@
-this is what file 1 says.
-
-have a nice day
-
-END FILE

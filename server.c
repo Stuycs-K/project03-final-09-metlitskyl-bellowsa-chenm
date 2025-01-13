@@ -43,6 +43,13 @@ int server_action(int new_socket){
   
   char path[2048];
   switch (init.mode){
+    case TR_AINIT:
+      printf("RECIVED MAKE USER ORDER\n------------------------------------\n\n");
+      sprintf(path, "%s/%s", SERVER_DATA, init.user.name);
+      mkdir(path, 0744);
+      server_action(new_socket);
+      return 0;
+      
     case TR_TRSMT:
       printf("RECIVED TRANSMIT ORDER\n------------------------------------\n\n");
 

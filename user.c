@@ -1,5 +1,8 @@
 #include "user.h"
 #include "utils.h"
+#include "file_transfer.h"
+#include "user.h"
+
 #include <string.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -11,6 +14,8 @@ int new_ft_user(char * name, struct ft_user * user){
 }
 
 int init_client_config(char * program_name, struct ft_user * user){
+    int made_new_user = 0;
+
     char path[1024];
     realpath(program_name, path);
 
@@ -38,6 +43,7 @@ int init_client_config(char * program_name, struct ft_user * user){
         printf("set your username: ");
         fflush(stdout);
         fgets(username, sizeof(username), stdin);
+
         printf("--------------------------------------\n\n");
 
         //remove \n
@@ -49,6 +55,8 @@ int init_client_config(char * program_name, struct ft_user * user){
         write(fd, &user, sizeof(user));
 
         close(fd);
+
+        made_new_user = 1;
     }
     else{
         strcat(path, "/user");
@@ -59,4 +67,6 @@ int init_client_config(char * program_name, struct ft_user * user){
     read(fd, user, sizeof(struct ft_user));
 
     close(fd);
+
+    return made_new_user;
 }
