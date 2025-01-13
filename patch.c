@@ -118,6 +118,9 @@ void apply_modify_patch(struct patch *patch) {
 
                 head +=sizeof(char); // advance to next byte
             }
+        } else if (plus_or_minus == MODE_MINUS) {
+            // only a shift left is needed (no need to shrink str)
+            // then move null byte back accordingly (strlen in the write will handle this!)
         }
     }
 
