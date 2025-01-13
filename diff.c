@@ -57,6 +57,21 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 	return 0;
 }
 
+//assumes patch is a MODIFY
+//returns new length of str
+int apply_patch(char *str, size_t str_length, Patch *p) {
+	int length = str_length;
+	for (int i = 0; i < p->memory_size; i++) {
+		if (p->pts[i].type == INSERT_TYPE) str_length++;
+		if (p->pts[i].type == DELETE_TYPE) str_length--;
+	}
+	char *result = malloc(length*sizeof(char));
+	
+	for (int i = length-1; i >= 0; i--) {
+		
+	}
+}
+
 int main() {
 	//gcc -Wall diff.c && ./a.out > out.txt && sed 's/50529027/_/g' out.txt
 	const char *a = "matthew";

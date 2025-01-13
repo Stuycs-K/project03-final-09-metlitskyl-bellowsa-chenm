@@ -18,11 +18,8 @@ void err();
 #define MODE_MODIFY 1 // modifying TEXT inside a file
 #define MODE_REMOVE 2
 
-#define MODE_PLUS 3
-#define MODE_MINUS 4
-
-#define INSERT_TYPE 69
-#define DELETE_TYPE 420
+#define INSERT_TYPE 3
+#define DELETE_TYPE 4
 
 /*
 Point update
@@ -40,8 +37,8 @@ typedef struct {
 Patch
 filepath: relative file path location
 mode: MODE_TOUCH (create file), MODE_MODIFY (modify file contents), MODE_REMOVE (remove file)
-memory_size: size of pts array, zero if TOUCH/REMOVE
-pts: contains point updates, empty if TOUCH/REMOVE
+memory_size: size of pts array, zero if REMOVE
+pts: contains point updates, empty if REMOVE
 */
 typedef struct {
     char filepath[MAX_FILEPATH];
