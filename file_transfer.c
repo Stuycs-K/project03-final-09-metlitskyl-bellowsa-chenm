@@ -15,8 +15,8 @@
 
 int new_ft_init(int mode, char * path, struct ft_user * user_in, struct ft_init * init){
     init -> mode = mode;
-    memset(init->path, 0, 1024);
-    strcpy(init->path, path);
+    memset(init->repo_name, 0, 1024);
+    strcpy(init->repo_name, path);
 
     if (user_in){
         strcpy(init->user.name, user_in -> name);
@@ -38,10 +38,19 @@ int send_full_directory_contents(int transmit_fd, char * path){
 
 // recieves the full transmition from init of root to end signal
 int recv_full_directory_contents(int recv_fd, char * path){
+
+    printf("RECIVED PATH of %s\n", path);
     char old_path[1000];
     getcwd(old_path, sizeof(old_path));
 
-    chdir(path);
+    int r = chdir(path);
+    v_err(r, "chdir err", 1);
+
+    char wd[1000];
+    
+    getcwd(wd, sizeof(wd));
+    printf("CURRENT WD is %s\n\n", wd);
+
     while(1){
         struct file_transfer ft;
         memset(&ft, 0, sizeof(struct file_transfer));

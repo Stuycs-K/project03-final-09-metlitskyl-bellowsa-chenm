@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "file_transfer.h"
+#include "user.h"
+
 #ifndef utils_h
 #define utils_h
 
@@ -29,4 +32,7 @@ struct patch {
     size_t memory_size;
     char memory[]; // FLEXIBLE ARRAY MEMBBER, unkown length of memory raw memory, used for chars in mode_touch, used for our diff format in mode_modify, 1 byte for mode_remove
 };
+
+int get_repo_path(char * server_root, struct ft_init * init, char * target);
+
 #endif

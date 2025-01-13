@@ -24,6 +24,8 @@
 
 #define TARGET_DIR "./test_dir"
 
+#define SERVER_DATA "./server_data"
+
 void sighandler(int signo){
   switch(signo){ //child 
     case SIGCHLD:
@@ -38,14 +40,24 @@ void sighandler(int signo){
 int server_action(int new_socket){
   struct ft_init init;
   read(new_socket, &init, sizeof(struct ft_init));
+  
+  char path[1024];
   switch (init.mode){
     case TR_TRSMT:
       printf("RECIVED TRANSMIT ORDER\n------------------------------------\n\n");
-      send_full_directory_contents(new_socket, init.path);
+
+      get_repo_path(SERVER_DATA, &init, path);
+      printf("serving download from %s\n", path);
+
+      send_full_directory_contents(new_socket, path);
       break;
+
     case TR_RECV:
       printf("RECIEVED RECIEVE REQUEST\n------------------------------------\n\n");
-      recv_full_directory_contents(new_socket, init.path);
+      get_repo_path(SERVER_DATA, &init, path);
+
+      printf("recieving push to %s\n", path);
+      recv_full_directory_contents(new_socket, path);
       break;
   }
 }

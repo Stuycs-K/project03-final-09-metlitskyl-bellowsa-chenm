@@ -20,7 +20,7 @@ struct file_transfer{
 struct ft_init{
     int mode;
     struct ft_user user;
-    char path[1024];
+    char repo_name[1024];
 };
 
 //create a new ft_init struct

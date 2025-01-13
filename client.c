@@ -47,7 +47,8 @@ int main(int argc, char const* argv[]){
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
-        new_ft_init(TR_RECV, "./server_dir", &user, &init);
+        new_ft_init(TR_RECV, (char *) argv[2], &user, &init);
+        
         write(client_fd, &init, sizeof(struct ft_init));
         
         send_full_directory_contents(client_fd, (char *) argv[2]);
