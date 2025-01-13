@@ -30,6 +30,7 @@ void write_patch(char *filename, struct patch *patch) {
     if (write_status == -1) {
         err();
     }
+    close(out_file);
 }
 struct patch *read_patch(char *filename) {
     int in_file = open(filename, O_RDONLY);
@@ -50,10 +51,34 @@ struct patch *read_patch(char *filename) {
     if (read_status == -1) {
         err();
     }
+    close(in_file);
 }
 
-void apply_patch(char *str, struct patch *patch) {
-    int new_size = 9;
+void apply_modify_patch(struct patch *patch) {
+
+    // Step 1: Get str from file
+    int in_file = open(patch->filepath, O_RDONLY);
+    if (in_file == -1) {
+        err();
+    }
+
+    struct stat file_stat;
+    int stat_status = stat(patch->filepath, &file_stat);
+    if (stat_status == -1) {
+        err();
+    }
+
+    size_t patch_file_size = file_stat.st_size;
+    char *str = calloc(1, patch_file_size + 1);
+
+    int read_status = read(in_file, str, patch_file_size);
+    if (read_status == -1) {
+        err();
+    }
+    printf("Read file to buffer str: |%s|\n", str);
+    close(in_file);
+
+    // Step 2: Generate new text from patch
     char *head = (patch->memory); // point to start
 
     while (head < patch->memory + patch->memory_size) { // loop until hits end of memory buffer
@@ -95,7 +120,21 @@ void apply_patch(char *str, struct patch *patch) {
             }
         }
     }
+
+    // Step 3: Write to file!
+    int out_file = open(patch->filepath, O_WRONLY | O_TRUNC, 0644);
+    if (out_file == -1) {
+        err();
+    }
+
+    int write_status = write(out_file, str, strlen(str));
+    if (write_status == -1) {
+        err();
+    }
+    close(out_file);
 }
+
+
 
 int main() {
     char txt[] = "hi\nline2\nline3";
@@ -112,16 +151,24 @@ int main() {
     visualize_patch(mypatch);
 
     char mem[] = {'+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
-                  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' };
+                //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
+                   };
     //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
     //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
-    struct patch *test_patch = create_patch("matthew.txt", MODE_MODIFY, sizeof(mem), mem);
-    char *str = calloc(100, sizeof(char));
-    strcpy(str, "abcdefghijk");
+    struct patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
+    // char *str = calloc(100, sizeof(char));
+    // strcpy(str, "abcdefghijk");
     write_patch(".dit/matthew1.patch", test_patch);
-    printf("string before test patch apply: |%s|\n", str);
-    apply_patch(str, test_patch);
-    printf("string after test patch apply: |%s|\n", str);
+
+    // ----- Patch Application
+
+
+    // printf("string before test patch apply: |%s|\n", str);
+    apply_modify_patch(test_patch);
+    // printf("string after test patch apply: |%s|\n", str);
+
+
+   
 
     return 0;
 }
