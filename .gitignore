@@ -70,3 +70,16 @@ Mkfile.old
 dkms.conf
 
 test/
+
+*test/
+
+*test*/
+
+.vscode/
+
+.client_config/
+
+t2/
+
+server_data/
+
