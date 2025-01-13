@@ -64,3 +64,19 @@ int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_nam
     sprintf(repo_name_dit, "./%s/.dit", repo_draft_name);
 
 }
+
+int get_base_name(char * path, char * target){
+    printf("\n-------------get base name-----------------\n");
+    printf("%s\n", path);
+    if(path[0] != '/'){
+        strcpy(target, path);
+        return 0;
+    }
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    strcpy(target, path+ strlen(cwd));
+    printf("\n-------------end base name-----------------\n");
+
+    return 1;
+}

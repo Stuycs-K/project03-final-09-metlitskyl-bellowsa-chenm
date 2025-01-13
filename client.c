@@ -40,7 +40,9 @@ int main(int argc, char const* argv[]){
     char repo_target[1050];
 
     get_repo_name_from_cwd(repo_name, sizeof(repo_name), repo_name_dit, repo_target);
-    printf("repo name: %s, repo_traget: %s\n", repo_name, repo_target);
+    char repo_dit_base_name[512] = {0};
+    get_base_name(repo_name_dit, repo_dit_base_name);
+    printf("repo name: %s, repo_traget: %s, baseName: %s\n", repo_name, repo_target, repo_dit_base_name);
     // exit(0);
     if(made_new_user){
         struct ft_init init_usr;
@@ -58,11 +60,14 @@ int main(int argc, char const* argv[]){
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
-        new_ft_init(TR_RECV, repo_name_dit, &user, &init);
+
+        new_ft_init(TR_RECV, repo_dit_base_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
         transmit_file(client_fd, repo_name, NULL);
-        send_full_directory_contents(client_fd, repo_target);
+        
+        chdir("..");
+        send_full_directory_contents(client_fd, repo_dit_base_name);
 
     }
 
