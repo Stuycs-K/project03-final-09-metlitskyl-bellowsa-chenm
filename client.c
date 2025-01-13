@@ -19,8 +19,6 @@
 #include "file_transfer.h"
 #include "networking.h"
 
-#define WORKING_DIR "/home/abellows50/systems/project03-final-09-metlitskyl-bellowsa-chenm/test"
-
 int main(int argc, char const* argv[]){
     
     if (argc < 3){
@@ -36,6 +34,11 @@ int main(int argc, char const* argv[]){
     struct ft_user user;
 
     int made_new_user = init_client_config((char *)argv[0], &user);
+
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    
     if(made_new_user){
         struct ft_init init_usr;
         new_ft_init(TR_AINIT, "", &user, &init_usr);
