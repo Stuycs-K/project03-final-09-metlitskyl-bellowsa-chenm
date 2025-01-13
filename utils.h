@@ -23,8 +23,8 @@ void err();
 #define MODE_MODIFY 1 // modifying TEXT inside a file
 #define MODE_REMOVE 2
 
-#define MODE_PLUS 3
-#define MODE_MINUS 4
+#define MODE_PLUS '+'
+#define MODE_MINUS '-'
 
 struct patch {
     char filepath[MAX_FILEPATH];

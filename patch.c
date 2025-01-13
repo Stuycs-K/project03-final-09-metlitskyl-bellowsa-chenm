@@ -52,6 +52,51 @@ struct patch *read_patch(char *filename) {
     }
 }
 
+void apply_patch(char *str, struct patch *patch) {
+    int new_size = 9;
+    char *head = (patch->memory); // point to start
+
+    while (head < patch->memory + patch->memory_size) { // loop until hits end of memory buffer
+        // THIS IS THE ONE CHANGE BLOCK
+        // grab char
+        char plus_or_minus = *(head);
+        head += sizeof(char);
+
+        // grab int
+        int location = *(int *)(head);
+        head += sizeof(int);
+
+        // grab int
+        int number_of_bytes = *(int *)(head);
+        head += sizeof(int);
+
+        printf("Plus or Minus: |%c|\n", plus_or_minus);
+        printf("Location: |%d|\n", location);
+        printf("number_of_bytes: |%d|\n", number_of_bytes);
+
+        if (plus_or_minus == MODE_PLUS) {
+            // assume worst case scenario that buffer is exactly size of str
+            size_t new_str_len = strlen(str) + number_of_bytes + 1; // +1 for null byte
+            str = realloc(str, sizeof(char) * (new_str_len));
+            str[new_str_len - 1] = '\0'; // just in case so you don't shoot yourself in the foot
+
+            // shift stuff after our location (including the byte at location) to the right
+            int max_number_of_bytes_to_copy = strlen(str) - location;
+            strncpy(str + location + number_of_bytes, str + location, max_number_of_bytes_to_copy); // dest, src, # to copy
+
+            // now read bytes
+            for (int i =0; i < number_of_bytes; i++){
+                // grab char
+                char new_byte = *(head);
+
+                str[location + i] = new_byte;
+
+                head +=sizeof(char); // advance to next byte
+            }
+        }
+    }
+}
+
 int main() {
     char txt[] = "hi\nline2\nline3";
     struct patch *mypatch = create_patch("hi.txt", MODE_TOUCH, strlen(txt) + 1, txt);
@@ -65,6 +110,18 @@ int main() {
     struct patch *mypatch2 = read_patch(filename);
     printf("Patch read!\n");
     visualize_patch(mypatch);
+
+    char mem[] = {'+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
+                  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' };
+    //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
+    //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
+    struct patch *test_patch = create_patch("matthew.txt", MODE_MODIFY, sizeof(mem), mem);
+    char *str = calloc(100, sizeof(char));
+    strcpy(str, "abcdefghijk");
+    write_patch(".dit/matthew1.patch", test_patch);
+    printf("string before test patch apply: |%s|\n", str);
+    apply_patch(str, test_patch);
+    printf("string after test patch apply: |%s|\n", str);
 
     return 0;
 }
