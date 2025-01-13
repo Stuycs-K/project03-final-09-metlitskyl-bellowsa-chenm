@@ -52,13 +52,19 @@ struct patch *read_patch(char *filename) {
         err();
     }
     close(in_file);
+    return patch;
 }
 
 void apply_modify_patch(struct patch *patch) {
 
     // Step 1: Get str from file
     int in_file = open(patch->filepath, O_RDONLY);
+
     if (in_file == -1) {
+        if (errno == ENOENT) {
+            printf("MODIFY PATCH FAILED: FILE |%s| DOES NOT EXIST!!\n", patch->filepath);
+            exit(errno);
+        }
         err();
     }
 
@@ -110,13 +116,13 @@ void apply_modify_patch(struct patch *patch) {
             strncpy(str + location + number_of_bytes, str + location, max_number_of_bytes_to_copy); // dest, src, # to copy
 
             // now read bytes
-            for (int i =0; i < number_of_bytes; i++){
+            for (int i = 0; i < number_of_bytes; i++) {
                 // grab char
                 char new_byte = *(head);
 
                 str[location + i] = new_byte;
 
-                head +=sizeof(char); // advance to next byte
+                head += sizeof(char); // advance to next byte
             }
         } else if (plus_or_minus == MODE_MINUS) {
             // only a shift left is needed (no need to shrink str)
@@ -137,26 +143,40 @@ void apply_modify_patch(struct patch *patch) {
     close(out_file);
 }
 
-void apply_touch_patch(struct patch *patch){
-    char* filepath = patch->filepath;
-    int fd = open(filepath, O_WRONLY | O_CREAT | O_EXCL, 0644); // O_EXCL is "error if create and file exists" 
-    if (fd == -1){
+void apply_touch_patch(struct patch *patch) {
+    char *filepath = patch->filepath;
+    int fd = open(filepath, O_WRONLY | O_CREAT | O_EXCL, 0644); // O_EXCL is "error if create and file exists"
+    if (fd == -1) {
+        if (errno == EEXIST) {
+            printf("TOUCH PATCH FAILED: FILE |%s| ALREADY EXISTS!!\n", patch->filepath);
+            exit(errno);
+        }
         err();
     }
+
+    if (patch->memory_size > 0) {
+        printf("Trying to write text from patch memory to newly created file...\n");
+        // treat memory as JUST a str (char*) NOT a fancy encoded modification patch memory thingy
+        int write_status = write(fd, patch->memory, patch->memory_size);
+        if (write_status == -1) {
+            err();
+        }
+    }
+
     close(fd);
 }
 
-void apply_delete_patch(struct patch *patch){
-    char* filepath = patch->filepath;
+void apply_delete_patch(struct patch *patch) {
+    char *filepath = patch->filepath;
     int removal_status = remove(filepath);
-    if (removal_status == -1){
+    if (removal_status == -1) {
         err();
     }
 }
 
 int main() {
     char txt[] = "hi\nline2\nline3";
-    struct patch *mypatch = create_patch("hi.txt", MODE_TOUCH, strlen(txt) + 1, txt);
+    struct patch *mypatch = create_patch("test/hi_write_then_read_and_apply.txt", MODE_TOUCH, strlen(txt), txt); // do not do strlen() + 1 bc we want to exclude null byte
     visualize_patch(mypatch);
 
     char filename[] = ".dit/patch1.patch";
@@ -165,32 +185,25 @@ int main() {
     printf("Patch written!\n");
 
     struct patch *mypatch2 = read_patch(filename);
-    printf("Patch read!\n");
-    visualize_patch(mypatch);
+    printf("Patch 2 read... visualizing now!\n");
+    visualize_patch(mypatch2);
+    printf("Writing the patch that we read off disk...\n");
+    apply_touch_patch(mypatch2);
 
-    char mem[] = {'+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
-                //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
-                   };
+    char mem[] = {
+        '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
+        //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
+    };
     //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
     //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
     struct patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
-    // char *str = calloc(100, sizeof(char));
-    // strcpy(str, "abcdefghijk");
     write_patch(".dit/matthew1.patch", test_patch);
-
-    // ----- Patch Application
-
-
-    // printf("string before test patch apply: |%s|\n", str);
     apply_modify_patch(test_patch);
-    // printf("string after test patch apply: |%s|\n", str);
-
 
     printf("About to create a file using a touch patch...\n");
     struct patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
     apply_touch_patch(test_touch_patch);
     printf("Created!\n");
-
 
     sleep(2);
 
