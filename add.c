@@ -55,10 +55,62 @@ int main(int argc, char *argv[]) {
             max_commit_number = commit_number;
         }
     }
-
+    int has_file_been_created_yet = 0; // false
     if (max_commit_number == -1) {
+        has_file_been_created_yet = 1;
         printf("NO COMMITS MADE YET!\n");
         printf("Therefore, making a patch commit\n");
+    } else {
+        printf("Latest commit is: %d\n", max_commit_number);
+
+        for (int i = 0; i <= max_commit_number; i++) {
+            char specific_commit_folder[MAX_FILEPATH] = "";
+
+            char folder_name_str[50] = "";
+            sprintf(folder_name_str, "%d", i);
+
+            strcat(specific_commit_folder, commit_folder);
+            strcat(specific_commit_folder, folder_name_str);
+
+            printf("Specific commit folder: |%s|\n", specific_commit_folder);
+            // open dir and apply every patch
+            DIR *commit_dir;
+            commit_dir = opendir(specific_commit_folder);
+            if (commit_dir == 0) {
+                err();
+            }
+            struct dirent *diff_entry = NULL;
+            printf("Directories: \n");
+            while ((diff_entry = readdir(commit_dir))) {
+                if (diff_entry->d_type != DT_REG) {
+                    continue;
+                }
+                if (strcmp(diff_entry->d_name, ".") == 0 || strcmp(diff_entry->d_name, "..") == 0) {
+                    continue;
+                }
+
+                char patch_full_path[MAX_FILEPATH] = "";
+                sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+                printf("Patch found in |%s|\n", patch_full_path);
+
+                // patch name doesn't neccesarily have to be the file name (in case dups/nested)
+                struct patch *p = read_patch(patch_full_path);
+
+                if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
+                    printf("THIS PATCH MATCHES MY AFFECTED FILE!\n");
+                    if (p->mode == MODE_TOUCH) {
+                        has_file_been_created_yet = 1;
+                    } else if (p->mode == MODE_REMOVE) {
+                        has_file_been_created_yet = 0;
+                    }
+                }
+            }
+            closedir(commit_dir);
+        }
+    }
+
+    if (has_file_been_created_yet == 0) {
+        // make patch commit!
         // therefore, this must be a patch commit
         // Step 1: Get str from file
         int in_file = open(filepath, O_RDONLY);
@@ -94,9 +146,56 @@ int main(int argc, char *argv[]) {
 
         printf("PATCH PATH: |%s|\n", patch_path);
         write_patch(patch_path, mypatch);
-
     } else {
-        printf("Latest commit is: %d\n", max_commit_number);
+        printf("\nNeed to build current file in memory!\n");
+
+        char *built_str = calloc(102410240, sizeof(char));
+
+        for (int i = 0; i <= max_commit_number; i++) {
+            char specific_commit_folder[MAX_FILEPATH] = "";
+
+            char folder_name_str[50] = "";
+            sprintf(folder_name_str, "%d", i);
+
+            strcat(specific_commit_folder, commit_folder);
+            strcat(specific_commit_folder, folder_name_str);
+
+            printf("Specific commit folder: |%s|\n", specific_commit_folder);
+            // open dir and apply every patch
+            DIR *commit_dir;
+            commit_dir = opendir(specific_commit_folder);
+            if (commit_dir == 0) {
+                err();
+            }
+            struct dirent *diff_entry = NULL;
+            printf("Directories: \n");
+            while ((diff_entry = readdir(commit_dir))) {
+                if (diff_entry->d_type != DT_REG) {
+                    continue;
+                }
+                if (strcmp(diff_entry->d_name, ".") == 0 || strcmp(diff_entry->d_name, "..") == 0) {
+                    continue;
+                }
+
+                char patch_full_path[MAX_FILEPATH] = "";
+                sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+                printf("Patch found in |%s|\n", patch_full_path);
+
+                // patch name doesn't neccesarily have to be the file name (in case dups/nested)
+                struct patch *p = read_patch(patch_full_path);
+
+                if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
+                    printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
+                    // apply patch to file
+                    if (p->mode == MODE_MODIFY) { //
+                        // apply patch BUT only do it to string in memory (not the file)
+                    }
+                }
+            }
+            closedir(commit_dir);
+        }
+
+        // build current file str in memory (get patches from 0 to max_commit_number, apply patches that match file name to str. Then read the file to a different str and geneerate new diff.)
     }
 
     // 3. see if file exists

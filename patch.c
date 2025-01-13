@@ -177,7 +177,7 @@ void apply_delete_patch(struct patch *patch) {
 
 // int main() {
 //     char txt[] = "hi\nline2\nline3";
-//     struct patch *mypatch = create_patch("test/hi_write_then_read_and_apply.txt", MODE_TOUCH, strlen(txt), txt); // do not do strlen() + 1 bc we want to exclude null byte
+//     struct patch *mypatch = create_patch("test.txt", MODE_TOUCH, strlen(txt), txt); // do not do strlen() + 1 bc we want to exclude null byte
 //     visualize_patch(mypatch);
 
 //     char filename[] = ".dit/patch1.patch";
