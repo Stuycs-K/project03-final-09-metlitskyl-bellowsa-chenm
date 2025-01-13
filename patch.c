@@ -59,7 +59,7 @@ void apply_patch(char *str, struct patch *patch) {
     while (head < patch->memory + patch->memory_size) { // loop until hits end of memory buffer
         // THIS IS THE ONE CHANGE BLOCK
         // grab char
-        char plus_or_minus = *(head + 0);
+        char plus_or_minus = *(head);
         head += sizeof(char);
 
         // grab int
@@ -80,9 +80,19 @@ void apply_patch(char *str, struct patch *patch) {
             str = realloc(str, sizeof(char) * (new_str_len));
             str[new_str_len - 1] = '\0'; // just in case so you don't shoot yourself in the foot
 
-            // now that we have space, insert!
-            // save stuff at [location, end]
-            // insert at location
+            // shift stuff after our location (including the byte at location) to the right
+            int max_number_of_bytes_to_copy = strlen(str) - location;
+            strncpy(str + location + number_of_bytes, str + location, max_number_of_bytes_to_copy); // dest, src, # to copy
+
+            // now read bytes
+            for (int i =0; i < number_of_bytes; i++){
+                // grab char
+                char new_byte = *(head);
+
+                str[location + i] = new_byte;
+
+                head +=sizeof(char); // advance to next byte
+            }
         }
     }
 }
@@ -102,13 +112,16 @@ int main() {
     visualize_patch(mypatch);
 
     char mem[] = {'+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
-                  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'};
+                  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' };
     //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
     //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
     struct patch *test_patch = create_patch("matthew.txt", MODE_MODIFY, sizeof(mem), mem);
-    char buffer[512] = "abcdefghijk";
+    char *str = calloc(100, sizeof(char));
+    strcpy(str, "abcdefghijk");
     write_patch(".dit/matthew1.patch", test_patch);
-    apply_patch(buffer, test_patch);
+    printf("string before test patch apply: |%s|\n", str);
+    apply_patch(str, test_patch);
+    printf("string after test patch apply: |%s|\n", str);
 
     return 0;
 }
