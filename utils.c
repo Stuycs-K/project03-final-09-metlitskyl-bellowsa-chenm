@@ -33,13 +33,14 @@ int get_repo_path(char * server_root, struct ft_init * init, char * target){
       sprintf(target, "%s/%s/%s", server_root, username, repo_name);
 }
 
-int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_target){
+int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_name_dit, char * repo_target){
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
 
     char dit[1050];
     sprintf(dit, "%s/.dit", cwd);
 
+    
     strcpy(repo_target, dit);
 
     char repo_draft_name[repo_name_size];
@@ -59,6 +60,7 @@ int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_tar
         repo_draft_name[i-slash_i-1] = cwd[i];
     }
 
-    sprintf(repo_name, "./%s/.dit", repo_draft_name);
+    strcpy(repo_name, repo_draft_name);
+    sprintf(repo_name_dit, "./%s/.dit", repo_draft_name);
 
 }
