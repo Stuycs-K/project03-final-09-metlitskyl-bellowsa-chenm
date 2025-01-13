@@ -41,7 +41,7 @@ int server_action(int new_socket){
   struct ft_init init;
   read(new_socket, &init, sizeof(struct ft_init));
   
-  char path[2048];
+  char path[2062];
   switch (init.mode){
     case TR_AINIT:
       printf("RECIVED MAKE USER ORDER\n------------------------------------\n\n");
@@ -54,17 +54,18 @@ int server_action(int new_socket){
       printf("RECIVED TRANSMIT ORDER\n------------------------------------\n\n");
 
       // get_repo_path(SERVER_DATA, &init, path);
-      sprintf(path, "%s/%s/", SERVER_DATA, init.user.name);
-      chdir(path);
-
+      sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
+      int r = chdir(path);
+      v_err(r, "chdir err", 1);
       printf("serving download from %s\n", path);
 
-      send_full_directory_contents(new_socket, init.repo_name);
+      
+      send_full_directory_contents(new_socket, ".dit");
       break;
 
     case TR_RECV:
       printf("RECIEVED RECIEVE REQUEST\n------------------------------------\n\n");
-      sprintf(path, "%s/%s/", SERVER_DATA, init.user.name);
+      sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
 
       printf("recieving push to %s\n", path);
       recv_full_directory_contents(new_socket, path);
