@@ -134,7 +134,22 @@ void apply_modify_patch(struct patch *patch) {
     close(out_file);
 }
 
+void apply_touch_patch(struct patch *patch){
+    char* filepath = patch->filepath;
+    int fd = open(filepath, O_WRONLY | O_CREAT | O_EXCL, 0644); // O_EXCL is "error if create and file exists" 
+    if (fd == -1){
+        err();
+    }
+    close(fd);
+}
 
+void apply_delete_patch(struct patch *patch){
+    char* filepath = patch->filepath;
+    int removal_status = remove(filepath);
+    if (removal_status == -1){
+        err();
+    }
+}
 
 int main() {
     char txt[] = "hi\nline2\nline3";
@@ -168,7 +183,18 @@ int main() {
     // printf("string after test patch apply: |%s|\n", str);
 
 
-   
+    printf("About to create a file using a touch patch...\n");
+    struct patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
+    apply_touch_patch(test_touch_patch);
+    printf("Created!\n");
+
+
+    sleep(2);
+
+    printf("About to delete a file using a touch patch...\n");
+    struct patch *test_removal_patch = create_patch("test/hi.txt", MODE_REMOVE, 0, NULL);
+    apply_delete_patch(test_removal_patch);
+    printf("Deleted!\n");
 
     return 0;
 }
