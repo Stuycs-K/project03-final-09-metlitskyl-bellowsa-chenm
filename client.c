@@ -52,10 +52,10 @@ int main(int argc, char const* argv[]){
 
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
-        new_ft_init(TR_TRSMT, repo_name, &user, &init);
+        new_ft_init(TR_TRSMT, repo_dit_base_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
-        recv_full_directory_contents(client_fd, "./");
+        recv_full_directory_contents(client_fd, "../");
         return 0;
     }
     else if(!strcmp(argv[1], "push")){
