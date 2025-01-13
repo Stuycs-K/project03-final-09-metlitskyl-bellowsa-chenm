@@ -55,8 +55,8 @@ int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_tar
         }
     }
 
-    for (int i = slash_i; i<lastIndex;i++){
-        repo_draft_name[i-slash_i] = cwd[i];
+    for (int i = slash_i+1; i<=lastIndex;i++){
+        repo_draft_name[i-slash_i-1] = cwd[i];
     }
 
     sprintf(repo_name, "./%s/.dit", repo_draft_name);
