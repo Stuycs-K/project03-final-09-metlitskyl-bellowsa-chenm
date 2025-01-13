@@ -35,10 +35,11 @@ int main(int argc, char const* argv[]){
 
     int made_new_user = init_client_config((char *)argv[0], &user);
 
-    char cwd[1024];
-    getcwd(cwd, sizeof(cwd));
-
-    
+    char repo_name[512];
+    char repo_target[1050];
+    get_repo_name_from_cwd(repo_name, sizeof(repo_name), repo_target);
+    printf("repo name: %s, repo_traget: %s\n", repo_name, repo_target);
+    exit(0);
     if(made_new_user){
         struct ft_init init_usr;
         new_ft_init(TR_AINIT, "", &user, &init_usr);
@@ -47,7 +48,7 @@ int main(int argc, char const* argv[]){
 
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
-        new_ft_init(TR_TRSMT, (char *)(argv[2]), &user, &init);
+        new_ft_init(TR_TRSMT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
 
         recv_full_directory_contents(client_fd, "./");

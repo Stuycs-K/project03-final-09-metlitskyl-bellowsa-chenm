@@ -34,5 +34,5 @@ struct patch {
 };
 
 int get_repo_path(char * server_root, struct ft_init * init, char * target);
-
+int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_target);
 #endif
