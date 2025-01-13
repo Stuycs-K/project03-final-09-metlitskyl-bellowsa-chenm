@@ -1,5 +1,13 @@
+#include "utils.h"
+
 int main(int argc, char *argv[]) {
+    char *tracked_dir = ""
+
     // 1. get filename
+    // char *filename = argv[1];
+    char *
+
+
     // 2. go through git tree
 
     // 3. see if file exists
