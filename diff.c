@@ -74,8 +74,8 @@ int apply_patch(char *str, size_t str_length, Patch *p) {
 
 int main() {
 	//gcc -Wall diff.c && ./a.out > out.txt && sed 's/50529027/_/g' out.txt
-	const char *a = "matthew";
-	const char *b = "little";
+	const char *a = "aaaa";
+	const char *b = "aaaa";
 
 	Patch *p = diff(a, b, strlen(a), strlen(b));
 	printf("%ld\n", p->memory_size);
