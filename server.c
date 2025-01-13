@@ -41,20 +41,23 @@ int server_action(int new_socket){
   struct ft_init init;
   read(new_socket, &init, sizeof(struct ft_init));
   
-  char path[1024];
+  char path[2048];
   switch (init.mode){
     case TR_TRSMT:
       printf("RECIVED TRANSMIT ORDER\n------------------------------------\n\n");
 
-      get_repo_path(SERVER_DATA, &init, path);
+      // get_repo_path(SERVER_DATA, &init, path);
+      sprintf(path, "%s/%s/", SERVER_DATA, init.user.name);
+      chdir(path);
+
       printf("serving download from %s\n", path);
 
-      send_full_directory_contents(new_socket, path);
+      send_full_directory_contents(new_socket, init.repo_name);
       break;
 
     case TR_RECV:
       printf("RECIEVED RECIEVE REQUEST\n------------------------------------\n\n");
-      get_repo_path(SERVER_DATA, &init, path);
+      sprintf(path, "%s/%s/", SERVER_DATA, init.user.name);
 
       printf("recieving push to %s\n", path);
       recv_full_directory_contents(new_socket, path);
