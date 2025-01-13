@@ -21,10 +21,33 @@ void err();
 #define MODE_PLUS 3
 #define MODE_MINUS 4
 
-struct patch {
+#define INSERT_TYPE 69
+#define DELETE_TYPE 420
+
+/*
+Point update
+type: INSERT or DELETE
+pos: byte location to make edit in file
+ch: char to insert, nullchar if DELETE
+*/
+typedef struct {
+	int type;
+	int pos;
+	char ch;
+} Point;
+
+/*
+Patch
+filepath: relative file path location
+mode: MODE_TOUCH (create file), MODE_MODIFY (modify file contents), MODE_REMOVE (remove file)
+memory_size: size of pts array, zero if TOUCH/REMOVE
+pts: contains point updates, empty if TOUCH/REMOVE
+*/
+typedef struct {
     char filepath[MAX_FILEPATH];
     int mode;
     size_t memory_size;
-    char memory[]; // FLEXIBLE ARRAY MEMBBER, unkown length of memory raw memory, used for chars in mode_touch, used for our diff format in mode_modify, 1 byte for mode_remove
-};
+	Point *pts;
+} Patch;
+
 #endif

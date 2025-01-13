@@ -1,19 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "utils.h"
 
-typedef struct {
-	int x;
-	int y;
-	int t;
-} Point;
-
-void diff(const char *a, const char *b) {
-	const int N = strlen(a);
-	const int M = strlen(b);
+//NOTE NEVER USE STRING CMDS HERE, WE HAVE A BYTE ARRAY
+Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
+	const int N = a_length;
+	const int M = b_length;
 	const int MAX = N+M;
 	int v[2*MAX+1];
-	Point trace[MAX+1][2*MAX+1];
+	memset(v, 0, (2*MAX+1)*sizeof(int));
+	int trace[MAX+1][2*MAX+1][3];//x, y, t
 
 	for (int d = 0; d <= MAX; d++) {
 		for (int k = -d; k <= d; k += 2) {
@@ -21,15 +15,17 @@ void diff(const char *a, const char *b) {
 		
 			if (k == -d || (k != d && v[k-1+MAX] < v[k+1+MAX])) {
 				x = v[k+1+MAX];
-				type = 0; //insertion
+				type = INSERT_TYPE; //insertion
 			}
 			else {
 				x = v[k-1+MAX]+1;
-				type = 1; //deletion
+				type = DELETE_TYPE; //deletion
 			}
 
 			y = x-k;
-			trace[d][k+MAX] = (Point){x, y, type};
+			trace[d][k+MAX][0] = x;
+			trace[d][k+MAX][1] = y;
+			trace[d][k+MAX][2] = type;
 
 			while (x < N && y < M && a[x] == b[y]) {
 				x++;
@@ -37,20 +33,28 @@ void diff(const char *a, const char *b) {
 			}
 
 			v[k+MAX] = x;
-			
 			if (x >= N && y >= M) {
-				//this part doesnt quite work
+				Patch *res = malloc(sizeof(Patch) + d*sizeof(Point));
+				res->pts = malloc(d*sizeof(Point));
+				res->memory_size = d;
+				
 				int c = k+MAX;
+				int ind = 0;
 				for (int r = d; r > 0; r--) {
-					printf("(%d,%c,%d) ", trace[r][c].x, b[trace[r][c].y-1], trace[r][c].t);
-					if (trace[r][c].t == 0) c++;
+					//type, pos, char
+					res->pts[ind] = (Point){trace[r][c][2], trace[r][c][0], (trace[r][c][2] == INSERT_TYPE)?b[trace[r][c][1]-1]:'\0'};
+					ind++;
+					
+					if (trace[r][c][2] == INSERT_TYPE) c++;
 					else c--;
 				}
-				printf("min edit dist is %d\n", d);
-				return;
+				
+				//printf("min edit dist is %d\n", d);
+				return res;
 			}
 		}
 	}
+	return 0;
 }
 
 int main() {
@@ -58,6 +62,15 @@ int main() {
 	const char *a = "matthew";
 	const char *b = "little";
 
-	diff(a, b);
+	Patch *p = diff(a, b, strlen(a), strlen(b));
+	printf("%ld\n", p->memory_size);
+	
+	for (int i = 0; i < p->memory_size; i++) {
+		printf("%d ", p->pts[i].pos);
+		if (p->pts[i].type == INSERT_TYPE) printf("%c", p->pts[i].ch);
+		printf("\n");
+	}
+	
+	free(p);
 	return 0;
 }

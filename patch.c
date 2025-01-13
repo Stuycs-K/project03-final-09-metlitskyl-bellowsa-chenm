@@ -1,7 +1,7 @@
 #include "utils.h"
 
-struct patch *create_patch(char *filepath, int mode, size_t memory_size, char *memory) {
-    struct patch *patch = calloc(1, sizeof(struct patch) + memory_size * sizeof(char));
+Patch *create_patch(char *filepath, int mode, size_t memory_size, char *memory) {
+    Patch *patch = calloc(1, sizeof(Patch) + memory_size * sizeof(char));
 
     strcpy(patch->filepath, filepath);
     patch->mode = mode;
@@ -11,7 +11,7 @@ struct patch *create_patch(char *filepath, int mode, size_t memory_size, char *m
     return patch;
 }
 
-void visualize_patch(struct patch *patch) {
+void visualize_patch(Patch *patch) {
     printf("----Visualizing Patch: ------\n");
     printf("filepath: |%s|\n", patch->filepath);
     printf("memory size: |%d|\n", patch->memory_size);
@@ -19,19 +19,19 @@ void visualize_patch(struct patch *patch) {
     printf("----End visualizing. ------\n");
 }
 
-void write_patch(char *filename, struct patch *patch) {
+void write_patch(char *filename, Patch *patch) {
     int out_file = open(filename, O_CREAT | O_WRONLY, 0644);
     if (out_file == -1) {
         err();
     }
-    size_t struct_byte_size = sizeof(struct patch) + patch->memory_size; // min size is sizeof(struct patch)
+    size_t struct_byte_size = sizeof(Patch) + patch->memory_size; // min size is sizeof(Patch)
 
     int write_status = write(out_file, patch, struct_byte_size);
     if (write_status == -1) {
         err();
     }
 }
-struct patch *read_patch(char *filename) {
+Patch *read_patch(char *filename) {
     int in_file = open(filename, O_RDONLY);
     if (in_file == -1) {
         err();
@@ -44,7 +44,7 @@ struct patch *read_patch(char *filename) {
     }
 
     size_t patch_file_size = file_stat.st_size;
-    struct patch *patch = calloc(1, patch_file_size);
+    Patch *patch = calloc(1, patch_file_size);
 
     int read_status = read(in_file, patch, patch_file_size);
     if (read_status == -1) {
@@ -54,7 +54,7 @@ struct patch *read_patch(char *filename) {
 
 int main() {
     char txt[] = "hi\nline2\nline3";
-    struct patch *mypatch = create_patch("hi.txt", MODE_TOUCH, strlen(txt) + 1, txt);
+    Patch *mypatch = create_patch("hi.txt", MODE_TOUCH, strlen(txt) + 1, txt);
     visualize_patch(mypatch);
 
     char filename[] = ".dit/patch1.patch";
@@ -62,7 +62,7 @@ int main() {
     write_patch(filename, mypatch);
     printf("Patch written!\n");
 
-    struct patch *mypatch2 = read_patch(filename);
+    Patch *mypatch2 = read_patch(filename);
     printf("Patch read!\n");
     visualize_patch(mypatch);
 
