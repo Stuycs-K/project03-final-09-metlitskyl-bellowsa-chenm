@@ -43,10 +43,16 @@ improved h file orgination.
 
 time: 2hr:30min
 
-### 2024-01-11 - user struct
+### 2024-01-11 - user struct + server repo system + create usr
 created user struct as part of init transmission
 
-time: 1hr
+now you can push a specific dir and if you have already inited the repo it will work 
+
+pull/push now works. use cmd ./client download/push name_of_repo. will create file/repo if does not exist.
+
+now a new user is created on server when client configs a usr
+
+time: 2.5hr
 
 ### 2024-01-03 - Brief description
 Expanded description including how much time was spent on task.
