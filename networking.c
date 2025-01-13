@@ -18,7 +18,7 @@
 #include "networking.h"
 
 #define PORT "9845"
-#define ADDRESS "127.0.0.1"
+#define ADDRESS "149.89.161.114"
 
 
 //init client and 
