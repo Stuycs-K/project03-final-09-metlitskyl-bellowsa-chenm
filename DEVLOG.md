@@ -133,12 +133,12 @@ Still working on tracking the edits
 Using debug statements to figure out how to backtrack the changes to file
 40min
 
-### 2024-01-11 to 2024-01-12
+### 2024-01-11 to 2024-01-12 - Tracing point updates
 Figured out how to properly backtrack edits
 Reformatted how patches are going to be stored/handled
 1h
 
-### 2024-01-13
+### 2024-01-13 - Applying point updates
 Wrote apply_patch which will apply a modify patch to a string
 Did testing to verify it works
 1h
