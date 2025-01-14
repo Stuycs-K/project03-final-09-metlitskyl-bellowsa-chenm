@@ -49,7 +49,6 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 					else c--;
 				}
 				
-				//printf("min edit dist is %d\n", d);
 				return res;
 			}
 		}
@@ -59,26 +58,46 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 
 //assumes patch is a MODIFY
 //returns new length of str
-int apply_patch(char *str, size_t str_length, Patch *p) {
+char *apply_patch(char *str, size_t str_length, Patch *p, size_t *new_size) {
+	
+	//calculate the resultant string length
 	int length = str_length;
 	for (int i = 0; i < p->memory_size; i++) {
-		if (p->pts[i].type == INSERT_TYPE) str_length++;
-		if (p->pts[i].type == DELETE_TYPE) str_length--;
+		if (p->pts[i].type == INSERT_TYPE) length++;
+		if (p->pts[i].type == DELETE_TYPE) length--;
 	}
+
 	char *result = malloc(length*sizeof(char));
+	int res_pt = length-1;
+	int cur_pt = 0;
 	
-	for (int i = length-1; i >= 0; i--) {
+	//for each char in str, determine whether to include it or not
+	for (int i = str_length-1; i >= 0; i--) {
 		
+		int del = 0;
+		while (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1) {
+			if (p->pts[cur_pt].type == INSERT_TYPE) {
+				result[res_pt--] = p->pts[cur_pt].ch;
+			}
+			if (p->pts[cur_pt].type == DELETE_TYPE) {
+				del = 1;
+			}
+			cur_pt++;
+			if (del) break;
+		}
+		if (del) continue;
+		result[res_pt--] = str[i];
 	}
+	
+	*new_size = length;
+	return result;
 }
 
 int main() {
-	//gcc -Wall diff.c && ./a.out > out.txt && sed 's/50529027/_/g' out.txt
-	const char *a = "aaaa";
-	const char *b = "aaaa";
+	char *a = "amogusballs";
+	char *b = "no";
 
 	Patch *p = diff(a, b, strlen(a), strlen(b));
-	printf("%ld\n", p->memory_size);
 	
 	for (int i = 0; i < p->memory_size; i++) {
 		printf("%d ", p->pts[i].pos);
@@ -86,6 +105,11 @@ int main() {
 		printf("\n");
 	}
 	
+	size_t new_size;
+	char *applied_patch = apply_patch(a, strlen(a), p, &new_size);
+	
+	printf("after applying patch: %s\n", applied_patch);
 	free(p);
+	free(applied_patch);
 	return 0;
 }
