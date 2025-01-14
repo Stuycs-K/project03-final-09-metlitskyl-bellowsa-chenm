@@ -70,6 +70,11 @@ int server_action(int new_socket){
       printf("recieving push to %s\n", path);
       recv_full_directory_contents(new_socket, path);
       break;
+    case TR_RINIT:
+      printf("RECIEVED REPO INIT REQUEST\n------------------------------------\n\n");
+      sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
+      int r_mkdir = mkdir(path, 0744);
+      v_err(r_mkdir, "error initing repo, mkdir", 1);
   }
 }
 

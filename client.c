@@ -21,8 +21,8 @@
 
 int main(int argc, char const* argv[]){
     
-    if (argc < 3){
-        perror("try using {pgrm name} {download/push} {directory-name}");
+    if (argc < 2){
+        perror("try using {pgrm name} {download/push/init}");
         return 1;
     }
 
@@ -40,10 +40,7 @@ int main(int argc, char const* argv[]){
     char repo_target[1050];
 
     get_repo_name_from_cwd(repo_name, sizeof(repo_name), repo_name_dit, repo_target);
-    char repo_dit_base_name[512] = {0};
-    get_base_name(repo_name_dit, repo_dit_base_name);
-    printf("repo name: %s, repo_traget: %s, baseName: %s\n", repo_name, repo_target, repo_dit_base_name);
-    // exit(0);
+  
     if(made_new_user){
         struct ft_init init_usr;
         new_ft_init(TR_AINIT, "", &user, &init_usr);
@@ -65,13 +62,17 @@ int main(int argc, char const* argv[]){
         new_ft_init(TR_RECV, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
-        // transmit_file(client_fd, repo_name, NULL);
-        
         send_full_directory_contents(client_fd, ".dit");
 
     }
-
+    else if(!strcmp(argv[1], "init")){
+        new_ft_init(TR_RINIT, repo_name, &user, &init);
+        write(client_fd, &init, sizeof(struct ft_init));
+        int r = mkdir(".dit",0744);
+        v_err(r, "err making .dit dir...", 1);
+    }
     // closing the connected socket
     close(client_fd);
+    printf("done!\n");
     return 0;
 }
