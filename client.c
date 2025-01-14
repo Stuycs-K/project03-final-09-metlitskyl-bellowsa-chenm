@@ -62,13 +62,12 @@ int main(int argc, char const* argv[]){
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
 
-        new_ft_init(TR_RECV, repo_dit_base_name, &user, &init);
+        new_ft_init(TR_RECV, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
-        transmit_file(client_fd, repo_name, NULL);
+        // transmit_file(client_fd, repo_name, NULL);
         
-        chdir("..");
-        send_full_directory_contents(client_fd, repo_dit_base_name);
+        send_full_directory_contents(client_fd, ".dit");
 
     }
 
