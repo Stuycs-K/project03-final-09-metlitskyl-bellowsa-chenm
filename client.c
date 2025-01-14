@@ -21,10 +21,14 @@
 
 int main(int argc, char const* argv[]){
     
+
     if (argc < 2){
         perror("try using {pgrm name} {download/push/init}");
         return 1;
     }
+
+    char path_to_program[1024];
+    
 
     int client_fd = setup_client();
         
@@ -58,6 +62,12 @@ int main(int argc, char const* argv[]){
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
+        int kidid = fork();
+        if(kidid == 0){
+            int r = execl("/bin/mpg123", "mpg123", "/home/students/odd/2025/abellows50/systems/project03-final-09-metlitskyl-bellowsa-chenm/media/bumble.mp3", (char *)NULL);
+            perror("install mpg123 for full functionality...");
+            exit(0);
+        }
 
         new_ft_init(TR_RECV, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
