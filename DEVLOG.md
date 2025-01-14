@@ -59,6 +59,7 @@ time: 2.5hr
 ### 2024-01-13 - push/download from inside rep
 pushes and pulls .dit hidden dir inside the repo
 stores on server
+client init
 
 ## Lenny
 
