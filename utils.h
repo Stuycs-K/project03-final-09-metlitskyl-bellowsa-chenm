@@ -35,9 +35,9 @@ pos: byte location to make edit in file
 ch: char to insert, nullchar if DELETE
 */
 typedef struct {
-	int type;
-	int pos;
-	char ch;
+    int type;
+    int pos;
+    char ch;
 } Point;
 
 /*
@@ -51,7 +51,7 @@ typedef struct {
     char filepath[MAX_FILEPATH];
     int mode;
     size_t memory_size;
-	Point *pts;
+    Point *pts;
 } Patch;
 
 #endif

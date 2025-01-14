@@ -2,18 +2,18 @@
 
 #ifndef PATCH_H
 #define PATCH_H
-struct patch *create_patch(char *filepath, int mode, size_t memory_size, char *memory);
+Patch *create_patch(char *filepath, int mode, size_t memory_size, Point *memory);
 
-void visualize_patch(struct patch *patch);
+void visualize_patch(Patch *patch);
 
-void write_patch(char *filename, struct patch *patch);
+void write_patch(char *filename, Patch *patch);
 
-struct patch *read_patch(char *filename);
+Patch *read_patch(char *filename);
 
-void apply_modify_patch(struct patch *patch);
+// void apply_modify_patch(Patch *patch);
 
-void apply_touch_patch(struct patch *patch);
+void apply_touch_patch(Patch *patch);
 
-void apply_delete_patch(struct patch *patch);
+void apply_delete_patch(Patch *patch);
 
 #endif
