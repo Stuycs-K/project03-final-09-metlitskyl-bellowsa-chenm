@@ -45,7 +45,7 @@ improved h file orgination.
 
 time: 2hr:30min
 
-### 2024-01-11 - user struct + server repo system + create usr
+### 2024-01-12 - user struct + server repo system + create usr
 created user struct as part of init transmission
 
 now you can push a specific dir and if you have already inited the repo it will work 
@@ -56,9 +56,10 @@ now a new user is created on server when client configs a usr
 
 time: 2.5hr
 
-### 2024-01-03 - Brief description
-
-Expanded description including how much time was spent on task.
+### 2024-01-13 - push/download from inside rep
+pushes and pulls .dit hidden dir inside the repo
+stores on server
+client init
 
 ## Lenny
 
@@ -96,6 +97,14 @@ touch patch creates a file, errors if file alr exists
 rm patch removes a file, errors if does not exist
 TODO: Modify patch DELETIONS need to also be implemented. Same logic/test case
 abt 1h
+
+# 2024-01-13 - Begin dit add & dit build
+- Make touch patches create file with CONTENTS
+- Build structure of .dit folder (/commits/0, /commits/1, /commits/2 etc )
+- When adding (proposing a stage) a file, see if it any previous commits have touchd this file
+- if so, current commit is modification type; begin to build old version of file in memory to be able to compare current version to to gen NEW mod commit
+- if not, generate new touch commit
+abt 4h
 
 ## Matthew
 
