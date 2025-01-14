@@ -1,6 +1,12 @@
 #include "utils.h"
+#include <assert.h>
 
-//NOTE NEVER USE STRING CMDS HERE, WE HAVE A BYTE ARRAY
+/*
+NOTE NEVER USE STRING CMDS HERE, WE HAVE A BYTE ARRAY
+returns the patch that converts one byte array to another
+-remember to always free this patch
+-also note that the filename isnt filled, u have to do that manually
+*/
 Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 	const int N = a_length;
 	const int M = b_length;
@@ -35,6 +41,7 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 			v[k+MAX] = x;
 			if (x >= N && y >= M) {
 				Patch *res = malloc(sizeof(Patch) + d*sizeof(Point));
+				res->mode = MODE_MODIFY;
 				res->pts = malloc(d*sizeof(Point));
 				res->memory_size = d;
 				
@@ -57,11 +64,13 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 }
 
 //assumes patch is a MODIFY
-//returns new length of str
-char *apply_patch(char *str, size_t str_length, Patch *p, size_t *new_size) {
+//returns new byte array
+//assigns new byte array size to new_size
+char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
+	assert(p->mode = MODE_MODIFY);
 	
-	//calculate the resultant string length
-	int length = str_length;
+	//calculate the resultant byte array length
+	int length = arr_length;
 	for (int i = 0; i < p->memory_size; i++) {
 		if (p->pts[i].type == INSERT_TYPE) length++;
 		if (p->pts[i].type == DELETE_TYPE) length--;
@@ -71,22 +80,22 @@ char *apply_patch(char *str, size_t str_length, Patch *p, size_t *new_size) {
 	int res_pt = length-1;
 	int cur_pt = 0;
 	
-	//for each char in str, determine whether to include it or not
-	for (int i = str_length-1; i >= 0; i--) {
+	//for each byte in arr, determine whether to include it or not
+	for (int i = arr_length-1; i >= 0; i--) {
 		
-		int del = 0;
-		while (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1) {
-			if (p->pts[cur_pt].type == INSERT_TYPE) {
-				result[res_pt--] = p->pts[cur_pt].ch;
-			}
-			if (p->pts[cur_pt].type == DELETE_TYPE) {
-				del = 1;
-			}
+		//repeatedly add insertion updates
+		while (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == INSERT_TYPE) {
+			result[res_pt--] = p->pts[cur_pt].ch;
 			cur_pt++;
-			if (del) break;
 		}
-		if (del) continue;
-		result[res_pt--] = str[i];
+		
+		//check if point update is a deletion, if so, just dont include arr[i] to result
+		if (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == DELETE_TYPE) {
+			cur_pt++;
+			continue;
+		}
+		
+		result[res_pt--] = arr[i];
 	}
 	
 	*new_size = length;
@@ -94,8 +103,8 @@ char *apply_patch(char *str, size_t str_length, Patch *p, size_t *new_size) {
 }
 
 int main() {
-	char *a = "amogusballs";
-	char *b = "no";
+	char *a = "matthew";
+	char *b = "little";
 
 	Patch *p = diff(a, b, strlen(a), strlen(b));
 	
@@ -109,6 +118,7 @@ int main() {
 	char *applied_patch = apply_patch(a, strlen(a), p, &new_size);
 	
 	printf("after applying patch: %s\n", applied_patch);
+	
 	free(p);
 	free(applied_patch);
 	return 0;
