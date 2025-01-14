@@ -35,7 +35,6 @@ struct patch {
     char memory[]; // FLEXIBLE ARRAY MEMBBER, unkown length of memory raw memory, used for chars in mode_touch, used for our diff format in mode_modify, 1 byte for mode_remove
 };
 
-int get_repo_path(char *server_root, struct ft_init *init, char *target);
 
 // yes i know this is defined in dirent.h it is just my intellisense is stupid
 #ifndef DT_REG
@@ -45,5 +44,9 @@ int get_repo_path(char *server_root, struct ft_init *init, char *target);
 #ifndef DT_DIR
 #define DT_DIR 4
 #endif
+
+int get_repo_path(char * server_root, struct ft_init * init, char * target);
+int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_name_dit, char * repo_target);
+int get_base_name(char * path, char * target);
 
 #endif

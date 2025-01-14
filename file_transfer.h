@@ -17,6 +17,7 @@ struct file_transfer{
 #define TR_RECV 1034
 #define TR_TRSMT 5678
 #define TR_AINIT 7994
+#define TR_RINIT 6689
 
 struct ft_init{
     int mode;

@@ -15,7 +15,6 @@
 
 int new_ft_init(int mode, char * path, struct ft_user * user_in, struct ft_init * init){
     init -> mode = mode;
-    memset(init->repo_name, 0, 1024);
     strcpy(init->repo_name, path);
 
     if (user_in){
