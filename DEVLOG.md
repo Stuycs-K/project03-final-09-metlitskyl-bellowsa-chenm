@@ -98,6 +98,14 @@ rm patch removes a file, errors if does not exist
 TODO: Modify patch DELETIONS need to also be implemented. Same logic/test case
 abt 1h
 
+# 2024-01-13 - Begin dit add & dit build
+- Make touch patches create file with CONTENTS
+- Build structure of .dit folder (/commits/0, /commits/1, /commits/2 etc )
+- When adding (proposing a stage) a file, see if it any previous commits have touchd this file
+- if so, current commit is modification type; begin to build old version of file in memory to be able to compare current version to to gen NEW mod commit
+- if not, generate new touch commit
+abt 4h
+
 ## Matthew
 
 ### 2024-01-06 - Planning
