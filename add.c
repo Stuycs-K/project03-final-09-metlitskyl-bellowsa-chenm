@@ -96,13 +96,14 @@ int main(int argc, char *argv[]) {
                 // patch name doesn't neccesarily have to be the file name (in case dups/nested)
                 struct patch *p = read_patch(patch_full_path);
 
-                if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
-                    printf("THIS PATCH MATCHES MY AFFECTED FILE!\n");
-                    if (p->mode == MODE_TOUCH) {
-                        has_file_been_created_yet = 1;
-                    } else if (p->mode == MODE_REMOVE) {
-                        has_file_been_created_yet = 0;
-                    }
+                if (strcmp(p->filepath, filename) != 0) { // just compare filenames, not paths to it
+                    continue;
+                }
+                printf("THIS PATCH MATCHES MY AFFECTED FILE!\n");
+                if (p->mode == MODE_TOUCH) {
+                    has_file_been_created_yet = 1;
+                } else if (p->mode == MODE_REMOVE) {
+                    has_file_been_created_yet = 0;
                 }
             }
             closedir(commit_dir);
@@ -149,56 +150,64 @@ int main(int argc, char *argv[]) {
     } else {
         printf("\nNeed to build current file in memory!\n");
 
-        char *built_str = calloc(102410240, sizeof(char));
-
-        for (int i = 0; i <= max_commit_number; i++) {
-            char specific_commit_folder[MAX_FILEPATH] = "";
-
-            char folder_name_str[50] = "";
-            sprintf(folder_name_str, "%d", i);
-
-            strcat(specific_commit_folder, commit_folder);
-            strcat(specific_commit_folder, folder_name_str);
-
-            printf("Specific commit folder: |%s|\n", specific_commit_folder);
-            // open dir and apply every patch
-            DIR *commit_dir;
-            commit_dir = opendir(specific_commit_folder);
-            if (commit_dir == 0) {
-                err();
-            }
-            struct dirent *diff_entry = NULL;
-            printf("Directories: \n");
-            while ((diff_entry = readdir(commit_dir))) {
-                if (diff_entry->d_type != DT_REG) {
-                    continue;
-                }
-                if (strcmp(diff_entry->d_name, ".") == 0 || strcmp(diff_entry->d_name, "..") == 0) {
-                    continue;
-                }
-
-                char patch_full_path[MAX_FILEPATH] = "";
-                sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
-                printf("Patch found in |%s|\n", patch_full_path);
-
-                // patch name doesn't neccesarily have to be the file name (in case dups/nested)
-                struct patch *p = read_patch(patch_full_path);
-
-                if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
-                    printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
-                    // apply patch to file
-                    if (p->mode == MODE_MODIFY) { //
-                        // apply patch BUT only do it to string in memory (not the file)
-                    }
-                }
-            }
-            closedir(commit_dir);
-        }
-
-        // build current file str in memory (get patches from 0 to max_commit_number, apply patches that match file name to str. Then read the file to a different str and geneerate new diff.)
+        char *built = build_str(max_commit_number, commit_folder, filename);
     }
+}
 
-    // 3. see if file exists
-    // 4. if so, send to diff code and make mod patch (store in staging dir)
-    // 5. if not, make a simple touch commit
+char *build_str(int max_commit_number, char *commit_folder, char *filename) { // regular filename NOT filepath
+    char *str = calloc(1, sizeof(char));
+    for (int i = 0; i <= max_commit_number; i++) {
+        char specific_commit_folder[MAX_FILEPATH] = "";
+
+        char folder_name_str[50] = "";
+        sprintf(folder_name_str, "%d", i);
+
+        strcat(specific_commit_folder, commit_folder);
+        strcat(specific_commit_folder, folder_name_str);
+
+        printf("Specific commit folder: |%s|\n", specific_commit_folder);
+        // open dir and apply every patch
+        DIR *commit_dir;
+        commit_dir = opendir(specific_commit_folder);
+        if (commit_dir == 0) {
+            err();
+        }
+        struct dirent *diff_entry = NULL;
+        printf("Directories: \n");
+        while ((diff_entry = readdir(commit_dir))) {
+            if (diff_entry->d_type != DT_REG) {
+                continue;
+            }
+            if (strcmp(diff_entry->d_name, ".") == 0 || strcmp(diff_entry->d_name, "..") == 0) {
+                continue;
+            }
+
+            char patch_full_path[MAX_FILEPATH] = "";
+            sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+            printf("Patch found in |%s|\n", patch_full_path);
+
+            // patch name doesn't neccesarily have to be the file name (in case dups/nested)
+            struct patch *p = read_patch(patch_full_path);
+
+            if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
+                printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
+                // apply patch STRING version (no files modified!)
+                if (p->mode == MODE_MODIFY) { //
+                    // apply patch BUT only do it to string in memory (not the file)
+                    // call matthew func
+                }
+                if (p->mode == MODE_TOUCH) {
+                    free(str);
+                    str = calloc(p->memory_size + 1, sizeof(char));
+                    memmove(str, p->memory, p->memory_size);
+                }
+                if (p->mode == MODE_REMOVE) {
+                    free(str);
+                    str = calloc(1, sizeof(char)); // this is byte array not str so not str funcs
+                }
+            }
+        }
+        closedir(commit_dir);
+    }
+    return str;
 }
