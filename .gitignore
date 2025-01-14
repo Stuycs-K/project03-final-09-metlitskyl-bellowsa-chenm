@@ -13,7 +13,10 @@ server
 patch
 
 .vscode
+client
+./test
 
+.nfs*
 # Prerequisites
 *.d
 
@@ -66,3 +69,18 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+test/
+
+*test/
+
+*test*/
+
+.vscode/
+
+.client_config/
+
+t2/
+
+server_data/
+

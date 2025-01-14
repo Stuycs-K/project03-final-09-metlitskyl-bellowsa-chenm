@@ -1,51 +1,78 @@
-// Client side C program to demonstrate Socket
-// programming
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#include <stdlib.h>
 
-int main(int argc, char const* argv[])
-{
-    int status, valread, client_fd;
-    struct sockaddr_in serv_addr;
-    char* hello = "Hello from client";
-    char buffer[1024] = { 0 };
-    if ((client_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf("\n Socket creation error \n");
-        return -1;
+//socket stuff
+#include <sys/socket.h>
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <netdb.h>
+
+#include <fcntl.h>
+
+//for mkdir
+#include <sys/stat.h>
+
+#include "utils.h"
+#include "file_transfer.h"
+#include "networking.h"
+
+int main(int argc, char const* argv[]){
+    
+    if (argc < 2){
+        perror("try using {pgrm name} {download/push/init}");
+        return 1;
     }
 
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
+    int client_fd = setup_client();
+        
+    printf("connected...\n");
 
-    // Convert IPv4 and IPv6 addresses from text to binary
-    // form
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)
-        <= 0) {
-        printf(
-            "\nInvalid address/ Address not supported \n");
-        return -1;
+    struct ft_init init;
+    struct ft_user user;
+
+    int made_new_user = init_client_config((char *)argv[0], &user);
+
+    char repo_name[512];
+    char repo_name_dit[512];
+    char repo_target[1050];
+
+    get_repo_name_from_cwd(repo_name, sizeof(repo_name), repo_name_dit, repo_target);
+  
+    if(made_new_user){
+        struct ft_init init_usr;
+        new_ft_init(TR_AINIT, "", &user, &init_usr);
+        write(client_fd, &init_usr, sizeof(struct ft_init));
     }
 
-    if ((status
-         = connect(client_fd, (struct sockaddr*)&serv_addr,
-                   sizeof(serv_addr)))
-        < 0) {
-        printf("\nConnection Failed \n");
-        return -1;
+    if (!strcmp(argv[1], "download")){
+        //init connection and ask for a transmission
+        new_ft_init(TR_TRSMT, repo_name, &user, &init);
+        write(client_fd, &init, sizeof(struct ft_init));
+        
+        mkdir(".dit",0744); //just insure that there is a .dit
+        recv_full_directory_contents(client_fd, ".");
+        return 0;
     }
-    while(1){
-    send(client_fd, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    valread = read(client_fd, buffer,
-                   1024 - 1); // subtract 1 for the null
-                              // terminator at the end
-    printf("%s\n", buffer);
+    else if(!strcmp(argv[1], "push")){
+        //init connection and ask for a transmission
+
+        new_ft_init(TR_RECV, repo_name, &user, &init);
+        write(client_fd, &init, sizeof(struct ft_init));
+        
+        send_full_directory_contents(client_fd, ".dit");
+
+    }
+    else if(!strcmp(argv[1], "init")){
+        new_ft_init(TR_RINIT, repo_name, &user, &init);
+        write(client_fd, &init, sizeof(struct ft_init));
+        int r = mkdir(".dit",0744);
+        v_err(r, "err making .dit dir...", 1);
     }
     // closing the connected socket
     close(client_fd);
+    printf("done!\n");
     return 0;
 }
