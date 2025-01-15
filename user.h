@@ -4,9 +4,10 @@
 
 struct ft_user{
     char name[1024];
+    int sound;
 };
 
-int new_ft_user(char * name, struct ft_user * user);
+int new_ft_user(char * name, int sound, struct ft_user * user);
 
 //create a new config_dir for a client if it does not exist
 // read contents of .client_config/user to user struct

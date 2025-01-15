@@ -9,8 +9,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-int new_ft_user(char * name, struct ft_user * user){
+int new_ft_user(char * name, int sound, struct ft_user * user){
     strcpy(user->name, name);
+    user->sound = sound;
 }
 
 int init_client_config(char * program_name, struct ft_user * user){
@@ -43,14 +44,23 @@ int init_client_config(char * program_name, struct ft_user * user){
         printf("set your username: ");
         fflush(stdout);
         fgets(username, sizeof(username), stdin);
-
-        printf("--------------------------------------\n\n");
-
         //remove \n
         username[strlen(username) - 1] = 0;
+        
+        char sound_yn;
+        int sound = 0;
+        printf("would you like sound effects [Y/n] WARNING sound effects will slow your program by 3sec: ");
+        fflush(stdout);
+        fgets(&sound_yn, sizeof(char), stdin);
+
+        if(sound_yn == 'Y'){
+            sound = 1;
+        }
+        printf("--------------------------------------\n\n");
+
 
         struct ft_user user;
-        new_ft_user(username, &user);
+        new_ft_user(username, sound, &user);
 
         write(fd, &user, sizeof(user));
 
