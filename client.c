@@ -64,11 +64,21 @@ int main(int argc, char const* argv[]){
 
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
+
+        int kidid;
+        if (SOUND){
+            kidid = play_song(path_to_programdir,"kesh.mp3", 3);
+        }
+
         new_ft_init(TR_TRSMT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
         mkdir(".dit",0744); //just insure that there is a .dit
         recv_full_directory_contents(client_fd, ".");
+
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
         return 0;
     }
     else if(!strcmp(argv[1], "push")){
@@ -89,10 +99,17 @@ int main(int argc, char const* argv[]){
 
     }
     else if(!strcmp(argv[1], "init")){
+        int kidid;
+        if (SOUND){
+            kidid = play_song(path_to_programdir,"church.mp3", 3);
+        }
         new_ft_init(TR_RINIT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         int r = mkdir(".dit",0744);
-        v_err(r, "err making .dit dir...", 1);
+        v_err(r, "err making .dit dir...", 0);
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
     }
     // closing the connected socket
     close(client_fd);
