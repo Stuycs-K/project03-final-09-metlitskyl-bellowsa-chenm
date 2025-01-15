@@ -60,6 +60,11 @@ time: 2.5hr
 pushes and pulls .dit hidden dir inside the repo
 stores on server
 client init
+time 1.5hr
+
+### 2024-01-14 - play sounds on actions
+sound system plays sound effects 
+time: 30min
 
 ## Lenny
 

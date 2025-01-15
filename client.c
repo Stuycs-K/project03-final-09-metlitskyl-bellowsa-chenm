@@ -1,6 +1,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -8,6 +9,9 @@
 #include <sys/socket.h>
 #include <sys/types.h> 
 #include <sys/socket.h> 
+
+#include <signal.h>
+
 #include <netdb.h>
 
 #include <fcntl.h>
@@ -19,15 +23,26 @@
 #include "file_transfer.h"
 #include "networking.h"
 
+#include "sound.h"
+
+#define SOUND 1
+
 int main(int argc, char const* argv[]){
     
+
     if (argc < 2){
         perror("try using {pgrm name} {download/push/init}");
         return 1;
     }
 
+    char path_to_programdir[1024];
+    if (SOUND){
+        realpath(argv[0], path_to_programdir);
+        path_to_programdir[strlen(path_to_programdir) - strlen(__FILE__)  + 1] = 0;
+    }
+
+
     int client_fd = setup_client();
-        
     printf("connected...\n");
 
     struct ft_init init;
@@ -49,27 +64,52 @@ int main(int argc, char const* argv[]){
 
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
+
+        int kidid;
+        if (SOUND){
+            kidid = play_song(path_to_programdir,"kesh.mp3", 3);
+        }
+
         new_ft_init(TR_TRSMT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
         mkdir(".dit",0744); //just insure that there is a .dit
         recv_full_directory_contents(client_fd, ".");
+
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
         return 0;
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
+        int kidid;
+        if (SOUND){
+            kidid = play_song(path_to_programdir,"bumble.mp3", 3);
+        }
 
         new_ft_init(TR_RECV, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         
         send_full_directory_contents(client_fd, ".dit");
 
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
+
     }
     else if(!strcmp(argv[1], "init")){
+        int kidid;
+        if (SOUND){
+            kidid = play_song(path_to_programdir,"church.mp3", 3);
+        }
         new_ft_init(TR_RINIT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         int r = mkdir(".dit",0744);
-        v_err(r, "err making .dit dir...", 1);
+        v_err(r, "err making .dit dir...", 0);
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
     }
     // closing the connected socket
     close(client_fd);
