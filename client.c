@@ -71,11 +71,12 @@ int main(int argc, char const* argv[]){
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
+        int kidid;
         if (SOUND){
             char bumble[strlen(path_to_programdir) + 100];
             sprintf(bumble, "%s/media/bumble.mp3", path_to_programdir);
 
-            int kidid = fork();
+            kidid = fork();
             if(kidid == 0){
                 int fd = open("/dev/null", O_WRONLY, 0);
                 dup2(fd, fileno(stdout));
@@ -93,7 +94,9 @@ int main(int argc, char const* argv[]){
         
         send_full_directory_contents(client_fd, ".dit");
 
-        kill(kidid, SIGKILL);
+        if(SOUND){
+            kill(kidid, SIGKILL);
+        }
 
     }
     else if(!strcmp(argv[1], "init")){
