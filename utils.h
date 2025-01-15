@@ -51,7 +51,7 @@ typedef struct {
     char filepath[MAX_FILEPATH];
     int mode;
     size_t memory_size;
-    Point *pts;
+    Point pts[];
 } Patch;
 
 #endif
