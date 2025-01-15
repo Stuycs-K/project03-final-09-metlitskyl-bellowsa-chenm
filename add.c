@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
                 printf("Patch found in |%s|\n", patch_full_path);
 
                 // patch name doesn't neccesarily have to be the file name (in case dups/nested)
-                struct patch *p = read_patch(patch_full_path);
+                Patch *p = read_patch(patch_full_path);
 
                 if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
                     printf("THIS PATCH MATCHES MY AFFECTED FILE!\n");
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
         printf("Read file to buffer str: |%s|\n", str);
         close(in_file);
 
-        struct patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), str); // do not do strlen() + 1 bc we want to exclude null byte
+        Patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), str); // do not do strlen() + 1 bc we want to exclude null byte
         visualize_patch(mypatch);
 
         //
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
                 printf("Patch found in |%s|\n", patch_full_path);
 
                 // patch name doesn't neccesarily have to be the file name (in case dups/nested)
-                struct patch *p = read_patch(patch_full_path);
+                Patch *p = read_patch(patch_full_path);
 
                 if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
                     printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
