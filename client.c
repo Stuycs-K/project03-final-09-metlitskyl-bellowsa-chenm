@@ -25,8 +25,6 @@
 
 #include "sound.h"
 
-#define SOUND 1
-
 int main(int argc, char const* argv[]){
     
 
@@ -36,10 +34,10 @@ int main(int argc, char const* argv[]){
     }
 
     char path_to_programdir[1024];
-    if (SOUND){
-        realpath(argv[0], path_to_programdir);
-        path_to_programdir[strlen(path_to_programdir) - strlen(__FILE__)  + 1] = 0;
-    }
+
+    realpath(argv[0], path_to_programdir);
+    path_to_programdir[strlen(path_to_programdir) - strlen(__FILE__)  + 1] = 0;
+
 
 
     int client_fd = setup_client();
@@ -66,7 +64,7 @@ int main(int argc, char const* argv[]){
         //init connection and ask for a transmission
 
         int kidid;
-        if (SOUND){
+        if (user.sound){
             kidid = play_song(path_to_programdir,"kesh.mp3", 3);
         }
 
@@ -76,7 +74,7 @@ int main(int argc, char const* argv[]){
         mkdir(".dit",0744); //just insure that there is a .dit
         recv_full_directory_contents(client_fd, ".");
 
-        if(SOUND){
+        if(user.sound){
             kill(kidid, SIGKILL);
         }
         return 0;
@@ -84,7 +82,7 @@ int main(int argc, char const* argv[]){
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
         int kidid;
-        if (SOUND){
+        if (user.sound){
             kidid = play_song(path_to_programdir,"bumble.mp3", 3);
         }
 
@@ -93,21 +91,21 @@ int main(int argc, char const* argv[]){
         
         send_full_directory_contents(client_fd, ".dit");
 
-        if(SOUND){
+        if(user.sound){
             kill(kidid, SIGKILL);
         }
 
     }
     else if(!strcmp(argv[1], "init")){
         int kidid;
-        if (SOUND){
+        if (user.sound){
             kidid = play_song(path_to_programdir,"church.mp3", 3);
         }
         new_ft_init(TR_RINIT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
         int r = mkdir(".dit",0744);
         v_err(r, "err making .dit dir...", 0);
-        if(SOUND){
+        if(user.sound){
             kill(kidid, SIGKILL);
         }
     }

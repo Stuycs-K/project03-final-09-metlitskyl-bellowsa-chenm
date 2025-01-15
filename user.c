@@ -51,7 +51,7 @@ int init_client_config(char * program_name, struct ft_user * user){
         int sound = 0;
         printf("would you like sound effects [Y/n] WARNING sound effects will slow your program by 3sec: ");
         fflush(stdout);
-        fgets(&sound_yn, sizeof(char), stdin);
+        scanf("%c", &sound_yn);
 
         if(sound_yn == 'Y'){
             sound = 1;
