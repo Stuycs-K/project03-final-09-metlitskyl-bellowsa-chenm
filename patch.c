@@ -177,46 +177,46 @@ void apply_delete_patch(Patch *patch) {
     }
 }
 
-int main() {
-    char *txt = calloc(100, sizeof(char));
-    strcpy(txt, "hi\nline2\nline3");
-    printf("Creating patch...\n");
-    Patch *mypatch = create_patch("test.txt", MODE_TOUCH, strlen(txt), (Point *)txt); // do not do strlen() + 1 bc we want to exclude null byte
-    printf("Patch created!\n");
-    visualize_patch(mypatch);
+// int main() {
+//     char *txt = calloc(100, sizeof(char));
+//     strcpy(txt, "hi\nline2\nline3");
+//     printf("Creating patch...\n");
+//     Patch *mypatch = create_patch("dit_test_dir/test.txt", MODE_TOUCH, strlen(txt), (Point *)txt); // do not do strlen() + 1 bc we want to exclude null byte
+//     printf("Patch created!\n");
+//     visualize_patch(mypatch);
 
-    char filename[] = ".dit/patch1.patch";
-    printf("Writing patch...\n");
-    write_patch(filename, mypatch);
-    printf("Patch written!\n");
+//     char filename[] = ".dit/patch1.patch";
+//     printf("Writing patch...\n");
+//     write_patch(filename, mypatch);
+//     printf("Patch written!\n");
 
-    Patch *mypatch2 = read_patch(filename);
-    printf("Patch 2 read... visualizing now!\n");
-    visualize_patch(mypatch2);
-    printf("Writing the patch that we read off disk...\n");
-    apply_touch_patch(mypatch2);
+//     Patch *mypatch2 = read_patch(filename);
+//     printf("Patch 2 read... visualizing now!\n");
+//     visualize_patch(mypatch2);
+//     printf("Writing the patch that we read off disk...\n");
+//     apply_touch_patch(mypatch2);
 
-    // char mem[] = {
-    //     '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
-    //     //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
-    // };
-    // //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
-    // //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
-    // Patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
-    // write_patch(".dit/matthew1.patch", test_patch);
-    // apply_modify_patch(test_patch);
+//     // char mem[] = {
+//     //     '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
+//     //     //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
+//     // };
+//     // //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
+//     // //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
+//     // Patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
+//     // write_patch(".dit/matthew1.patch", test_patch);
+//     // apply_modify_patch(test_patch);
 
-    printf("About to create a file using a touch patch...\n");
-    Patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
-    apply_touch_patch(test_touch_patch);
-    printf("Created!\n");
+//     printf("About to create a file using a touch patch...\n");
+//     Patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
+//     apply_touch_patch(test_touch_patch);
+//     printf("Created!\n");
 
-    sleep(2);
+//     sleep(2);
 
-    printf("About to delete a file using a touch patch...\n");
-    Patch *test_removal_patch = create_patch("test/hi.txt", MODE_REMOVE, 0, NULL);
-    apply_delete_patch(test_removal_patch);
-    printf("Deleted!\n");
+//     printf("About to delete a file using a touch patch...\n");
+//     Patch *test_removal_patch = create_patch("test/hi.txt", MODE_REMOVE, 0, NULL);
+//     apply_delete_patch(test_removal_patch);
+//     printf("Deleted!\n");
 
-    return 0;
-}
+//     return 0;
+// }
