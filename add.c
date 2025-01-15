@@ -199,7 +199,7 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
                 if (p->mode == MODE_TOUCH) {
                     free(str);
                     str = calloc(p->memory_size + 1, sizeof(char));
-                    memmove(str, p->memory, p->memory_size);
+                    memmove(str, p->pts, p->memory_size);
                 }
                 if (p->mode == MODE_REMOVE) {
                     free(str);

@@ -54,4 +54,13 @@ typedef struct {
     Point pts[];
 } Patch;
 
+// yes i know this is defined in dirent.h it is just my intellisense is stupid
+#ifndef DT_REG
+#define DT_REG 8
+#endif
+
+#ifndef DT_DIR
+#define DT_DIR 4
+#endif
+
 #endif
