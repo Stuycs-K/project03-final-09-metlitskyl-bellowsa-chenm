@@ -2,15 +2,12 @@
 #include "utils.h"
 
 Patch *create_patch(char *filepath, int mode, size_t memory_size, Point *memory) {
-    Patch *patch = calloc(1, sizeof(Patch) + memory_size + 1000);
+    Patch *patch = calloc(1, sizeof(Patch) + memory_size + 1);
     strcpy(patch->filepath, filepath);
     patch->mode = mode;
     patch->memory_size = memory_size;
-    printf("before memcpy!\n");
-    printf("Memory size |%d|, sizeof Point: (%d)\n", memory_size, sizeof(Point));
-    printf("MEMORY CASTED AS STRING |%s|\n", memory);
-    memcpy(patch->pts, memory, memory_size + 1);
-    printf("after memcpy!\n");
+
+    memcpy(patch->pts, memory, memory_size);
 
     return patch;
 }
@@ -181,7 +178,8 @@ void apply_delete_patch(Patch *patch) {
 }
 
 int main() {
-    char txt[] = "hi\nline2\nline3";
+    char *txt = calloc(100, sizeof(char));
+    strcpy(txt, "hi\nline2\nline3");
     printf("Creating patch...\n");
     Patch *mypatch = create_patch("test.txt", MODE_TOUCH, strlen(txt), (Point *)txt); // do not do strlen() + 1 bc we want to exclude null byte
     printf("Patch created!\n");
