@@ -3,6 +3,9 @@ compile: dit server download commit clone add push client
 utils.o: utils.c
 	gcc -c -g utils.c
 
+sound.o: sound.c
+	gcc -c -g sound.c
+
 file_transfer.o: file_transfer.c
 	gcc -c file_transfer.c
 
@@ -13,10 +16,10 @@ user.o: user.c
 	gcc -c user.c
 
 # dit
-client: client.o utils.o file_transfer.o networking.o user.o
-	gcc -o client -g client.o utils.o file_transfer.o networking.o user.o
+client: client.o utils.o file_transfer.o networking.o user.o sound.o
+	gcc -o client -g client.o utils.o file_transfer.o networking.o user.o sound.o
 
-client.o: client.c utils.h file_transfer.h networking.h user.h
+client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
 	gcc -c -g client.c
 
 # dit

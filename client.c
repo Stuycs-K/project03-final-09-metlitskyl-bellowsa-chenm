@@ -23,6 +23,8 @@
 #include "file_transfer.h"
 #include "networking.h"
 
+#include "sound.h"
+
 #define SOUND 1
 
 int main(int argc, char const* argv[]){
@@ -73,20 +75,7 @@ int main(int argc, char const* argv[]){
         //init connection and ask for a transmission
         int kidid;
         if (SOUND){
-            char bumble[strlen(path_to_programdir) + 100];
-            sprintf(bumble, "%s/media/bumble.mp3", path_to_programdir);
-
-            kidid = fork();
-            if(kidid == 0){
-                int fd = open("/dev/null", O_WRONLY, 0);
-                dup2(fd, fileno(stdout));
-                dup2(fd,fileno(stderr));
-
-                int r = execl("/bin/mpg123", "mpg123", bumble, (char *)NULL);
-                perror("install mpg123 for full functionality...");
-                exit(0);
-            }
-            sleep(3);
+            kidid = play_song(path_to_programdir,"bumble.mp3", 3);
         }
 
         new_ft_init(TR_RECV, repo_name, &user, &init);
