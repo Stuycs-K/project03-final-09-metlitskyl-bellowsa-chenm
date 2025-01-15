@@ -1,31 +1,31 @@
 #include "patch.h"
 #include "utils.h"
 
-struct patch *create_patch(char *filepath, int mode, size_t memory_size, char *memory) {
-    struct patch *patch = calloc(1, sizeof(struct patch) + memory_size * sizeof(char));
-
+Patch *create_patch(char *filepath, int mode, size_t memory_size, Point *memory) {
+    Patch *patch = calloc(1, sizeof(Patch) + memory_size + 1);
     strcpy(patch->filepath, filepath);
     patch->mode = mode;
     patch->memory_size = memory_size;
-    memcpy(patch->memory, memory, memory_size);
+
+    memcpy(patch->pts, memory, memory_size);
 
     return patch;
 }
 
-void visualize_patch(struct patch *patch) {
+void visualize_patch(Patch *patch) {
     printf("----Visualizing Patch: ------\n");
     printf("filepath: |%s|\n", patch->filepath);
-    printf("memory size: |%d|\n", patch->memory_size);
-    printf("raw memory: |%s|\n", patch->memory);
+    printf("num pts: |%d|\n", patch->memory_size);
+    printf("raw memory: |%s|\n", patch->pts);
     printf("----End visualizing. ------\n");
 }
 
-void write_patch(char *filename, struct patch *patch) {
+void write_patch(char *filename, Patch *patch) {
     int out_file = open(filename, O_CREAT | O_WRONLY, 0644);
     if (out_file == -1) {
         err();
     }
-    size_t struct_byte_size = sizeof(struct patch) + patch->memory_size; // min size is sizeof(struct patch)
+    size_t struct_byte_size = sizeof(Patch) + patch->memory_size; // min size is sizeof(Patch)
 
     int write_status = write(out_file, patch, struct_byte_size);
     if (write_status == -1) {
@@ -33,7 +33,7 @@ void write_patch(char *filename, struct patch *patch) {
     }
     close(out_file);
 }
-struct patch *read_patch(char *filename) {
+Patch *read_patch(char *filename) {
     int in_file = open(filename, O_RDONLY);
     if (in_file == -1) {
         err();
@@ -46,7 +46,7 @@ struct patch *read_patch(char *filename) {
     }
 
     size_t patch_file_size = file_stat.st_size;
-    struct patch *patch = calloc(1, patch_file_size);
+    Patch *patch = calloc(1, patch_file_size);
 
     int read_status = read(in_file, patch, patch_file_size);
     if (read_status == -1) {
@@ -56,7 +56,8 @@ struct patch *read_patch(char *filename) {
     return patch;
 }
 
-void apply_modify_patch(struct patch *patch) {
+/*
+void apply_modify_patch(Patch *patch) {
 
     // Step 1: Get str from file
     int in_file = open(patch->filepath, O_RDONLY);
@@ -143,8 +144,9 @@ void apply_modify_patch(struct patch *patch) {
     }
     close(out_file);
 }
+*/
 
-void apply_touch_patch(struct patch *patch) {
+void apply_touch_patch(Patch *patch) {
     char *filepath = patch->filepath;
     int fd = open(filepath, O_WRONLY | O_CREAT | O_EXCL, 0644); // O_EXCL is "error if create and file exists"
     if (fd == -1) {
@@ -158,7 +160,7 @@ void apply_touch_patch(struct patch *patch) {
     if (patch->memory_size > 0) {
         printf("Trying to write text from patch memory to newly created file...\n");
         // treat memory as JUST a str (char*) NOT a fancy encoded modification patch memory thingy
-        int write_status = write(fd, patch->memory, patch->memory_size);
+        int write_status = write(fd, patch->pts, patch->memory_size);
         if (write_status == -1) {
             err();
         }
@@ -167,7 +169,7 @@ void apply_touch_patch(struct patch *patch) {
     close(fd);
 }
 
-void apply_delete_patch(struct patch *patch) {
+void apply_delete_patch(Patch *patch) {
     char *filepath = patch->filepath;
     int removal_status = remove(filepath);
     if (removal_status == -1) {
@@ -176,8 +178,11 @@ void apply_delete_patch(struct patch *patch) {
 }
 
 // int main() {
-//     char txt[] = "hi\nline2\nline3";
-//     struct patch *mypatch = create_patch("test.txt", MODE_TOUCH, strlen(txt), txt); // do not do strlen() + 1 bc we want to exclude null byte
+//     char *txt = calloc(100, sizeof(char));
+//     strcpy(txt, "hi\nline2\nline3");
+//     printf("Creating patch...\n");
+//     Patch *mypatch = create_patch("dit_test_dir/test.txt", MODE_TOUCH, strlen(txt), (Point *)txt); // do not do strlen() + 1 bc we want to exclude null byte
+//     printf("Patch created!\n");
 //     visualize_patch(mypatch);
 
 //     char filename[] = ".dit/patch1.patch";
@@ -185,31 +190,31 @@ void apply_delete_patch(struct patch *patch) {
 //     write_patch(filename, mypatch);
 //     printf("Patch written!\n");
 
-//     struct patch *mypatch2 = read_patch(filename);
+//     Patch *mypatch2 = read_patch(filename);
 //     printf("Patch 2 read... visualizing now!\n");
 //     visualize_patch(mypatch2);
 //     printf("Writing the patch that we read off disk...\n");
 //     apply_touch_patch(mypatch2);
 
-//     char mem[] = {
-//         '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
-//         //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
-//     };
-//     //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
-//     //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
-//     struct patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
-//     write_patch(".dit/matthew1.patch", test_patch);
-//     apply_modify_patch(test_patch);
+//     // char mem[] = {
+//     //     '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm',
+//     //     //   '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y'
+//     // };
+//     // //  '+', 3, 0, 0, 0, 2, 0, 0, 0, 'n', 'm' is one change
+//     // //  '+', 7, 0, 0, 0, 2, 0, 0, 0, 'x', 'y' is one change
+//     // Patch *test_patch = create_patch("test/matthew.txt", MODE_MODIFY, sizeof(mem), mem);
+//     // write_patch(".dit/matthew1.patch", test_patch);
+//     // apply_modify_patch(test_patch);
 
 //     printf("About to create a file using a touch patch...\n");
-//     struct patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
+//     Patch *test_touch_patch = create_patch("test/hi.txt", MODE_TOUCH, 0, NULL);
 //     apply_touch_patch(test_touch_patch);
 //     printf("Created!\n");
 
 //     sleep(2);
 
 //     printf("About to delete a file using a touch patch...\n");
-//     struct patch *test_removal_patch = create_patch("test/hi.txt", MODE_REMOVE, 0, NULL);
+//     Patch *test_removal_patch = create_patch("test/hi.txt", MODE_REMOVE, 0, NULL);
 //     apply_delete_patch(test_removal_patch);
 //     printf("Deleted!\n");
 

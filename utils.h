@@ -25,28 +25,33 @@ void err();
 #define MODE_MODIFY 2 // modifying TEXT inside a file
 #define MODE_REMOVE 3
 
-#define MODE_PLUS '+'
-#define MODE_MINUS '-'
+#define INSERT_TYPE 3
+#define DELETE_TYPE 4
 
-struct patch {
+/*
+Point update
+type: INSERT or DELETE
+pos: byte location to make edit in file
+ch: char to insert, nullchar if DELETE
+*/
+typedef struct {
+    int type;
+    int pos;
+    char ch;
+} Point;
+
+/*
+Patch
+filepath: relative file path location
+mode: MODE_TOUCH (create file), MODE_MODIFY (modify file contents), MODE_REMOVE (remove file)
+memory_size: size of pts array, zero if REMOVE
+pts: contains point updates, empty if REMOVE
+*/
+typedef struct {
     char filepath[MAX_FILEPATH];
     int mode;
     size_t memory_size;
-    char memory[]; // FLEXIBLE ARRAY MEMBBER, unkown length of memory raw memory, used for chars in mode_touch, used for our diff format in mode_modify, 1 byte for mode_remove
-};
-
-
-// yes i know this is defined in dirent.h it is just my intellisense is stupid
-#ifndef DT_REG
-#define DT_REG 8
-#endif
-
-#ifndef DT_DIR
-#define DT_DIR 4
-#endif
-
-int get_repo_path(char * server_root, struct ft_init * init, char * target);
-int get_repo_name_from_cwd(char * repo_name, int repo_name_size, char * repo_name_dit, char * repo_target);
-int get_base_name(char * path, char * target);
+    Point pts[];
+} Patch;
 
 #endif
