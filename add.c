@@ -159,10 +159,47 @@ int main(int argc, char *argv[]) {
         printf("Built str!\n");
         printf("STR: |%s|\n", built);
 
+        int current_file_with_users_changes = open(filepath, O_RDONLY);
+        if (current_file_with_users_changes == -1) {
+            err();
+        }
+
+        struct stat file_stat;
+        int stat_status = stat(filepath, &file_stat);
+        if (stat_status == -1) {
+            err();
+        }
+
+        char *file_str = calloc(1, file_stat.st_size + 1);
+
+        int read_status = read(current_file_with_users_changes, file_str, file_stat.st_size);
+        if (read_status == -1) {
+            err();
+        }
+        close(current_file_with_users_changes);
+        printf("FILE WITH USER CHANGES: |%s|\n", file_str);
 
         // NOW COMPARE
+        Patch *p_diff = diff(built, file_str, strlen(built), strlen(file_str));
+        strcpy(p_diff->filepath, filename);
 
-        
+        // are there changes?
+        if (p_diff->memory_size == 0) {
+            printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
+            return 0;
+        }
+        printf("THERE ARE CHANGES!\n");
+
+        char patch_name[MAX_FILEPATH] = "";
+        strcat(patch_name, filename);
+        strcat(patch_name, ".patch");
+        char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
+        strcat(save_patch_to_saving_folder_path, staging_folder);
+        strcat(save_patch_to_saving_folder_path, patch_name);
+        write_patch(patch_name, p_diff);
+
+        printf("matthew's patch filename: |%s|\n", p_diff->filepath);
+        visualize_patch(p_diff);
     }
 }
 

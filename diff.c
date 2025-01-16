@@ -107,7 +107,7 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 }
 
 // int main() {
-//     char *a = "";
+//     char *a = "a";
 //     char *b = "little";
 
 //     Patch *p = diff(a, b, strlen(a), strlen(b));

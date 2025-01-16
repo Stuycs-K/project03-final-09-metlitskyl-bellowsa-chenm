@@ -16,7 +16,10 @@ void visualize_patch(Patch *patch) {
     printf("----Visualizing Patch: ------\n");
     printf("filepath: |%s|\n", patch->filepath);
     printf("num pts: |%d|\n", patch->memory_size);
-    printf("raw memory: |%s|\n", patch->pts);
+    printf("Memory size: |%d|\n", patch->memory_size / sizeof(Point));
+    for (int i = 0; i < patch->memory_size / sizeof(Point); i++) {
+        printf("|%d| |%d| |%c|\n", patch->pts[i].type, patch->pts[i].pos, patch->pts[i].ch);
+    }
     printf("----End visualizing. ------\n");
 }
 
