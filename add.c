@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
     int has_file_been_created_yet = 0; // false
     if (max_commit_number == -1) {
-        has_file_been_created_yet = 1;
+        has_file_been_created_yet = 0;
         printf("NO COMMITS MADE YET!\n");
         printf("Therefore, making a patch commit\n");
     } else {
@@ -113,6 +113,8 @@ int main(int argc, char *argv[]) {
             closedir(commit_dir);
         }
     }
+
+    printf("HAS FILE BEEN CREATED YET: |%d|\n", has_file_been_created_yet);
 
     if (has_file_been_created_yet == 0) {
         // make patch commit!

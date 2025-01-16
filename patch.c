@@ -15,12 +15,15 @@ Patch *create_patch(char *filepath, int mode, size_t memory_size, Point *memory)
 void visualize_patch(Patch *patch) {
     printf("----Visualizing Patch: ------\n");
     printf("filepath: |%s|\n", patch->filepath);
-    printf("num pts: |%d|\n", patch->memory_size);
-    printf("Memory size: |%d|\n", patch->memory_size / sizeof(Point));
-    for (int i = 0; i < patch->memory_size / sizeof(Point); i++) {
-        printf("|%d| |%d| |%c|\n", patch->pts[i].type, patch->pts[i].pos, patch->pts[i].ch);
+    printf("mode: |%d|\n", patch->mode);
+    if (patch->mode == MODE_MODIFY) {
+        printf("num pts: |%d|\n", patch->memory_size);
+        printf("Memory size: |%d|\n", patch->memory_size / sizeof(Point));
+        for (int i = 0; i < patch->memory_size / sizeof(Point); i++) {
+            printf("|%d| |%d| |%c|\n", patch->pts[i].type, patch->pts[i].pos, patch->pts[i].ch);
+        }
+        printf("----End visualizing. ------\n");
     }
-    printf("----End visualizing. ------\n");
 }
 
 void write_patch(char *filename, Patch *patch) {
