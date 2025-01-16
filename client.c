@@ -63,6 +63,7 @@ int main(int argc, char const* argv[]){
     if (!strcmp(argv[1], "download")){
         //init connection and ask for a transmission
 
+        //this stuff is for sound
         int kidid;
         if (user.sound){
             kidid = play_song(path_to_programdir,"kesh.mp3", 3);
@@ -74,13 +75,16 @@ int main(int argc, char const* argv[]){
         mkdir(".dit",0744); //just insure that there is a .dit
         recv_full_directory_contents(client_fd, ".");
 
+        //kill the mpg123 if sound is on
         if(user.sound){
             kill(kidid, SIGKILL);
         }
-        return 0;
+
     }
     else if(!strcmp(argv[1], "push")){
         //init connection and ask for a transmission
+
+        // this stuff is for sound
         int kidid;
         if (user.sound){
             kidid = play_song(path_to_programdir,"bumble.mp3", 3);
@@ -91,20 +95,32 @@ int main(int argc, char const* argv[]){
         
         send_full_directory_contents(client_fd, ".dit");
 
+        //kill the mpg123 if sound is on
         if(user.sound){
             kill(kidid, SIGKILL);
         }
 
     }
     else if(!strcmp(argv[1], "init")){
+        //this is analogous to git init. It creates the .dir directory 
+        //it also sends a create request to the server so the server has the dir created
+        //without init, push crashes on the server side
+
+        // this stuff is for sound
         int kidid;
         if (user.sound){
             kidid = play_song(path_to_programdir,"church.mp3", 3);
         }
+
+        // create init struct and send it
         new_ft_init(TR_RINIT, repo_name, &user, &init);
         write(client_fd, &init, sizeof(struct ft_init));
+
+        // make the .dit directory
         int r = mkdir(".dit",0744);
         v_err(r, "err making .dit dir...", 0);
+
+        //kill the mpg123 if sound is on
         if(user.sound){
             kill(kidid, SIGKILL);
         }
