@@ -71,7 +71,9 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 	
 	//calculate the resultant byte array length
 	int length = arr_length;
+
 	for (int i = 0; i < p->memory_size/sizeof(Point); i++) {
+		printf("type: %d\n", p->pts[i].type);
 		if (p->pts[i].type == INSERT_TYPE) length++;
 		if (p->pts[i].type == DELETE_TYPE) length--;
 	}
@@ -79,10 +81,9 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 	char *result = malloc(length*sizeof(char));
 	int res_pt = length-1;
 	int cur_pt = 0;
-	
+
 	//for each byte in arr, determine whether to include it or not
 	for (int i = arr_length-1; i >= 0; i--) {
-		
 		//repeatedly add insertion updates
 		while (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == INSERT_TYPE) {
 			result[res_pt--] = p->pts[cur_pt].ch;
@@ -97,14 +98,18 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 		
 		result[res_pt--] = arr[i];
 	}
+	while (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == 0 && p->pts[cur_pt].type == INSERT_TYPE) {
+		result[res_pt--] = p->pts[cur_pt].ch;
+		cur_pt++;
+	}
 	
 	*new_size = length;
 	return result;
 }
 
 int main() {
-	char *a = "matthew";
-	char *b = "little";
+	char *a = "little";
+	char *b = "asdflittle";
 
 	Patch *p = diff(a, b, strlen(a), strlen(b));
 	
