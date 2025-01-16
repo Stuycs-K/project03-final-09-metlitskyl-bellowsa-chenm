@@ -23,9 +23,6 @@ int get_max_commit_number(char *tracked_dir) {
     populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
 
     printf("Tracked Dit Folder : |%s|\n", tracked_dir);
-    printf("Corresponding dit folder: |%s|\n", dit_folder);
-    printf("Corresponding dit commit folder: |%s|\n", commit_folder);
-    printf("Corresponding dit staging folder: |%s|\n", staging_folder);
 
     // 2. go through git tree commits folder
 
@@ -39,7 +36,6 @@ int get_max_commit_number(char *tracked_dir) {
     int max_commit_number = -1;
 
     struct dirent *entry = NULL;
-    printf("Directories: \n");
     while ((entry = readdir(d))) {
         if (entry->d_type != DT_DIR) {
             continue;
@@ -47,12 +43,9 @@ int get_max_commit_number(char *tracked_dir) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
-        // char *full_path = join_path(folder_path_with_slash, entry->d_name);
-        // total += my_ls(full_path);
+
         int commit_number = -1;
         sscanf(entry->d_name, "%d", &commit_number);
-
-        printf("commit number (%d) found\n", commit_number);
 
         if (commit_number > max_commit_number) {
             max_commit_number = commit_number;
@@ -86,6 +79,7 @@ int main(int argc, char *argv[]) {
         printf("Latest commit is: %d\n", max_commit_number);
 
         for (int i = 0; i <= max_commit_number; i++) {
+            // this loop sees if the file has been net added or removed at the very present
             char specific_commit_folder[MAX_FILEPATH] = "";
 
             char folder_name_str[50] = "";
@@ -94,7 +88,7 @@ int main(int argc, char *argv[]) {
             strcat(specific_commit_folder, commit_folder);
             strcat(specific_commit_folder, folder_name_str);
 
-            printf("Specific commit folder: |%s|\n", specific_commit_folder);
+            // printf("Specific commit folder: |%s|\n", specific_commit_folder);
             // open dir and apply every patch
             DIR *commit_dir;
             commit_dir = opendir(specific_commit_folder);
@@ -102,7 +96,7 @@ int main(int argc, char *argv[]) {
                 err();
             }
             struct dirent *diff_entry = NULL;
-            printf("Directories: \n");
+            // printf("Directories: \n");
             while ((diff_entry = readdir(commit_dir))) {
                 if (diff_entry->d_type != DT_REG) {
                     continue;
@@ -113,7 +107,6 @@ int main(int argc, char *argv[]) {
 
                 char patch_full_path[MAX_FILEPATH] = "";
                 sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
-                printf("Patch found in |%s|\n", patch_full_path);
 
                 // patch name doesn't neccesarily have to be the file name (in case dups/nested)
                 Patch *p = read_patch(patch_full_path);
@@ -121,7 +114,6 @@ int main(int argc, char *argv[]) {
                 if (strcmp(p->filepath, filename) != 0) { // just compare filenames, not paths to it
                     continue;
                 }
-                printf("THIS PATCH MATCHES MY AFFECTED FILE!\n");
                 if (p->mode == MODE_TOUCH) {
                     has_file_been_created_yet = 1;
                 } else if (p->mode == MODE_REMOVE) {
@@ -172,12 +164,11 @@ int main(int argc, char *argv[]) {
         printf("PATCH PATH: |%s|\n", patch_path);
         write_patch(patch_path, mypatch);
     } else {
-        printf("\nNeed to build current file in memory!\n");
+        printf("Modify patch: Need to build current file in memory!\n");
 
         char *built = build_str(max_commit_number, commit_folder, filename);
 
-        printf("\n\n\n\nBuilt str!\n");
-        printf("STR: |%s|\n", built);
+        printf("\nLast version of file built up from .dit: |%s|\n\n", built);
 
         int current_file_with_users_changes = open(filepath, O_RDONLY);
         if (current_file_with_users_changes == -1) {
@@ -197,7 +188,7 @@ int main(int argc, char *argv[]) {
             err();
         }
         close(current_file_with_users_changes);
-        printf("FILE WITH USER CHANGES: |%s|\n", file_str);
+        printf("Current file on disk: |%s|\n\n", file_str);
 
         // NOW COMPARE
         Patch *p_diff = diff(built, file_str, strlen(built), strlen(file_str));
@@ -222,15 +213,11 @@ int main(int argc, char *argv[]) {
         printf("Wrote patch to : |%s|\n", save_patch_to_saving_folder_path);
 
         // debug and verify
-        printf("matthew's patch filename: |%s|\n", p_diff->filepath);
-        visualize_patch(p_diff);
-
-        Patch *verify_patch = read_patch(save_patch_to_saving_folder_path);
-
-        size_t new_size;
-        char *applied_patch = apply_patch(built, strlen(built), verify_patch, &new_size);
-
-        printf("after applying patch: |%s|\n", applied_patch);
+        // visualize_patch(p_diff);
+        // Patch *verify_patch = read_patch(save_patch_to_saving_folder_path);
+        // size_t new_size;
+        // char *applied_patch = apply_patch(built, strlen(built), verify_patch, &new_size);
+        // printf("after applying patch: |%s|\n", applied_patch);
     }
 }
 
@@ -245,7 +232,7 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
         strcat(specific_commit_folder, commit_folder);
         strcat(specific_commit_folder, folder_name_str);
 
-        printf("Specific commit folder: |%s|\n", specific_commit_folder);
+        // printf("Specific commit folder: |%s|\n", specific_commit_folder);
         // open dir and apply every patch
         DIR *commit_dir;
         commit_dir = opendir(specific_commit_folder);
@@ -253,7 +240,7 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
             err();
         }
         struct dirent *diff_entry = NULL;
-        printf("Directories: \n");
+        // printf("Directories: \n");
         while ((diff_entry = readdir(commit_dir))) {
             if (diff_entry->d_type != DT_REG) {
                 continue;
@@ -264,22 +251,18 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
 
             char patch_full_path[MAX_FILEPATH] = "";
             sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
-            printf("Patch found in |%s|\n", patch_full_path);
 
             // patch name doesn't neccesarily have to be the file name (in case dups/nested)
             Patch *p = read_patch(patch_full_path);
 
             if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
-                printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
+                // printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
                 // apply patch STRING version (no files modified!)
-                if (p->mode == MODE_MODIFY) { //
-                                              // apply patch BUT only do it to string in memory (not the file)
-                                              // call matthew func and apply!
-                    printf("About to apply diff!\n ");
+                if (p->mode == MODE_MODIFY) {
                     size_t new_size;
                     char *applied_patch = apply_patch(str, strlen(str), p, &new_size);
 
-                    printf("after applying patch: |%s|\n", applied_patch);
+                    // printf("after applying patch: |%s|\n", applied_patch);
 
                     free(str);
                     str = applied_patch;
