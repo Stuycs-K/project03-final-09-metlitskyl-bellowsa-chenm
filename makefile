@@ -36,13 +36,6 @@ server: server.o utils.o file_transfer.o networking.o user.o
 server.o: server.c utils.h file_transfer.h networking.h user.h
 	gcc -c -g server.c
 
-# Download
-commit: commit.o utils.o
-	gcc -o commit -g commit.o utils.o
-
-commit.o: commit.c utils.h
-	gcc -c -g commit.c
-
 # clone
 clone: clone.o utils.o
 	gcc -o clone -g clone.o utils.o
@@ -62,6 +55,12 @@ add.o: add.c utils.h patch.h diff.h
 
 add: patch.o utils.o diff.o add.o
 	@gcc -o add -g add.o utils.o patch.o diff.o
+#commit
+commit.o: commit.c utils.h patch.h diff.h
+	@gcc -c -g commit.c
+
+commit: patch.o utils.o diff.o commit.o
+	@gcc -o commit -g commit.o utils.o patch.o diff.o
 # push
 push: push.o utils.o
 	gcc -o push -g push.o utils.o
