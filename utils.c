@@ -80,3 +80,54 @@ int get_base_name(char * path, char * target){
 
     return 1;
 }
+
+
+void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_folder, char *staging_folder) {
+    strcat(dit_folder, tracked_dir);
+    strcat(dit_folder, ".dit/");
+
+    strcat(commit_folder, dit_folder);
+    strcat(commit_folder, "commits/");
+
+    strcat(staging_folder, dit_folder);
+    strcat(staging_folder, "staging/");
+}
+
+int get_max_commit_number(char *tracked_dir) {
+    char dit_folder[MAX_FILEPATH] = "";
+    char commit_folder[MAX_FILEPATH] = "";
+    char staging_folder[MAX_FILEPATH] = "";
+    populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
+
+    printf("Tracked Dit Folder : |%s|\n", tracked_dir);
+
+    // 2. go through git tree commits folder
+
+    // get latest (highest #) commit
+    DIR *d;
+    d = opendir(commit_folder);
+    if (d == 0) {
+        err();
+    }
+
+    int max_commit_number = -1;
+
+    struct dirent *entry = NULL;
+    while ((entry = readdir(d))) {
+        if (entry->d_type != DT_DIR) {
+            continue;
+        }
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        int commit_number = -1;
+        sscanf(entry->d_name, "%d", &commit_number);
+
+        if (commit_number > max_commit_number) {
+            max_commit_number = commit_number;
+        }
+    }
+
+    return max_commit_number;
+}

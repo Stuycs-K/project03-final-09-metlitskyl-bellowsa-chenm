@@ -63,4 +63,8 @@ typedef struct {
 #define DT_DIR 4
 #endif
 
+void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_folder, char *staging_folder);
+
+int get_max_commit_number(char *tracked_dir);
+
 #endif
