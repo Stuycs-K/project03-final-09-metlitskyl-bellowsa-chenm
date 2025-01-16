@@ -68,7 +68,8 @@ time: 30min
 
 ### 2024-01-14 - added user customization options to play sound
 user customization
-time: 30min
+commenting
+time: 45min
 
 ## Lenny
 
