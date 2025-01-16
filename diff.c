@@ -37,73 +37,77 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
                 y++;
             }
 
-			v[k+MAX] = x;
-			if (x >= N && y >= M) {
-				Patch *res = malloc(sizeof(Patch) + d*sizeof(Point));
-				res->mode = MODE_MODIFY;
-				//res->pts = malloc(d*sizeof(Point));
-				res->memory_size = d*sizeof(Point);
-				
-				int c = k+MAX;
-				int ind = 0;
-				for (int r = d; r > 0; r--) {
-					//type, pos, char
-					res->pts[ind] = (Point){trace[r][c][2], trace[r][c][0], (trace[r][c][2] == INSERT_TYPE)?b[trace[r][c][1]-1]:'\0'};
-					ind++;
-					
-					if (trace[r][c][2] == INSERT_TYPE) c++;
-					else c--;
-				}
-				
-				return res;
-			}
-		}
-	}
-	return 0;
+            v[k + MAX] = x;
+            if (x >= N && y >= M) {
+                Patch *res = malloc(sizeof(Patch) + d * sizeof(Point));
+                res->mode = MODE_MODIFY;
+                // res->pts = malloc(d*sizeof(Point));
+                res->memory_size = d * sizeof(Point);
+
+                int c = k + MAX;
+                int ind = 0;
+                for (int r = d; r > 0; r--) {
+                    // type, pos, char
+                    res->pts[ind] = (Point){trace[r][c][2], trace[r][c][0], (trace[r][c][2] == INSERT_TYPE) ? b[trace[r][c][1] - 1] : '\0'};
+                    ind++;
+
+                    if (trace[r][c][2] == INSERT_TYPE)
+                        c++;
+                    else
+                        c--;
+                }
+
+                return res;
+            }
+        }
+    }
+    return 0;
 }
 
 // assumes patch is a MODIFY
 // returns new byte array
 // assigns new byte array size to new_size
 char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
-	assert(p->mode == MODE_MODIFY);
-	
-	//calculate the resultant byte array length
-	int length = arr_length;
+    assert(p->mode == MODE_MODIFY);
 
-	for (int i = 0; i < p->memory_size/sizeof(Point); i++) {
-		printf("type: %d\n", p->pts[i].type);
-		if (p->pts[i].type == INSERT_TYPE) length++;
-		if (p->pts[i].type == DELETE_TYPE) length--;
-	}
+    // calculate the resultant byte array length
+    int length = arr_length;
 
-	char *result = malloc(length*sizeof(char));
-	int res_pt = length-1;
-	int cur_pt = 0;
+    for (int i = 0; i < p->memory_size / sizeof(Point); i++) {
+        // printf("type: %d\n", p->pts[i].type);
+        if (p->pts[i].type == INSERT_TYPE)
+            length++;
+        if (p->pts[i].type == DELETE_TYPE)
+            length--;
+    }
 
-	//for each byte in arr, determine whether to include it or not
-	for (int i = arr_length-1; i >= 0; i--) {
-		//repeatedly add insertion updates
-		while (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == INSERT_TYPE) {
-			result[res_pt--] = p->pts[cur_pt].ch;
-			cur_pt++;
-		}
-		
-		//check if point update is a deletion, if so, just dont include arr[i] to result
-		if (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == DELETE_TYPE) {
-			cur_pt++;
-			continue;
-		}
-		
-		result[res_pt--] = arr[i];
-	}
-	while (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == 0 && p->pts[cur_pt].type == INSERT_TYPE) {
-		result[res_pt--] = p->pts[cur_pt].ch;
-		cur_pt++;
-	}
-	
-	*new_size = length;
-	return result;
+    char *result = malloc(length * sizeof(char));
+    int res_pt = length - 1;
+    int cur_pt = 0;
+
+    // for each byte in arr, determine whether to include it or not
+    for (int i = arr_length - 1; i >= 0; i--) {
+        // repeatedly add insertion updates
+        while (cur_pt < p->memory_size / sizeof(Point) && p->pts[cur_pt].pos == i + 1 && p->pts[cur_pt].type == INSERT_TYPE) {
+            result[res_pt--] = p->pts[cur_pt].ch;
+            cur_pt++;
+        }
+
+        // check if point update is a deletion, if so, just dont include arr[i] to result
+        if (cur_pt < p->memory_size / sizeof(Point) && p->pts[cur_pt].pos == i + 1 && p->pts[cur_pt].type == DELETE_TYPE) {
+            cur_pt++;
+            continue;
+        }
+
+        result[res_pt--] = arr[i];
+    }
+    while (cur_pt < p->memory_size / sizeof(Point) && p->pts[cur_pt].pos == 0 && p->pts[cur_pt].type == INSERT_TYPE) {
+        result[res_pt--] = p->pts[cur_pt].ch;
+        cur_pt++;
+    }
+
+    *new_size = length;
+    return result;
 }
 
 // int main() {
@@ -111,18 +115,18 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 // //     char *b = "little";
 
 // 	Patch *p = diff(a, b, strlen(a), strlen(b));
-	
+
 // 	for (int i = 0; i < p->memory_size; i++) {
 // 		printf("%d ", p->pts[i].pos);
 // 		if (p->pts[i].type == INSERT_TYPE) printf("%c", p->pts[i].ch);
 // 		printf("\n");
 // 	}
-	
+
 // 	size_t new_size;
 // 	char *applied_patch = apply_patch(a, strlen(a), p, &new_size);
-	
+
 // 	printf("after applying patch: %s\n", applied_patch);
-	
+
 // 	free(p);
 // 	free(applied_patch);
 // 	return 0;

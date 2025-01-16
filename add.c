@@ -193,13 +193,24 @@ int main(int argc, char *argv[]) {
         char patch_name[MAX_FILEPATH] = "";
         strcat(patch_name, filename);
         strcat(patch_name, ".patch");
+
         char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
         strcat(save_patch_to_saving_folder_path, staging_folder);
         strcat(save_patch_to_saving_folder_path, patch_name);
-        write_patch(patch_name, p_diff);
+        write_patch(save_patch_to_saving_folder_path, p_diff);
 
+        printf("Wrote patch to : |%s|\n", save_patch_to_saving_folder_path);
+
+        // debug and verify
         printf("matthew's patch filename: |%s|\n", p_diff->filepath);
         visualize_patch(p_diff);
+
+        Patch *verify_patch = read_patch(save_patch_to_saving_folder_path);
+
+        size_t new_size;
+        char *applied_patch = apply_patch(built, strlen(built), verify_patch, &new_size);
+
+        printf("after applying patch: |%s|\n", applied_patch);
     }
 }
 
