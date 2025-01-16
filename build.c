@@ -151,9 +151,25 @@ void build(char *tracked_dir) {
 
     for (int i = 0; i < num_of_files_in_history; i++) {
         if (does_file_still_exist[i]) {
-            printf("FILE |%s| still exists!\n", filenames_in_history[i]);
+            printf("\nFILE |%s| still exists!\n", filenames_in_history[i]);
             char *built = build_str(max_commit_number, commit_folder, filenames_in_history[i]);
             printf("Built str: |%s|\n", built);
+
+            char full_path_to_file[MAX_FILEPATH] = "";
+            strcat(full_path_to_file, tracked_dir);
+            strcat(full_path_to_file, filenames_in_history[i]);
+
+            // write built str to file!
+            int out_file = open(full_path_to_file, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+            if (out_file == -1) {
+                err();
+            }
+
+            int write_status = write(out_file, built, strlen(built));
+            if (write_status == -1) {
+                err();
+            }
+            close(out_file);
         }
     }
 
