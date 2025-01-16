@@ -1,29 +1,8 @@
-#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdlib.h>
-
-//socket stuff
-#include <sys/socket.h>
-#include <sys/types.h> 
-#include <sys/socket.h> 
-
-#include <signal.h>
-
-#include <netdb.h>
-
-#include <fcntl.h>
-
-//for mkdir
-#include <sys/stat.h>
-
-#include "utils.h"
-#include "file_transfer.h"
-#include "networking.h"
-
-#include "sound.h"
 
 #include "client_module.h"
 
@@ -46,6 +25,8 @@ void print_usage(){
 
 #define REMOTE 0
 #define VERSION 1
+#define CMD_NOT_FOUND 2
+
 int what_related(char * cmd){
     if(!strcmp(cmd, "download") ||
        !strcmp(cmd, "push") ||
@@ -54,6 +35,7 @@ int what_related(char * cmd){
         return REMOTE;
     }
 
+    return CMD_NOT_FOUND;
     //continue building this out
 }
 
@@ -67,9 +49,14 @@ int main(int argc, char * argv[]){
 
     int category = what_related(cmd);
 
+    if (category == CMD_NOT_FOUND){
+        perror("cmd not found :(");
+        exit(1);
+    }
+
     if( category == REMOTE ){
         client(argc, argv);
     }
     
-
+    
 }
