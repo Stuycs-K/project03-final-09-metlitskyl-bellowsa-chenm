@@ -8,10 +8,20 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename);
 int main(int argc, char *argv[]) {
     char tracked_dir[] = "dit_test_dir/";
 
-    char filename[] = "test.txt";
+    if (argc < 2) {
+        printf("You must specify the file you want to dit add.\n");
+        exit(1);
+    }
+
+    char *filename = argv[1];
     char filepath[MAX_FILEPATH] = "";
     strcat(filepath, tracked_dir);
     strcat(filepath, filename);
+
+    if (access(filepath, F_OK) != 0) {
+        printf("File at |%s| does not exist.\n", filepath);
+        exit(1);
+    }
 
     char dit_folder[MAX_FILEPATH] = "";
     char commit_folder[MAX_FILEPATH] = "";
