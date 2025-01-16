@@ -18,8 +18,6 @@
 #include "utils.h"
 #include "file_transfer.h"
 
-#define PORT 8080
-
 #include "networking.h"
 
 #define TARGET_DIR "./test_dir"
@@ -27,26 +25,36 @@
 #define SERVER_DATA "./server_data"
 
 void sighandler(int signo){
-  switch(signo){ //child 
+  switch(signo){
     case SIGCHLD:
       {
+        //reap all available children but don't block
         while(waitpid(-1,NULL,WNOHANG) > 0);
       }
-    // cleanup();
   }
 
 }
 
 int server_action(int new_socket){
+  // what the server should do
+  //generic for forking server (thats why this is set up this way)
+
+  //read instruction struct
   struct ft_init init;
   read(new_socket, &init, sizeof(struct ft_init));
   
+  //get a path var ready if needed
   char path[ (strlen(SERVER_DATA) + strlen(init.user.name) + strlen(init.repo_name)) * sizeof(char) ];
+  
+  //based on the init connection mode
   switch (init.mode){
     case TR_AINIT:
+      //create a user
       printf("RECIVED MAKE USER ORDER\n------------------------------------\n\n");
       sprintf(path, "%s/%s", SERVER_DATA, init.user.name);
       mkdir(path, 0744);
+
+      // user can be created on download or push so see if there is more
       server_action(new_socket);
       return 0;
       
@@ -65,9 +73,12 @@ int server_action(int new_socket){
 
     case TR_RECV:
       printf("RECIEVED RECIEVE REQUEST\n------------------------------------\n\n");
+      // assemble path to recieve to
       sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
 
       printf("recieving push to %s\n", path);
+
+      // recieve the push
       recv_full_directory_contents(new_socket, path);
       break;
     case TR_RINIT:
@@ -96,6 +107,8 @@ int main(int argc, char const* argv[]){
         if(fork()==0){//if fork is child
             // do what the server should do
             server_action(new_socket); 
+
+            //clean up
             close(new_socket);
             printf("closing connection to client...\n");
             exit(0);
