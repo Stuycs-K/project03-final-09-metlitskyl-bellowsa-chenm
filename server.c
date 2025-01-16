@@ -41,7 +41,7 @@ int server_action(int new_socket){
   struct ft_init init;
   read(new_socket, &init, sizeof(struct ft_init));
   
-  char path[2062];
+  char path[ (strlen(SERVER_DATA) + strlen(init.user.name) + strlen(init.repo_name)) * sizeof(char) ];
   switch (init.mode){
     case TR_AINIT:
       printf("RECIVED MAKE USER ORDER\n------------------------------------\n\n");
