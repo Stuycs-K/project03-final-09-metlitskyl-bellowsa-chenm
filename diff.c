@@ -42,8 +42,8 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 			if (x >= N && y >= M) {
 				Patch *res = malloc(sizeof(Patch) + d*sizeof(Point));
 				res->mode = MODE_MODIFY;
-				res->pts = malloc(d*sizeof(Point));
-				res->memory_size = d;
+				//res->pts = malloc(d*sizeof(Point));
+				res->memory_size = d*sizeof(Point);
 				
 				int c = k+MAX;
 				int ind = 0;
@@ -67,11 +67,11 @@ Patch *diff(const char *a, const char *b, size_t a_length, size_t b_length) {
 //returns new byte array
 //assigns new byte array size to new_size
 char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
-	assert(p->mode = MODE_MODIFY);
+	assert(p->mode == MODE_MODIFY);
 	
 	//calculate the resultant byte array length
 	int length = arr_length;
-	for (int i = 0; i < p->memory_size; i++) {
+	for (int i = 0; i < p->memory_size/sizeof(Point); i++) {
 		if (p->pts[i].type == INSERT_TYPE) length++;
 		if (p->pts[i].type == DELETE_TYPE) length--;
 	}
@@ -84,13 +84,13 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 	for (int i = arr_length-1; i >= 0; i--) {
 		
 		//repeatedly add insertion updates
-		while (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == INSERT_TYPE) {
+		while (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == INSERT_TYPE) {
 			result[res_pt--] = p->pts[cur_pt].ch;
 			cur_pt++;
 		}
 		
 		//check if point update is a deletion, if so, just dont include arr[i] to result
-		if (cur_pt < p->memory_size && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == DELETE_TYPE) {
+		if (cur_pt < p->memory_size/sizeof(Point) && p->pts[cur_pt].pos == i+1 && p->pts[cur_pt].type == DELETE_TYPE) {
 			cur_pt++;
 			continue;
 		}
@@ -108,7 +108,7 @@ int main() {
 
 	Patch *p = diff(a, b, strlen(a), strlen(b));
 	
-	for (int i = 0; i < p->memory_size; i++) {
+	for (int i = 0; i < p->memory_size/sizeof(Point); i++) {
 		printf("%d ", p->pts[i].pos);
 		if (p->pts[i].type == INSERT_TYPE) printf("%c", p->pts[i].ch);
 		printf("\n");
