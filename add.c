@@ -4,29 +4,28 @@
 #include <stdlib.h>
 
 char *build_str(int max_commit_number, char *commit_folder, char *filename);
-int main(int argc, char *argv[]) {
-    char tracked_dir[] = "dit_test_dir/";
 
-    char dit_folder[MAX_FILEPATH] = "";
+void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_folder, char *staging_folder) {
     strcat(dit_folder, tracked_dir);
     strcat(dit_folder, ".dit/");
 
-    char filename[] = "test.txt";
-    char filepath[MAX_FILEPATH] = "";
-    strcat(filepath, tracked_dir);
-    strcat(filepath, filename);
-
-    char commit_folder[MAX_FILEPATH] = "";
     strcat(commit_folder, dit_folder);
     strcat(commit_folder, "commits/");
 
-    char staging_folder[MAX_FILEPATH] = "";
     strcat(staging_folder, dit_folder);
     strcat(staging_folder, "staging/");
+}
 
-    printf("Filepath : |%s|\n", filepath);
+int get_max_commit_number(char *tracked_dir) {
+    char dit_folder[MAX_FILEPATH] = "";
+    char commit_folder[MAX_FILEPATH] = "";
+    char staging_folder[MAX_FILEPATH] = "";
+    populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
+
+    printf("Tracked Dit Folder : |%s|\n", tracked_dir);
     printf("Corresponding dit folder: |%s|\n", dit_folder);
     printf("Corresponding dit commit folder: |%s|\n", commit_folder);
+    printf("Corresponding dit staging folder: |%s|\n", staging_folder);
 
     // 2. go through git tree commits folder
 
@@ -59,6 +58,25 @@ int main(int argc, char *argv[]) {
             max_commit_number = commit_number;
         }
     }
+
+    return max_commit_number;
+}
+
+int main(int argc, char *argv[]) {
+    char tracked_dir[] = "dit_test_dir/";
+
+    char filename[] = "test.txt";
+    char filepath[MAX_FILEPATH] = "";
+    strcat(filepath, tracked_dir);
+    strcat(filepath, filename);
+
+    char dit_folder[MAX_FILEPATH] = "";
+    char commit_folder[MAX_FILEPATH] = "";
+    char staging_folder[MAX_FILEPATH] = "";
+    populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
+
+    int max_commit_number = get_max_commit_number(tracked_dir);
+
     int has_file_been_created_yet = 0; // false
     if (max_commit_number == -1) {
         has_file_been_created_yet = 0;
@@ -158,7 +176,7 @@ int main(int argc, char *argv[]) {
 
         char *built = build_str(max_commit_number, commit_folder, filename);
 
-        printf("Built str!\n");
+        printf("\n\n\n\nBuilt str!\n");
         printf("STR: |%s|\n", built);
 
         int current_file_with_users_changes = open(filepath, O_RDONLY);
@@ -263,7 +281,8 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
 
                     printf("after applying patch: |%s|\n", applied_patch);
 
-                    free(applied_patch);
+                    free(str);
+                    str = applied_patch;
                 }
                 if (p->mode == MODE_TOUCH) {
                     free(str);
