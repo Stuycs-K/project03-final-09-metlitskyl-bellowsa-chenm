@@ -15,7 +15,6 @@ networking.o: networking.c networking.h utils.h
 user.o: user.c
 	gcc -c user.c
 
-# dit
 client: client.o utils.o file_transfer.o networking.o user.o sound.o
 	gcc -o client -g client.o utils.o file_transfer.o networking.o user.o sound.o
 
@@ -23,11 +22,15 @@ client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
 	gcc -c -g client.c
 
 # dit
-dit: dit.o utils.o
-	gcc -o dit -g dit.o utils.o
+dit: dit.o utils.o client_module.o
+	gcc -o dit dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o
 
-dit.o: dit.c utils.h
-	gcc -c -g dit.c
+dit.o: dit.c utils.h client_module.h
+	gcc -c -g dit.c 
+
+client_module.o: client_module.c utils.h file_transfer.h networking.h user.h sound.h
+	gcc -g -c client_module.c 
+
 
 # Server
 server: server.o utils.o file_transfer.o networking.o user.o
