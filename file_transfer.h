@@ -4,21 +4,25 @@
 #include <dirent.h>
 #include "user.h"
 
+//file transfer constants
 #define TR_FILE 1
 #define TR_DIR 2
 #define TR_END 3
 
+//file transfer struct sent before a file goes through
 struct file_transfer{
     int mode;
     int size;
     char path[1024];
 };
 
+// init connection modes
 #define TR_RECV 1034
 #define TR_TRSMT 5678
 #define TR_AINIT 7994
 #define TR_RINIT 6689
 
+// init connection struct
 struct ft_init{
     int mode;
     struct ft_user user;
