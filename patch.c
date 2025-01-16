@@ -27,7 +27,7 @@ void visualize_patch(Patch *patch) {
 }
 
 void write_patch(char *filename, Patch *patch) {
-    int out_file = open(filename, O_CREAT | O_WRONLY, 0644);
+    int out_file = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
     if (out_file == -1) {
         err();
     }
