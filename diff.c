@@ -73,7 +73,7 @@ char *apply_patch(char *arr, size_t arr_length, Patch *p, size_t *new_size) {
 	int length = arr_length;
 
 	for (int i = 0; i < p->memory_size/sizeof(Point); i++) {
-		printf("type: %d\n", p->pts[i].type);
+		//printf("type: %d\n", p->pts[i].type);
 		if (p->pts[i].type == INSERT_TYPE) length++;
 		if (p->pts[i].type == DELETE_TYPE) length--;
 	}
