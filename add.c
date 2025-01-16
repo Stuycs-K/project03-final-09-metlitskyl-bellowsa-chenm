@@ -1,5 +1,9 @@
+#include "diff.h" // todo, make h file for matthew
 #include "patch.h"
 #include "utils.h"
+#include <stdlib.h>
+
+char *build_str(int max_commit_number, char *commit_folder, char *filename);
 int main(int argc, char *argv[]) {
     char tracked_dir[] = "dit_test_dir/";
 
@@ -136,7 +140,7 @@ int main(int argc, char *argv[]) {
         printf("Read file to buffer str: |%s|\n", str);
         close(in_file);
 
-        Patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), str); // do not do strlen() + 1 bc we want to exclude null byte
+        Patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), (Point *)str); // do not do strlen() + 1 bc we want to exclude null byte
         visualize_patch(mypatch);
 
         //
@@ -151,6 +155,14 @@ int main(int argc, char *argv[]) {
         printf("\nNeed to build current file in memory!\n");
 
         char *built = build_str(max_commit_number, commit_folder, filename);
+
+        printf("Built str!\n");
+        printf("STR: |%s|\n", built);
+
+
+        // NOW COMPARE
+
+        
     }
 }
 
@@ -193,8 +205,15 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
                 printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
                 // apply patch STRING version (no files modified!)
                 if (p->mode == MODE_MODIFY) { //
-                    // apply patch BUT only do it to string in memory (not the file)
-                    // call matthew func
+                                              // apply patch BUT only do it to string in memory (not the file)
+                                              // call matthew func and apply!
+                    printf("About to apply diff!\n ");
+                    size_t new_size;
+                    char *applied_patch = apply_patch(str, strlen(str), p, &new_size);
+
+                    printf("after applying patch: |%s|\n", applied_patch);
+
+                    free(applied_patch);
                 }
                 if (p->mode == MODE_TOUCH) {
                     free(str);
@@ -206,6 +225,7 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
                     str = calloc(1, sizeof(char)); // this is byte array not str so not str funcs
                 }
             }
+            free(p);
         }
         closedir(commit_dir);
     }
