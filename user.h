@@ -7,6 +7,7 @@ struct ft_user{
     int sound;
 };
 
+// set up user
 int new_ft_user(char * name, int sound, struct ft_user * user);
 
 //create a new config_dir for a client if it does not exist
