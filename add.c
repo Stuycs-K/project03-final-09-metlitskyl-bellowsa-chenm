@@ -168,6 +168,7 @@ int main(int argc, char *argv[]) {
         char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
         strcat(save_patch_to_saving_folder_path, staging_folder);
         strcat(save_patch_to_saving_folder_path, patch_name);
+        // printf("Trying to write patch to |%s|...\n", save_patch_to_saving_folder_path);
         write_patch(save_patch_to_saving_folder_path, p_diff);
 
         printf("Wrote patch to : |%s|\n", save_patch_to_saving_folder_path);

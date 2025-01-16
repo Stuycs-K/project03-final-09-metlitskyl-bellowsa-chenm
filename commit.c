@@ -52,7 +52,7 @@ void commit(char *tracked_dir) {
         }
 
         // make a new empty staging folder
-        int mk_status = mkdir(staging_folder, 0644);
+        int mk_status = mkdir(staging_folder, 0755);
         if (mk_status == -1) {
             err();
         }
