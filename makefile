@@ -1,4 +1,4 @@
-compile: dit server download commit clone add push client
+compile: dit server download commit clone add push client build
 
 utils.o: utils.c
 	gcc -c -g utils.c
@@ -50,17 +50,23 @@ patch: patch.o utils.o
 patch.o: patch.c utils.h
 	gcc -c -g patch.c
 # add
-add.o: add.c utils.h patch.h diff.h
+add.o: add.c utils.h patch.h diff.h build.h
 	@gcc -c -g add.c
 
-add: patch.o utils.o diff.o add.o
-	@gcc -o add -g add.o utils.o patch.o diff.o
+add: patch.o utils.o diff.o add.o build.o
+	@gcc -o add -g add.o utils.o patch.o diff.o build.o
 #commit
 commit.o: commit.c utils.h patch.h diff.h
 	@gcc -c -g commit.c
 
 commit: patch.o utils.o diff.o commit.o
 	@gcc -o commit -g commit.o utils.o patch.o diff.o
+#build
+build.o: build.c utils.h patch.h diff.h
+	@gcc -c -g build.c
+
+build: patch.o utils.o diff.o build.o
+	@gcc -o build -g build.o utils.o patch.o diff.o
 # push
 push: push.o utils.o
 	gcc -o push -g push.o utils.o

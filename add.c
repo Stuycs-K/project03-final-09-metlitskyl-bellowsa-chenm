@@ -1,9 +1,8 @@
+#include "build.h"
 #include "diff.h" // todo, make h file for matthew
 #include "patch.h"
 #include "utils.h"
 #include <stdlib.h>
-
-char *build_str(int max_commit_number, char *commit_folder, char *filename);
 
 int main(int argc, char *argv[]) {
     char tracked_dir[] = "dit_test_dir/";
@@ -180,67 +179,4 @@ int main(int argc, char *argv[]) {
         // char *applied_patch = apply_patch(built, strlen(built), verify_patch, &new_size);
         // printf("after applying patch: |%s|\n", applied_patch);
     }
-}
-
-char *build_str(int max_commit_number, char *commit_folder, char *filename) { // regular filename NOT filepath
-    char *str = calloc(1, sizeof(char));
-    for (int i = 0; i <= max_commit_number; i++) {
-        char specific_commit_folder[MAX_FILEPATH] = "";
-
-        char folder_name_str[50] = "";
-        sprintf(folder_name_str, "%d", i);
-
-        strcat(specific_commit_folder, commit_folder);
-        strcat(specific_commit_folder, folder_name_str);
-
-        // printf("Specific commit folder: |%s|\n", specific_commit_folder);
-        // open dir and apply every patch
-        DIR *commit_dir;
-        commit_dir = opendir(specific_commit_folder);
-        if (commit_dir == 0) {
-            err();
-        }
-        struct dirent *diff_entry = NULL;
-        // printf("Directories: \n");
-        while ((diff_entry = readdir(commit_dir))) {
-            if (diff_entry->d_type != DT_REG) {
-                continue;
-            }
-            if (strcmp(diff_entry->d_name, ".") == 0 || strcmp(diff_entry->d_name, "..") == 0) {
-                continue;
-            }
-
-            char patch_full_path[MAX_FILEPATH] = "";
-            sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
-
-            // patch name doesn't neccesarily have to be the file name (in case dups/nested)
-            Patch *p = read_patch(patch_full_path);
-
-            if (strcmp(p->filepath, filename) == 0) { // just compare filenames, not paths to it
-                // printf("THIS PATCH MATCHES MY AFFECTED FILE! need to apply in mem\n");
-                // apply patch STRING version (no files modified!)
-                if (p->mode == MODE_MODIFY) {
-                    size_t new_size;
-                    char *applied_patch = apply_patch(str, strlen(str), p, &new_size);
-
-                    // printf("after applying patch: |%s|\n", applied_patch);
-
-                    free(str);
-                    str = applied_patch;
-                }
-                if (p->mode == MODE_TOUCH) {
-                    free(str);
-                    str = calloc(p->memory_size + 1, sizeof(char));
-                    memmove(str, p->pts, p->memory_size);
-                }
-                if (p->mode == MODE_REMOVE) {
-                    free(str);
-                    str = calloc(1, sizeof(char)); // this is byte array not str so not str funcs
-                }
-            }
-            free(p);
-        }
-        closedir(commit_dir);
-    }
-    return str;
 }
