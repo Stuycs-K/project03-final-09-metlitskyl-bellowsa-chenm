@@ -15,6 +15,7 @@ patch
 .vscode
 client
 ./test
+
 .nfs*
 # Prerequisites
 *.d

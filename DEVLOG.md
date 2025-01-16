@@ -66,6 +66,10 @@ time 1.5hr
 sound system plays sound effects 
 time: 30min
 
+### 2024-01-14 - added user customization options to play sound
+user customization
+time: 30min
+
 ## Lenny
 
 ### 2024-01-06 - Discussion and choosing of project theme, structure with @Abel and @Matthew
@@ -103,6 +107,14 @@ rm patch removes a file, errors if does not exist
 TODO: Modify patch DELETIONS need to also be implemented. Same logic/test case
 abt 1h
 
+# 2024-01-13 - Begin dit add & dit build
+- Make touch patches create file with CONTENTS
+- Build structure of .dit folder (/commits/0, /commits/1, /commits/2 etc )
+- When adding (proposing a stage) a file, see if it any previous commits have touchd this file
+- if so, current commit is modification type; begin to build old version of file in memory to be able to compare current version to to gen NEW mod commit
+- if not, generate new touch commit
+abt 4h
+
 ## Matthew
 
 ### 2024-01-06 - Planning
@@ -129,6 +141,16 @@ Still working on tracking the edits
 ### 2024-01-10 - Refining Diff
 Using debug statements to figure out how to backtrack the changes to file
 40min
+
+### 2024-01-11 to 2024-01-12 - Tracing point updates
+Figured out how to properly backtrack edits
+Reformatted how patches are going to be stored/handled
+1h
+
+### 2024-01-13 - Applying point updates
+Wrote apply_patch which will apply a modify patch to a string
+Did testing to verify it works
+1h
 
 ## EXAMPLE
 
