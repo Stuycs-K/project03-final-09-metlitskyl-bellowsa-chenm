@@ -66,6 +66,10 @@ time 1.5hr
 sound system plays sound effects 
 time: 30min
 
+### 2024-01-14 - added user customization options to play sound
+user customization
+time: 30min
+
 ## Lenny
 
 ### 2024-01-06 - Discussion and choosing of project theme, structure with @Abel and @Matthew
