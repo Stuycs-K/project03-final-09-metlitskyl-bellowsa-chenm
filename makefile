@@ -57,11 +57,11 @@ patch: patch.o utils.o
 patch.o: patch.c utils.h
 	gcc -c -g patch.c
 # add
-add: add.o patch.o utils.o
-	gcc -o add -g add.o utils.o patch.o
+add.o: add.c utils.h patch.h diff.h
+	@gcc -c -g add.c
 
-add.o: add.c utils.h patch.h
-	gcc -c -g add.c
+add: patch.o utils.o diff.o add.o
+	@gcc -o add -g add.o utils.o patch.o diff.o
 # push
 push: push.o utils.o
 	gcc -o push -g push.o utils.o
