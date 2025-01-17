@@ -20,8 +20,11 @@ Explain what is this project.
   
 ### Instructions:
 
-How does the user install/compile/run the program.
-How does the user interact with this program?
+build with make build
+
+run server with ./server
+
+alias dit if you would like
 
 
 
