@@ -25,13 +25,7 @@
 
 #include "sound.h"
 
-int main(int argc, char * argv[]){
-    
-
-    if (argc < 2){
-        perror("try using {pgrm name} {download/push/init}");
-        return 1;
-    }
+int client(int argc, char * argv[]){
 
     char path_to_programdir[1024];
 
@@ -53,7 +47,7 @@ int main(int argc, char * argv[]){
     char repo_target[1050];
 
     get_repo_name_from_cwd(repo_name, sizeof(repo_name), repo_name_dit, repo_target);
-  
+
     if(made_new_user){
         struct ft_init init_usr;
         new_ft_init(TR_AINIT, "", &user, &init_usr);
