@@ -4,15 +4,7 @@
 #include "utils.h"
 #include <stdlib.h>
 
-int main(int argc, char *argv[]) {
-    char tracked_dir[] = "dit_test_dir/";
-
-    if (argc < 2) {
-        printf("You must specify the file you want to dit add.\n");
-        exit(1);
-    }
-
-    char *filename = argv[1];
+void add(char *tracked_dir, char *filename) {
     char filepath[MAX_FILEPATH] = "";
     strcat(filepath, tracked_dir);
     strcat(filepath, filename);
@@ -156,7 +148,7 @@ int main(int argc, char *argv[]) {
         // are there changes?
         if (p_diff->memory_size == 0) {
             printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
-            return 0;
+            return;
         }
         printf("THERE ARE CHANGES!\n");
 
@@ -179,4 +171,16 @@ int main(int argc, char *argv[]) {
         // char *applied_patch = apply_patch(built, strlen(built), verify_patch, &new_size);
         // printf("after applying patch: |%s|\n", applied_patch);
     }
+}
+
+int main(int argc, char *argv[]) {
+    char tracked_dir[] = "dit_test_dir/";
+
+    if (argc < 2) {
+        printf("You must specify the file you want to dit add.\n");
+        exit(1);
+    }
+
+    add(tracked_dir, argv[1]);
+    return 0;
 }
