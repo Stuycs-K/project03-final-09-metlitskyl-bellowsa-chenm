@@ -6,20 +6,25 @@
 
 #include "client_module.h"
 
+#define VERSION "v1.0"
+
 void print_usage(){
-    printf("usage: dit <command> [<args>]\n\n");
-    printf("These are common dit commands used in various situations:\n\n");
-    printf("create a repo to push to: \n");
-    printf("    init\n\n");
+    printf("usage: dit <command> [<args>] version: " VERSION "\n\n"
 
-    printf("remote (pull and push files from server): \n");
-    printf("    download\n");
-    printf("    push\n\n");
+           "These are common dit commands used in various situations:\n\n"
 
-    printf("version control: \n");
-    printf("    add: creates patch for specific file in staging folder\n");
-    printf("    commit: renames staging folder to commit id\n");
-    printf("    build: takes already downloaded .dit and builds files\n\n");
+           "create a repo to push to: \n"
+           "    init\n\n"
+
+           "remote (pull and push files from server): \n"
+           "    push\n\n"
+
+           "version control: \n"
+           "    add: creates patch for specific file in staging folder\n"
+           "    commit: renames staging folder to commit id\n"
+           "    build: takes already downloaded .dit and builds files\n\n"
+           
+           );
 
 }
 
