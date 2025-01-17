@@ -92,6 +92,9 @@ int server_action(int new_socket){
 int main(int argc, char const* argv[]){
     signal(SIGCHLD, sighandler); //set SIGCHILD to reaper...
 
+    //if the server data dir is not already created, make it
+    mkdir(SERVER_DATA,0744);
+
     //set up server listening ...
     int server_fd = setup_server();
     
