@@ -1,4 +1,5 @@
 #include "build.h"
+#include "add.h"
 #include "diff.h" // todo, make h file for matthew
 #include "patch.h"
 #include "utils.h"
@@ -173,14 +174,14 @@ void add(char *tracked_dir, char *filename) {
     }
 }
 
-int main(int argc, char *argv[]) {
-    char tracked_dir[] = "dit_test_dir/";
+// int main(int argc, char *argv[]) {
+//     char tracked_dir[] = "dit_test_dir/";
 
-    if (argc < 2) {
-        printf("You must specify the file you want to dit add.\n");
-        exit(1);
-    }
+//     if (argc < 2) {
+//         printf("You must specify the file you want to dit add.\n");
+//         exit(1);
+//     }
 
-    add(tracked_dir, argv[1]);
-    return 0;
-}
+//     add(tracked_dir, argv[1]);
+//     return 0;
+// }

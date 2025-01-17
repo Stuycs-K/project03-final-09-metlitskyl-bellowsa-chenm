@@ -176,6 +176,6 @@ void build(char *tracked_dir) {
     // for every file detected:
 }
 
-int main() {
-    build("dit_test_dir/");
-}
+// int main() {
+//     build("dit_test_dir/");
+// }

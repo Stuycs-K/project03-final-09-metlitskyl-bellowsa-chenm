@@ -22,10 +22,10 @@ client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
 	gcc -c -g client.c
 
 # dit
-dit: dit.o utils.o client_module.o
-	gcc -o dit dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o
+dit: dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o
+	gcc -o dit dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o
 
-dit.o: dit.c utils.h client_module.h
+dit.o: dit.c utils.h client_module.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h
 	gcc -c -g dit.c 
 
 client_module.o: client_module.c utils.h file_transfer.h networking.h user.h sound.h
@@ -53,19 +53,19 @@ patch: patch.o utils.o
 patch.o: patch.c utils.h
 	gcc -c -g patch.c
 # add
-add.o: add.c utils.h patch.h diff.h build.h
+add.o: add.c utils.h patch.h diff.h build.h add.h
 	@gcc -c -g add.c
 
-add: patch.o utils.o diff.o add.o build.o
+add: patch.o utils.o diff.o add.o build.o 
 	@gcc -o add -g add.o utils.o patch.o diff.o build.o
 #commit
-commit.o: commit.c utils.h patch.h diff.h
+commit.o: commit.c utils.h patch.h diff.h commit.h
 	@gcc -c -g commit.c
 
 commit: patch.o utils.o diff.o commit.o
 	@gcc -o commit -g commit.o utils.o patch.o diff.o
 #build
-build.o: build.c utils.h patch.h diff.h
+build.o: build.c utils.h patch.h diff.h build.h
 	@gcc -c -g build.c
 
 build: patch.o utils.o diff.o build.o

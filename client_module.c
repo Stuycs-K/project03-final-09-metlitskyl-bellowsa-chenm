@@ -114,6 +114,13 @@ int client(int argc, char * argv[]){
         int r = mkdir(".dit",0744);
         v_err(r, "err making .dit dir...", 0);
 
+        r = mkdir(".dit/staging",0744);
+        v_err(r, "err making staging dir...", 0);
+
+        r = mkdir(".dit/commits",0744);
+        v_err(r, "err making commits dir...", 0);
+
+
         //kill the mpg123 if sound is on
         if(user.sound){
             kill(kidid, SIGKILL);

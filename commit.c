@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "commit.h"
 
 void commit(char *tracked_dir) {
 
@@ -63,6 +64,6 @@ void commit(char *tracked_dir) {
     }
 }
 
-int main() {
-    commit("dit_test_dir/");
-}
+// int main() {
+//     commit("dit_test_dir/");
+// }

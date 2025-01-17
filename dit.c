@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 #include "client_module.h"
+#include "build.h"
+#include "add.h"
+#include "commit.h"
 
 #define VERSION "v1.0"
 
@@ -28,22 +31,6 @@ void print_usage(){
 
 }
 
-#define REMOTE 0
-#define VERSION 1
-#define CMD_NOT_FOUND 2
-
-int what_related(char * cmd){
-    if(!strcmp(cmd, "download") ||
-       !strcmp(cmd, "push") ||
-       !strcmp(cmd, "init")){
-
-        return REMOTE;
-    }
-
-    return CMD_NOT_FOUND;
-    //continue building this out
-}
-
 int main(int argc, char * argv[]){
     if(argc == 1){
         print_usage();
@@ -52,16 +39,31 @@ int main(int argc, char * argv[]){
 
     char * cmd = argv[1];
 
-    int category = what_related(cmd);
+  
 
-    if (category == CMD_NOT_FOUND){
-        perror("cmd not found :(");
-        exit(1);
-    }
 
-    if( category == REMOTE ){
+    if( !strcmp(cmd, "download") ||
+        !strcmp(cmd, "push") ||
+        !strcmp(cmd, "init") ){
         client(argc, argv);
+        exit(0);
     }
+
+    if(!strcmp(argv[1], "build")){
+        build("./");
+        exit(0);
+    }
+    if(!strcmp(argv[1], "add")){
+        add("./", argv[2]);
+        exit(0);
+    }
+    if(!strcmp(argv[1], "commit")){
+        commit("./");
+        exit(0);
+    }
+    
+    printf("cmd not found :(\n");
+    exit(1);
     
     
 }
