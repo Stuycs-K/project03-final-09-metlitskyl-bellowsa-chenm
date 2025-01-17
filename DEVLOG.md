@@ -66,9 +66,13 @@ time 1.5hr
 sound system plays sound effects 
 time: 30min
 
-### 2024-01-14 - added user customization options to play sound
+### 2024-01-15 - added user customization options to play sound
 user customization
 commenting
+time: 45min
+
+### 2024-01-16 - begining dit merge
+dit client works
 time: 45min
 
 ## Lenny
