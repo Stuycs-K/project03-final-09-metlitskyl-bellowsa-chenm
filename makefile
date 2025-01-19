@@ -71,11 +71,11 @@ commit.o: commit.c utils.h patch.h diff.h commit.h
 commit: patch.o utils.o diff.o commit.o
 	@gcc -o commit -g commit.o utils.o patch.o diff.o
 #build
-build.o: build.c utils.h patch.h diff.h build.h
+build.o: build.c utils.h patch.h diff.h build.h status.h
 	@gcc -c -g build.c
 
-build: patch.o utils.o diff.o build.o
-	@gcc -o build -g build.o utils.o patch.o diff.o
+build: patch.o utils.o diff.o build.o status.o
+	@gcc -o build -g build.o utils.o patch.o diff.o status.o
 #status
 status.o: status.c utils.h patch.h diff.h status.h
 	@gcc -c -g status.c

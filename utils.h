@@ -80,4 +80,7 @@ struct client_session{
 };
 
 void new_client_session(char ** argv, struct client_session * cs);
+
+#define MAX_FILES 50000
+
 #endif
