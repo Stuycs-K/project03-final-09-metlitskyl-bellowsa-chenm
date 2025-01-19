@@ -22,10 +22,10 @@ client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
 	gcc -c -g client.c
 
 # dit
-dit: dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o download.o push.o init.o
-	gcc -o dit dit.o utils.o client_module.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o download.o push.o init.o
+dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o download.o push.o init.o
+	gcc -o dit dit.o utils.o file_transfer.o networking.o user.o sound.o build.o add.o commit.o diff.o patch.o download.o push.o init.o
 
-dit.o: dit.c utils.h client_module.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h download.h push.h init.h
+dit.o: dit.c utils.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h download.h push.h init.h
 	gcc -c -g dit.c 
 
 download.o: utils.h file_transfer.h networking.h user.h sound.h download.c
@@ -36,9 +36,6 @@ init.o: utils.h file_transfer.h networking.h user.h sound.h init.c
 	
 push.o: utils.h file_transfer.h networking.h user.h sound.h push.c
 	gcc -c -g push.c
-
-client_module.o: client_module.c utils.h file_transfer.h networking.h user.h sound.h
-	gcc -g -c client_module.c 
 
 
 # Server
