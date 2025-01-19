@@ -9,6 +9,7 @@
 #include "add.h"
 #include "commit.h"
 #include "download.h"
+#include "push.h"
 
 #define VERSION "v1.0"
 
@@ -49,6 +50,11 @@ int main(int argc, char * argv[]){
         exit(0);
     }
 
+    if(!strcmp(cmd, "push") ){
+        push(argc, argv);
+        exit(0);
+    }
+    
     if( !strcmp(cmd, "download") ||
         !strcmp(cmd, "push") ||
         !strcmp(cmd, "init") ){
