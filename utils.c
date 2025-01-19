@@ -128,3 +128,22 @@ int get_max_commit_number(char *tracked_dir) {
 
     return max_commit_number;
 }
+
+void new_client_session(char ** argv, struct client_session * cs){
+
+    realpath(argv[0], cs->path_to_programdir);
+    cs->path_to_programdir[strlen(cs->path_to_programdir) - strlen(__FILE__)  + 1] = 0;
+
+    cs->client_fd = setup_client();
+    printf("connected...\n");
+
+    int made_new_user = init_client_config((char *)argv[0], &cs->user);
+
+    get_repo_name_from_cwd(cs->repo_name, sizeof(cs->repo_name), cs->repo_name_dit, cs->repo_target);
+
+    if(made_new_user){
+        struct ft_init init_usr;
+        new_ft_init(TR_AINIT, "", &cs->user, &init_usr);
+        write(cs->client_fd, &init_usr, sizeof(struct ft_init));
+    }
+}

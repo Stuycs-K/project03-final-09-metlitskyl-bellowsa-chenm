@@ -67,4 +67,17 @@ void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_fold
 
 int get_max_commit_number(char *tracked_dir);
 
+
+struct client_session{
+    char path_to_programdir[1024];
+    int client_fd;;
+    struct ft_init init;
+    struct ft_user user;
+
+    char repo_name[512];
+    char repo_name_dit[512];
+    char repo_target[1050];
+};
+
+void new_client_session(char ** argv, struct client_session * cs);
 #endif
