@@ -74,6 +74,15 @@ time: 45min
 ### 2024-01-16 - begining dit merge
 dit client works
 time: 45min
+### 2024-01-17 - merged dit networking with dit version control 
+with mathew and lenny I merged dit networking with version control -> 
+    now dit can do all needed functions
+    all left to do id DOCS + refactoring
+time: 45min
+### 2024-01-19 - refactor and ip
+isolated all functions into their own c/h files
+refactored ip system and user system to allow server customization
+time: 2hr
 
 ## Lenny
 
