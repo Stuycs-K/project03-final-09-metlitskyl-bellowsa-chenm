@@ -34,13 +34,12 @@ First make the dit program by running `make dit`. When complete, you should see 
 
 To configure your user acount run `dit user`. You will be prompted to enter in your username, music preference and the ip address of the server. A `.client_config` containing a file called `user` will be created in the same directory that `dit` is installed in. If your information or choices change, `dit user` will override the previous user configuration.
 
-To make a directory a dit repo, run `dit init`.
+To make a directory a dit repo, run `dit init` inside the repo. This will make a repo on the server and create the nececary .dit directory with a commits and staging folder.
 
-build with make build
+To pull from a repo, cd into the repo and then run either `dit pull` or `dit download && dit build`
 
-run server with ./server
+To push your .dit directory run `dit push`
 
-alias dit if you would like
+To stage a file for commiting run `dit add <file>`
 
-
-
+To commit run `dit commit`
