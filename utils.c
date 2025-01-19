@@ -134,12 +134,22 @@ void new_client_session(char ** argv, struct client_session * cs){
 
     int made_new_user = init_client_config((char *)argv[0], &cs->user, 0);
     
+
     realpath(argv[0], cs->path_to_programdir);
     cs->path_to_programdir[strlen(cs->path_to_programdir) - strlen("dit.c")  + 1] = 0;
 
     cs->client_fd = setup_client(cs->user.ip);
     printf("connected...\n");
 
+    if(made_new_user){
+        printf("creating server user_profile...\n");
+        struct ft_init init_usr;
+        new_ft_init(TR_AINIT, "", &cs->user, &init_usr);
+        write(cs->client_fd, &init_usr, sizeof(struct ft_init));
+    }
+    else{
+        printf("did not create user...\n");
+    }
 
     get_repo_name_from_cwd(cs->repo_name, sizeof(cs->repo_name), cs->repo_name_dit, cs->repo_target);
 

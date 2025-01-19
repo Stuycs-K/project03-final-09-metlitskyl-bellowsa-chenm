@@ -13,6 +13,8 @@
 
 #include "user.h"
 
+#include "file_transfer.h"
+
 #define VERSION "v1.3"
 
 void print_usage(){
@@ -80,7 +82,15 @@ int main(int argc, char * argv[]){
     }
     
     if(!strcmp(cmd, "user")){
-        init_client_config(argv[0],NULL, 1);
+        struct ft_user user;
+        init_client_config(argv[0],&user, 1);
+        printf("creating server user_profile...\n");
+
+        int client_fd = setup_client(user.ip);
+        struct ft_init init_usr;
+        new_ft_init(TR_AINIT, "", &user, &init_usr);
+        write(client_fd, &init_usr, sizeof(struct ft_init));
+
         exit(0);
     }
     printf("cmd not found :(\n");
