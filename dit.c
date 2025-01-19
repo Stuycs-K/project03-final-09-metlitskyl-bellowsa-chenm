@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "client_module.h"
+// #include "client_module.h"
 #include "build.h"
 #include "add.h"
 #include "commit.h"
@@ -43,8 +43,6 @@ int main(int argc, char * argv[]){
 
     char * cmd = argv[1];
 
-  
-
     if( !strcmp(cmd, "download")){
         download(argc, argv);
         exit(0);
@@ -54,25 +52,15 @@ int main(int argc, char * argv[]){
         push(argc, argv);
         exit(0);
     }
-    
-    if( !strcmp(cmd, "download") ||
-        !strcmp(cmd, "push") ||
-        !strcmp(cmd, "init") ){
-        client(argc, argv);
+
+    if(!strcmp(cmd, "init") ){
+        init(argc, argv);
         exit(0);
     }
 
     if(!strcmp(cmd,"pull")){
-        // printf("about to make argv2\n");
-        char * argv2[2];
-        argv2[0] =  argv[0];
-        argv2[1] = calloc(strlen("download")+1,sizeof(char));
-        strcpy(argv2[1], "download");
-        // printf("client\n");
-        client(2, argv2);
-        // printf("build\n");
+        download(argc, argv);
         build("./");
-        free(argv2[1]);
         exit(0);
     }
 
@@ -91,6 +79,4 @@ int main(int argc, char * argv[]){
     
     printf("cmd not found :(\n");
     exit(1);
-    
-    
 }
