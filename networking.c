@@ -65,11 +65,6 @@ int setup_server(){
     int addr_return = getaddrinfo("0.0.0.0", PORT, &hints, &results); 
     v_err(addr_return, "getaddrinfo", 1);
 
-    // for (struct addrinfo * a = results; a != NULL; a = a->ai_next){
-    //     struct in_addr addr = ( (struct sockaddr_in *)(results->ai_addr) )->sin_addr;
-    //     printf("connected socket to %s\n", inet_ntoa(addr));
-    // }
-    // create Socket stream socket
     server_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
     v_err(server_fd, "socket creation err: ", 1);
 
