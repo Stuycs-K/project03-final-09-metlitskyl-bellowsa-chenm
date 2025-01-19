@@ -77,6 +77,7 @@ int init_client_config(char * program_name, struct ft_user * user, int refactor)
 
         close(fd);
 
+        
         made_new_user = 1;
     }
     else{
