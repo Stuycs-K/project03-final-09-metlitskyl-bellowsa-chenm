@@ -11,7 +11,9 @@
 #include "download.h"
 #include "push.h"
 
-#define VERSION "v1.0"
+#include "user.h"
+
+#define VERSION "v1.3"
 
 void print_usage(){
     printf("usage: dit <command> [<args>] version: " VERSION "\n\n"
@@ -77,6 +79,10 @@ int main(int argc, char * argv[]){
         exit(0);
     }
     
+    if(!strcmp(cmd, "user")){
+        init_client_config(argv[0],NULL, 1);
+        exit(0);
+    }
     printf("cmd not found :(\n");
     exit(1);
 }

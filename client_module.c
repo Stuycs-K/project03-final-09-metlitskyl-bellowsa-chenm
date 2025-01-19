@@ -40,7 +40,7 @@ int client(int argc, char * argv[]){
     struct ft_init init;
     struct ft_user user;
 
-    int made_new_user = init_client_config((char *)argv[0], &user);
+    int made_new_user = init_client_config((char *)argv[0], &user, 0);
 
     char repo_name[512];
     char repo_name_dit[512];

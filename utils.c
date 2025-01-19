@@ -132,7 +132,7 @@ int get_max_commit_number(char *tracked_dir) {
 
 void new_client_session(char ** argv, struct client_session * cs){
 
-    int made_new_user = init_client_config((char *)argv[0], &cs->user);
+    int made_new_user = init_client_config((char *)argv[0], &cs->user, 0);
     
     realpath(argv[0], cs->path_to_programdir);
     cs->path_to_programdir[strlen(cs->path_to_programdir) - strlen("dit.c")  + 1] = 0;

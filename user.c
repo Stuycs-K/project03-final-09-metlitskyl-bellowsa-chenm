@@ -16,9 +16,9 @@ int new_ft_user(char * name, int sound, char * ip, struct ft_user * user){
 
 }
 
-int init_client_config(char * program_name, struct ft_user * user){
+int init_client_config(char * program_name, struct ft_user * user, int refactor){
     int made_new_user = 0;
-
+    
     char path[1024];
     realpath(program_name, path);
 
@@ -32,14 +32,16 @@ int init_client_config(char * program_name, struct ft_user * user){
 
 
     strcat(path, "/.client_config");
+
+
     int mkdir_r = mkdir(path, 0744);
     
-    if(mkdir_r != -1){
+    if(mkdir_r != -1 || refactor){
         printf("---------------USER CONFIGURATION-------------------\n");
         printf("created your config dir at %s\n", path);
         strcat(path, "/user");
 
-        int fd = open(path, O_CREAT | O_WRONLY, 0644);
+        int fd = open(path, O_CREAT |O_TRUNC| O_WRONLY, 0644);
         v_err(fd, "could not create usr config file", 1);
         //get username
         char username[1024];
@@ -82,11 +84,13 @@ int init_client_config(char * program_name, struct ft_user * user){
         strcat(path, "/user");
     }
 
-    int fd = open(path, O_RDONLY, 0);
+    if(user){
+        int fd = open(path, O_RDONLY, 0);
 
-    read(fd, user, sizeof(struct ft_user));
+        read(fd, user, sizeof(struct ft_user));
 
-    close(fd);
+        close(fd);
+    }
 
     return made_new_user;
 }
