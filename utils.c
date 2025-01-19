@@ -132,13 +132,14 @@ int get_max_commit_number(char *tracked_dir) {
 
 void new_client_session(char ** argv, struct client_session * cs){
 
+    int made_new_user = init_client_config((char *)argv[0], &cs->user);
+    
     realpath(argv[0], cs->path_to_programdir);
-    cs->path_to_programdir[strlen(cs->path_to_programdir) - strlen(__FILE__)  + 1] = 0;
+    cs->path_to_programdir[strlen(cs->path_to_programdir) - strlen("dit.c")  + 1] = 0;
 
-    cs->client_fd = setup_client();
+    cs->client_fd = setup_client(cs->user.ip);
     printf("connected...\n");
 
-    int made_new_user = init_client_config((char *)argv[0], &cs->user);
 
     get_repo_name_from_cwd(cs->repo_name, sizeof(cs->repo_name), cs->repo_name_dit, cs->repo_target);
 

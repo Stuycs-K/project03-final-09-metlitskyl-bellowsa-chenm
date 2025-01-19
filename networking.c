@@ -16,20 +16,21 @@
 #include <sys/stat.h>
 #include "utils.h"
 #include "networking.h"
-
+#include "user.h"
 #define PORT "9845"
 #define ADDRESS "127.0.0.1"
 
 
 //init client and 
-int setup_client(){
+int setup_client(char * ip){
     struct addrinfo * results;//results is allocated in getaddrinfo
     struct addrinfo hints; 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM; //TCP socket
 
-    int addr_return = getaddrinfo(ADDRESS, PORT, &hints, &results);  //Server sets node to NULL
+    printf("IP: %s\n", ip);
+    int addr_return = getaddrinfo(ip, PORT, &hints, &results);  //Server sets node to NULL
     
     v_err(addr_return, "getaddrinfo", 1);
 

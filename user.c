@@ -9,9 +9,11 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-int new_ft_user(char * name, int sound, struct ft_user * user){
+int new_ft_user(char * name, int sound, char * ip, struct ft_user * user){
     strcpy(user->name, name);
+    strcpy(user->ip, ip);
     user->sound = sound;
+
 }
 
 int init_client_config(char * program_name, struct ft_user * user){
@@ -56,12 +58,20 @@ int init_client_config(char * program_name, struct ft_user * user){
         if(sound_yn == 'Y'){
             sound = 1;
         }
+
+        char ip[256];
+        printf("ip adress of server: ");
+        fflush(stdout);
+        
+        scanf("%s", ip);
+
         printf("--------------------------------------\n\n");
 
 
         struct ft_user user;
-        new_ft_user(username, sound, &user);
+        new_ft_user(username, sound, ip, &user);
 
+        printf("IP %s\n", user.ip);
         write(fd, &user, sizeof(user));
 
         close(fd);
