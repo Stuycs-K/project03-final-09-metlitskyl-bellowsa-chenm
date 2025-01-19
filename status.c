@@ -5,6 +5,23 @@
 
 void status(char *tracked_dir){
     printf("Dit status...\n");
+
+    char dit_folder[MAX_FILEPATH] = "";
+    char commit_folder[MAX_FILEPATH] = "";
+    char staging_folder[MAX_FILEPATH] = "";
+    populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
+    int max_commit_number = get_max_commit_number(tracked_dir);
+
+    char **filenames_in_history = calloc(MAX_FILES, sizeof(char *));
+    int *does_file_still_exist_in_dit_tree = calloc(MAX_FILES, sizeof(int));
+
+    int num_of_files_in_history = get_files_in_tree(max_commit_number, commit_folder, filenames_in_history, does_file_still_exist_in_dit_tree);
+
+    for (int i = 0; i < num_of_files_in_history; i++) {
+        if (!does_file_still_exist_in_dit_tree[i]) {
+            continue; // skip if file got deleted from dit tree
+        }
+    }
 }
 
 int get_files_in_tree(int max_commit_number, char *commit_folder, char **filenames_in_history, int *does_file_still_exist_in_dit_tree){
