@@ -8,6 +8,7 @@
 #include "build.h"
 #include "add.h"
 #include "commit.h"
+#include "download.h"
 
 #define VERSION "v1.0"
 
@@ -43,6 +44,10 @@ int main(int argc, char * argv[]){
 
   
 
+    if( !strcmp(cmd, "download")){
+        download(argc, argv);
+        exit(0);
+    }
 
     if( !strcmp(cmd, "download") ||
         !strcmp(cmd, "push") ||

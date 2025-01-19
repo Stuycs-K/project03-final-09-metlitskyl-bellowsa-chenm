@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "file_transfer.h"
+#include "networking.h"
 #include "user.h"
 #include <dirent.h>
 #include <errno.h>
