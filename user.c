@@ -33,7 +33,6 @@ int init_client_config(char * program_name, struct ft_user * user, int refactor)
 
     strcat(path, "/.client_config");
 
-
     int mkdir_r = mkdir(path, 0744);
     
     if(mkdir_r != -1 || refactor){

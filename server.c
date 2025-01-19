@@ -20,8 +20,6 @@
 
 #include "networking.h"
 
-#define TARGET_DIR "./test_dir"
-
 #define SERVER_DATA "./server_data"
 
 void sighandler(int signo){
