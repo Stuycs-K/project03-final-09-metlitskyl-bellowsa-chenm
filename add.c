@@ -5,6 +5,14 @@
 #include "utils.h"
 #include <stdlib.h>
 
+void make_patch_name_safe(char *patchname){
+    for (int i =0; i < strlen(patchname); i++){
+        if (patchname[i] == '/'){
+            patchname[i] = '_';
+        }
+    }
+}
+
 void add_dir(char *tracked_dir, char *filename){
     printf("DIR ADD: |%s|\n", filename);
     char dit_folder[MAX_FILEPATH] = "";
@@ -38,6 +46,7 @@ void add_dir(char *tracked_dir, char *filename){
             char patch_name[MAX_FILEPATH] = "";
             strcat(patch_name, filenames_in_history[i]);
             strcat(patch_name, ".patch");
+            make_patch_name_safe(patch_name);
 
             char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
             strcat(save_patch_to_saving_folder_path, staging_folder);
@@ -213,12 +222,15 @@ void add(char *tracked_dir, char *filename) {
 
         Patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), (Point *)str); // do not do strlen() + 1 bc we want to exclude null byte
         visualize_patch(mypatch);
-
+        
+        char patch_name[MAX_FILEPATH] = "";
+        strcat(patch_name, filename);
+        strcat(patch_name, ".patch");
+        make_patch_name_safe(patch_name);
         //
         char patch_path[MAX_FILEPATH] = "";
         strcat(patch_path, staging_folder);
-        strcat(patch_path, filename);
-        strcat(patch_path, ".patch");
+        strcat(patch_path, patch_name);
 
         printf("PATCH PATH: |%s|\n", patch_path);
         write_patch(patch_path, mypatch);
@@ -263,6 +275,7 @@ void add(char *tracked_dir, char *filename) {
         char patch_name[MAX_FILEPATH] = "";
         strcat(patch_name, filename);
         strcat(patch_name, ".patch");
+        make_patch_name_safe(patch_name);
 
         char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
         strcat(save_patch_to_saving_folder_path, staging_folder);
