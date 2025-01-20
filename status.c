@@ -124,27 +124,39 @@ int get_files_in_tree(int max_commit_number, char *commit_folder, char **filenam
 
             // p-> filepath is just the name of the file inside the tracked dir alr
             int index_in_filename_list = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, p->filepath);
-            if (p->mode == MODE_REMOVE) {
-                // for a remove patch to exist, means previous commit must have added it, so just delete
-                does_file_still_exist_in_dit_tree[num_of_files_in_history] = 0;
-                continue;
-            }
-
             if (p->mode == MODE_MODIFY) {
                 // irrelevant to whether the file still exists or not;
                 continue;
             }
-            // must be p->mode == MODE_MODIFY here
+
+            int index_to_mod = index_in_filename_list;
+
             if (index_in_filename_list == -1) {
                 filenames_in_history[num_of_files_in_history] = calloc(strlen(p->filepath) + 1, sizeof(char));
                 strcpy(filenames_in_history[num_of_files_in_history], p->filepath);
-                does_file_still_exist_in_dit_tree[num_of_files_in_history] = 1;
-                // printf("Marking file |%s| as existing (val = %d)...\n", filenames_in_history[num_of_files_in_history], does_file_still_exist_in_dit_tree[num_of_files_in_history]);
-                num_of_files_in_history = num_of_files_in_history + 1;
+                index_to_mod = num_of_files_in_history;
+                num_of_files_in_history++;
+            }
+
+            if (p->mode == MODE_REMOVE) {
+                does_file_still_exist_in_dit_tree[index_to_mod] = 0;
+                continue;
+            }
+
+            if (p->mode == MODE_TOUCH) {
+                does_file_still_exist_in_dit_tree[index_to_mod] = 1;
+                continue;
             }
         }
         closedir(commit_dir);
     }
+
+    // printf("Visualizing get_files_in_tree...\n");
+    // for (int i = 0; i < MAX_FILES; i++){
+    //     printf("(%s, %d) ", filenames_in_history[i], does_file_still_exist_in_dit_tree[i]);
+        
+    // }
+    // printf("\n");
 
     return num_of_files_in_history;
 }
