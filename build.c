@@ -88,6 +88,8 @@ void build(char *tracked_dir) {
         char *built = build_str(max_commit_number, commit_folder, filenames_in_history[i]);
         printf("Built str: |%s|\n", built);
 
+        create_missing_dirs_to_place_file(tracked_dir, filenames_in_history[i]);
+
         char full_path_to_file[MAX_FILEPATH] = "";
         strcat(full_path_to_file, tracked_dir);
         strcat(full_path_to_file, filenames_in_history[i]);
@@ -108,6 +110,36 @@ void build(char *tracked_dir) {
     // for every file detected:
 }
 
-// int main() {
-//     build("dit_test_dir/");
-// }
+void create_missing_dirs_to_place_file(char* tracked_dir, char* rel_filepath){
+    char *clone = calloc(strlen(rel_filepath) + 1, sizeof(char));
+    strcpy(clone, rel_filepath);
+    char *front = clone;
+    char *token;
+    int c = 0;
+
+    char **each_path_of_filename = calloc(MAX_FILEPATH, sizeof(char *));
+
+    char dir_creation_path[MAX_FILEPATH] = "";
+    strcat(dir_creation_path, tracked_dir);
+
+    while ((token = strsep(&front, "/")) != NULL) {
+        strcat(dir_creation_path, token);
+        strcat(dir_creation_path, "/");
+
+        each_path_of_filename[c] = calloc(strlen(dir_creation_path) + 1, sizeof(char));
+        strcpy(each_path_of_filename[c], dir_creation_path);
+
+        c++;
+    }
+
+    for (int i = 0; i < c - 1; i++){
+        // only create dirs if they do not exist
+        if (access(each_path_of_filename[i], F_OK) != 0) {
+            // printf("PATH |%s| does not exist, need to create dir...\n", each_path_of_filename[i]);
+            int mk_status = mkdir(each_path_of_filename[i], 0744);
+            if (mk_status == -1){
+                err();
+            }
+        }
+    }
+}
