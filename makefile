@@ -5,53 +5,47 @@ compile: dit server
 
 #dit
 dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
-	gcc -o dit dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
+	@gcc -o dit -g dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
 # Server
 server: server.o utils.o file_transfer.o networking.o user.o
-	gcc -o server -g server.o utils.o file_transfer.o networking.o user.o
+	@gcc -o server -g server.o utils.o file_transfer.o networking.o user.o
 
 #O FILES
 utils.o: utils.c
-	gcc -c -g utils.c
+	@gcc -c -g utils.c
 
 sound.o: sound.c
-	gcc -c -g sound.c
+	@gcc -c -g sound.c
 
 file_transfer.o: file_transfer.c
-	gcc -c file_transfer.c
+	@gcc -c -g file_transfer.c
 
 networking.o: networking.c networking.h utils.h 
-	gcc -c networking.c
+	@gcc -c -g networking.c
 
 user.o: user.c
-	gcc -c user.c
-
-client: client.o utils.o file_transfer.o networking.o user.o sound.o
-	gcc -o client -g client.o utils.o file_transfer.o networking.o user.o sound.o
-
-client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
-	gcc -c -g client.c
+	@gcc -c -g user.c
 
 dit.o: dit.c utils.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h download.h push.h init.h status.h
-	gcc -c -g dit.c 
+	@gcc -c -g dit.c 
 
 download.o: utils.h file_transfer.h networking.h user.h sound.h download.c
-	gcc -c -g download.c
+	@gcc -c -g download.c
 
 init.o: utils.h file_transfer.h networking.h user.h sound.h init.c
-	gcc -c -g init.c
+	@gcc -c -g init.c
 	
 push.o: utils.h file_transfer.h networking.h user.h sound.h push.c
-	gcc -c -g push.c
+	@gcc -c -g push.c
 
 server.o: server.c utils.h file_transfer.h networking.h user.h
-	gcc -c -g server.c
+	@gcc -c -g server.c
 
 clone.o: clone.c utils.h
-	gcc -c -g clone.c
+	@gcc -c -g clone.c
 
 patch.o: patch.c utils.h
-	gcc -c -g patch.c
+	@gcc -c -g patch.c
 
 add.o: add.c utils.h patch.h diff.h build.h add.h
 	@gcc -c -g add.c
