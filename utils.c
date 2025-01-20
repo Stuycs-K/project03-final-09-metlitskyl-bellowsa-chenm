@@ -172,6 +172,13 @@ struct file_node * new_file_node(char * name, struct file_node * next){
     new->next = next;
 }
 
+void free_file_node_list(struct file_node * root){
+    if(root){
+        free_file_node_list(root->next);
+        free(root);
+    }
+}
+
 struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
     DIR * d;
     d = opendir(dir_path);
