@@ -71,15 +71,19 @@ void status(char *tracked_dir){
     }
 
     // check to see for additional files to see if touch patch is needed
-}
+    char **filenames_in_tracked_dir = calloc(MAX_FILES, sizeof(char *));
 
-int find_index_in_filename_list(char **filename_list, int max_num_files, char *search) {
-    for (int i = 0; i < max_num_files; i++) {
-        if (strcmp(filename_list[i], search) == 0) {
-            return i;
+    int num_of_files_in_tracked_dir = get_all_files_in_dir_and_subdirs(tracked_dir, filenames_in_tracked_dir);
+
+    for (int i = 0; i < num_of_files_in_tracked_dir; i++){
+        int try_to_find_index_in_history = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, filenames_in_tracked_dir[i]);
+        if (try_to_find_index_in_history > -1 && does_file_still_exist_in_dit_tree[try_to_find_index_in_history]){
+            // file DOES exist in git tree
+            // printf("File |%s| DOES exist in git tree... ignoring...\n", filenames_in_tracked_dir[i]);
+            continue;
         }
+        printf("File |%s| has been added.\n", filenames_in_tracked_dir[i]);
     }
-    return -1;
 }
 
 int get_files_in_tree(int max_commit_number, char *commit_folder, char **filenames_in_history, int *does_file_still_exist_in_dit_tree){

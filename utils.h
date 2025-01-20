@@ -83,4 +83,7 @@ void new_client_session(char ** argv, struct client_session * cs);
 
 #define MAX_FILES 50000
 
+int get_all_files_in_dir_and_subdirs(char* dir_path, char** filenames_in_tracked_dir);
+
+int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search);
 #endif
