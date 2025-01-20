@@ -81,9 +81,22 @@ struct client_session{
 
 void new_client_session(char ** argv, struct client_session * cs);
 
+// file Node recursive directory system
+typedef struct file_node {
+    char name[1024];
+    struct file_node * next;
+} FileNode;
+
+FileNode * new_file_node(char * name, FileNode * next);
+void free_file_node_list(FileNode * root);
+FileNode * get_all_in_dir(char * dir_path, FileNode * root);
+void print_file_list(FileNode * root);
+
+
+//depricated system
 #define MAX_FILES 50000
-
 int get_all_files_in_dir_and_subdirs(char* dir_path, char** filenames_in_tracked_dir);
-
 int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search);
+
+
 #endif

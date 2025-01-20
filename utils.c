@@ -12,6 +12,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// verbose err checking function
+// checks if sigerr is equal to -1 (err code)
+// if yes it perrors the message (which also echecks errno)
+// then it exits if _exit is set to true.
 int v_err(int sigerr, char *msg, int _exit) {
     if (sigerr < 0) {
         perror(msg);
@@ -22,11 +26,13 @@ int v_err(int sigerr, char *msg, int _exit) {
     return sigerr;
 }
 
+// less verbose version of v_err for easier implementation
 void err() {
     printf("ERROR %d: %s\n", errno, strerror(errno));
     exit(errno);
 }
 
+//get the path to the repo and store it in target. 
 int get_repo_path(char *server_root, struct ft_init *init, char *target) {
     char *username = init->user.name;
     char *repo_name = init->repo_name;
@@ -34,6 +40,8 @@ int get_repo_path(char *server_root, struct ft_init *init, char *target) {
     sprintf(target, "%s/%s/%s", server_root, username, repo_name);
 }
 
+// this gets some information about the repo based on an assumption that you are in the repo
+// it has some depricated fetures but is still used in dit v1.3
 int get_repo_name_from_cwd(char *repo_name, int repo_name_size, char *repo_name_dit, char *repo_target) {
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
@@ -64,6 +72,9 @@ int get_repo_name_from_cwd(char *repo_name, int repo_name_size, char *repo_name_
     sprintf(repo_name_dit, "./%s/.dit", repo_draft_name);
 }
 
+
+//a get base name for a path function
+//depricated and not used
 int get_base_name(char *path, char *target) {
     printf("\n-------------get base name-----------------\n");
     printf("%s\n", path);
@@ -80,6 +91,7 @@ int get_base_name(char *path, char *target) {
     return 1;
 }
 
+//sets paths to dit_folder, commit_folder, staging_folder
 void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_folder, char *staging_folder) {
     strcat(dit_folder, tracked_dir);
     strcat(dit_folder, ".dit/");
@@ -130,6 +142,8 @@ int get_max_commit_number(char *tracked_dir) {
     return max_commit_number;
 }
 
+// creates a new struct client session that contains the user, the socked fd, and the repo name.
+// on user creation, it inits the user
 void new_client_session(char ** argv, struct client_session * cs){
 
     int made_new_user = init_client_config((char *)argv[0], &cs->user, 0);
@@ -161,25 +175,21 @@ void new_client_session(char ** argv, struct client_session * cs){
 }
 
 
-struct file_node {
-    char name[1024];
-    struct file_node * next;
-};
 
-struct file_node * new_file_node(char * name, struct file_node * next){
-    struct file_node * new = calloc(1, sizeof(struct file_node));
+FileNode * new_file_node(char * name, FileNode * next){
+    FileNode * new = calloc(1, sizeof(FileNode));
     strcpy(new->name, name);
     new->next = next;
 }
 
-void free_file_node_list(struct file_node * root){
+void free_file_node_list(FileNode * root){
     if(root){
         free_file_node_list(root->next);
         free(root);
     }
 }
 
-struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
+FileNode * get_all_in_dir(char * dir_path, FileNode * root){
     DIR * d;
     d = opendir(dir_path);
     if(!d){
@@ -207,28 +217,18 @@ struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
     return root;
 }
 
-void print_file_list(struct file_node * root){
-    for(struct file_node * f = root; f; f=f->next){
+void print_file_list(FileNode * root){
+    for(FileNode * f = root; f; f=f->next){
         printf("%s\n", f->name);
     }
 }
 
 
 // int main(int argc, char ** argv){
-//     struct file_node * root = NULL;
+//     FileNode * root = NULL;
 //     root = get_all_in_dir(argv[1], root);
 //     print_file_list(root);
 // }
-
-int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
-    for (int i = 0; i < num_of_files_in_history; i++) {
-        if (strcmp(filename_list[i], search) == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 
 int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
     for (int i = 0; i < num_of_files_in_history; i++) {
@@ -253,18 +253,18 @@ int find_index_in_filename_list(char **filename_list, int num_of_files_in_histor
 #include <dirent.h>
 
 
-struct file_node {
+FileNode {
     char name[1024];
-    struct file_node * next;
+    FileNode * next;
 };
 
-struct file_node * new_file_node(char * name, struct file_node * next){
-    struct file_node * new = calloc(1, sizeof(struct file_node));
+FileNode * new_file_node(char * name, FileNode * next){
+    FileNode * new = calloc(1, sizeof(FileNode));
     strcpy(new->name, name);
     new->next = next;
 }
 
-struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
+FileNode * get_all_in_dir(char * dir_path, FileNode * root){
     DIR * d;
     d = opendir(dir_path);
     if(!d){
@@ -288,15 +288,15 @@ struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
     return root;
 }
 
-void print_file_list(struct file_node * root){
-    for(struct file_node * f = root; f; f=f->next){
+void print_file_list(FileNode * root){
+    for(FileNode * f = root; f; f=f->next){
         printf("%s\n", f->name);
     }
 }
 
 
 int main(int argc, char ** argv){
-    struct file_node * root = NULL;
+    FileNode * root = NULL;
     root = get_all_in_dir(argv[1], root);
     print_file_list(root);
 }
