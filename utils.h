@@ -68,6 +68,14 @@ void populate_dit_folders(char *tracked_dir, char *dit_folder, char *commit_fold
 int get_max_commit_number(char *tracked_dir);
 
 
+// STRUCT client_session
+// path_to_programdir: max length 1024char path to where dit is located
+// int clinet_fd: fd to talk to server
+// struct ft_init init: init connection struct
+// struct ft_user: user profile
+// char repo_name: name of repo
+// char repo_name_dit: path to .dit
+// char repo_target: ? 
 struct client_session{
     char path_to_programdir[1024];
     int client_fd;;

@@ -48,13 +48,13 @@ int init(int argc, char * argv[]){
 
     // make the .dit directory
     int r = mkdir(".dit",0744);
-    v_err(r, "err making .dit dir...", 0);
+    v_err(r, __FILE__ " : " __LINE__ " err making .dit dir...", 0);
 
     r = mkdir(".dit/staging",0744);
-    v_err(r, "err making staging dir...", 0);
+    v_err(r, __FILE__ " : " __LINE__ " err making staging dir...", 0);
 
     r = mkdir(".dit/commits",0744);
-    v_err(r, "err making commits dir...", 0);
+    v_err(r, __FILE__ " : " __LINE__ " err making commits dir...", 0);
 
 
     //kill the mpg123 if sound is on

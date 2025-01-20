@@ -41,7 +41,7 @@ int init_client_config(char * program_name, struct ft_user * user, int refactor)
         strcat(path, "/user");
 
         int fd = open(path, O_CREAT |O_TRUNC| O_WRONLY, 0644);
-        v_err(fd, "could not create usr config file", 1);
+        v_err(fd, __FILE__ " : " __LINE__ " could not create usr config file", 1);
         //get username
         char username[1024];
         printf("set your username: ");

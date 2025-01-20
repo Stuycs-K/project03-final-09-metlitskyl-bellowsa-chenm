@@ -62,7 +62,7 @@ int server_action(int new_socket){
       // get_repo_path(SERVER_DATA, &init, path);
       sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
       int r = chdir(path);
-      v_err(r, "chdir err", 1);
+      v_err(r, __FILE__ " : " __LINE__ " chdir err", 1);
       printf("serving download from %s\n", path);
 
       
@@ -83,7 +83,7 @@ int server_action(int new_socket){
       printf("RECIEVED REPO INIT REQUEST\n------------------------------------\n\n");
       sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
       int r_mkdir = mkdir(path, 0744);
-      v_err(r_mkdir, "error initing repo, mkdir", 1);
+      v_err(r_mkdir, __FILE__ " : " __LINE__ " error initing repo, mkdir", 1);
   }
 }
 
