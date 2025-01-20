@@ -13,8 +13,9 @@
 #include "revert.h"
 
 #include "user.h"
-
+#include "init.h"
 #include "file_transfer.h"
+#include "networking.h"
 
 #define VERSION "v1.3"
 
