@@ -6,6 +6,7 @@
 
 // #include "client_module.h"
 #include "build.h"
+#include "status.h"
 #include "add.h"
 #include "commit.h"
 #include "download.h"
@@ -78,6 +79,10 @@ int main(int argc, char * argv[]){
     }
     if(!strcmp(cmd, "commit")){
         commit("./");
+        exit(0);
+    }
+    if(!strcmp(cmd, "status")){
+        status("./");
         exit(0);
     }
     
