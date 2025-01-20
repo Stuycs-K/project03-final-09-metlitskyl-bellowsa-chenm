@@ -201,3 +201,12 @@ int find_index_in_filename_list(char **filename_list, int num_of_files_in_histor
     }
     return -1;
 }
+
+int is_directory(char *path) {
+    struct stat statbuf;
+    int stat_status = stat(path, &statbuf);
+    if (stat_status == -1){
+        err();
+    }
+    return S_ISDIR(statbuf.st_mode);
+}

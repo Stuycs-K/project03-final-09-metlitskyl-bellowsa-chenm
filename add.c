@@ -5,6 +5,107 @@
 #include "utils.h"
 #include <stdlib.h>
 
+void add_dir(char *tracked_dir, char *filename){
+    printf("DIR ADD: |%s|\n", filename);
+    char dit_folder[MAX_FILEPATH] = "";
+    char commit_folder[MAX_FILEPATH] = "";
+    char staging_folder[MAX_FILEPATH] = "";
+    populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
+    int max_commit_number = get_max_commit_number(tracked_dir);
+
+    char **filenames_in_history = calloc(MAX_FILES, sizeof(char *));
+    int *does_file_still_exist_in_dit_tree = calloc(MAX_FILES, sizeof(int));
+
+    int num_of_files_in_history = get_files_in_tree(max_commit_number, commit_folder, filenames_in_history, does_file_still_exist_in_dit_tree);
+
+    for (int i = 0; i < num_of_files_in_history; i++) {
+        if (!does_file_still_exist_in_dit_tree[i]) {
+            continue; // skip if file got deleted from dit tree
+        }
+
+        char full_path_to_file[MAX_FILEPATH] = "";
+        strcat(full_path_to_file, tracked_dir);
+        strcat(full_path_to_file, filenames_in_history[i]); 
+
+        if (access(full_path_to_file, F_OK) != 0) {
+            printf("File |%s| has been removed.\n", full_path_to_file);
+            printf("So going to MAKE A REMOVE PATCH\n");
+
+            // TODO: Pass this to dit add because (dit add DELETED_FILE) is supposed to work
+
+            Patch* delete_patch = create_patch(filenames_in_history[i], MODE_REMOVE, 0, NULL);
+
+            char patch_name[MAX_FILEPATH] = "";
+            strcat(patch_name, filenames_in_history[i]);
+            strcat(patch_name, ".patch");
+
+            char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
+            strcat(save_patch_to_saving_folder_path, staging_folder);
+            strcat(save_patch_to_saving_folder_path, patch_name);
+            printf("Trying to write patch to |%s|...\n", save_patch_to_saving_folder_path);
+            write_patch(save_patch_to_saving_folder_path, delete_patch);
+
+            continue;
+        }
+
+        // now see if mod patch needed
+        // printf("Abt to build string...\n");
+        char *built = build_str(max_commit_number, commit_folder, filenames_in_history[i]);
+
+        // printf("\nLast version of file built up from .dit: |%s|\n\n", built);
+
+        int current_file_with_users_changes = open(full_path_to_file, O_RDONLY);
+        if (current_file_with_users_changes == -1) {
+            err();
+        }
+
+        struct stat file_stat;
+        int stat_status = stat(full_path_to_file, &file_stat);
+        if (stat_status == -1) {
+            err();
+        }
+
+        char *file_str = calloc(1, file_stat.st_size + 1);
+
+        int read_status = read(current_file_with_users_changes, file_str, file_stat.st_size);
+        if (read_status == -1) {
+            err();
+        }
+        close(current_file_with_users_changes);
+        // printf("Current file on disk: |%s|\n\n", file_str);
+
+        // NOW COMPARE
+        Patch *p_diff = diff(built, file_str, strlen(built), strlen(file_str));
+        strcpy(p_diff->filepath, filenames_in_history[i]);
+
+        // are there changes?
+        if (p_diff->memory_size == 0) {
+            // printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
+            continue;
+        }
+        printf("File |%s| has been modified.\n", full_path_to_file);
+        printf("So, going to dit add |%s|\n", filenames_in_history[i]);
+        add(tracked_dir, filenames_in_history[i]);
+    }
+
+    // check to see for additional files to see if touch patch is needed
+    char **filenames_in_tracked_dir = calloc(MAX_FILES, sizeof(char *));
+
+    int num_of_files_in_tracked_dir = get_all_files_in_dir_and_subdirs(tracked_dir, filenames_in_tracked_dir); // returns just the relative filenames within tracked_dir, not full path to it
+
+    for (int i = 0; i < num_of_files_in_tracked_dir; i++){
+        int try_to_find_index_in_history = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, filenames_in_tracked_dir[i]);
+        if (try_to_find_index_in_history > -1 && does_file_still_exist_in_dit_tree[try_to_find_index_in_history]){
+            // file DOES exist in git tree
+            // printf("File |%s| DOES exist in git tree... ignoring...\n", filenames_in_tracked_dir[i]);
+            continue;
+        }
+        printf("File |%s%s| has been added.\n", tracked_dir, filenames_in_tracked_dir[i]);
+        printf("So, going to dit add |%s|\n", filenames_in_tracked_dir[i]);
+        add(tracked_dir, filenames_in_tracked_dir[i]);
+    }
+}
+
 void add(char *tracked_dir, char *filename) {
     char filepath[MAX_FILEPATH] = "";
     strcat(filepath, tracked_dir);
@@ -13,6 +114,11 @@ void add(char *tracked_dir, char *filename) {
     if (access(filepath, F_OK) != 0) {
         printf("File at |%s| does not exist.\n", filepath);
         exit(1);
+    }
+
+    if (is_directory(filepath)){
+        add_dir(tracked_dir, filename);
+        return;
     }
 
     char dit_folder[MAX_FILEPATH] = "";
