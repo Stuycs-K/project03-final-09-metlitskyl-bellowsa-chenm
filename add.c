@@ -31,11 +31,17 @@ void add_dir(char *tracked_dir, char *filename){
             continue; // skip if file got deleted from dit tree
         }
 
+        // skip if does not start with file name
+        if (strcmp(filename, ".") != 0 && strncmp(filenames_in_history[i], filename, strlen(filename)) != 0){
+            continue;
+        }
+
         char full_path_to_file[MAX_FILEPATH] = "";
         strcat(full_path_to_file, tracked_dir);
         strcat(full_path_to_file, filenames_in_history[i]); 
 
         if (access(full_path_to_file, F_OK) != 0) {
+            // stage a removal patch
             add(tracked_dir, filenames_in_history[i], 0);
             continue;
         }
@@ -84,6 +90,11 @@ void add_dir(char *tracked_dir, char *filename){
     for(FileNode * f = root; f; f=f->next){
         char *proper_filename = calloc(strlen(f->name) + 1, sizeof(char));
         strcpy(proper_filename, f->name + 3 );
+
+        // skip if does not start with file name
+        if (strcmp(filename, ".") != 0 && strncmp(proper_filename, filename, strlen(filename)) != 0){
+            continue;
+        }
 
         int try_to_find_index_in_history = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, proper_filename);
         if (try_to_find_index_in_history > -1 && does_file_still_exist_in_dit_tree[try_to_find_index_in_history]){
