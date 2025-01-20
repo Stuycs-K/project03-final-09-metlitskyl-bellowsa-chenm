@@ -32,16 +32,16 @@ int setup_client(char * ip){
     printf("IP: %s\n", ip);
     int addr_return = getaddrinfo(ip, PORT, &hints, &results);  //Server sets node to NULL
     
-    v_err(addr_return,  __FILE__ " : " __LINE__ " getaddrinfo", 1);
+    v_err(addr_return,  __FILE__ " : "   " getaddrinfo", 1);
 
 
     //create socket
     int client_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
-    v_err(client_fd, __FILE__ " : " __LINE__ " socket creation err", EXIT);
+    v_err(client_fd, __FILE__ " : "   " socket creation err", EXIT);
 
     //attatch client_fd to server
     int status = connect(client_fd, results->ai_addr, results->ai_addrlen); 
-    v_err(status, __FILE__ " : " __LINE__ " connection err", EXIT);
+    v_err(status, __FILE__ " : "   " connection err", EXIT);
 
     freeaddrinfo(results);
 
@@ -66,7 +66,7 @@ int setup_server(){
     v_err(addr_return, "getaddrinfo", 1);
 
     server_fd = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
-    v_err(server_fd, __FILE__ " : " __LINE__ " socket creation err: ", 1);
+    v_err(server_fd, __FILE__ " : "   " socket creation err: ", 1);
 
     int opt=1;
     v_err(setsockopt(server_fd, SOL_SOCKET,
@@ -74,16 +74,16 @@ int setup_server(){
                    sizeof(opt)),"setsocketopt", 1);
 
     int bind_result = bind(server_fd, results->ai_addr, results->ai_addrlen);
-    v_err(bind_result,__FILE__ " : " __LINE__ " binding socket",1);
+    v_err(bind_result,__FILE__ " : "   " binding socket",1);
         
     //set server_fd to listen and set max number of waiting connections to 3
     int listen_result = listen(server_fd, 3);
-    v_err(listen_result,__FILE__ " : " __LINE__ " listen",1); 
+    v_err(listen_result,__FILE__ " : "   " listen",1); 
     //end server_fd setup
 
     freeaddrinfo(results);
 
-    v_err(server_fd,__FILE__ " : " __LINE__ " accept",1);
+    v_err(server_fd,__FILE__ " : "   " accept",1);
 
     return server_fd;
 }

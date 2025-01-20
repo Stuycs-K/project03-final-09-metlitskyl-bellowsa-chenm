@@ -43,7 +43,7 @@ int recv_full_directory_contents(int recv_fd, char * path){
     getcwd(old_path, sizeof(old_path));
 
     int r = chdir(path);
-    v_err(r, __FILE__ " : " __LINE__ " chdir err", 1);
+    v_err(r, __FILE__ " : "   " chdir err", 1);
 
     char wd[1000];
     
@@ -55,7 +55,7 @@ int recv_full_directory_contents(int recv_fd, char * path){
         memset(&ft, 0, sizeof(struct file_transfer));
 
         int bytes = read(recv_fd, &ft,sizeof(ft));
-        v_err(bytes, __FILE__ " : " __LINE__ " read err", 1);
+        v_err(bytes, __FILE__ " : "   " read err", 1);
 
         if(bytes == 0){
             printf("transmission ended with no bytes left to read...\n");
@@ -89,7 +89,7 @@ int new_file_transfer(char * path, struct dirent * entry, struct file_transfer *
 
         struct stat sb;
         int r = stat(ft->path,&sb);
-        v_err(r, __FILE__ " : " __LINE__ " stat err", 1);
+        v_err(r, __FILE__ " : "   " stat err", 1);
         ft->size = sb.st_size;
     }
     else{
@@ -113,7 +113,7 @@ int send_file_contents(int transmit_fd, struct file_transfer * ft){
 
     //read from file
     while((bytes = read(fd, buffer, sizeof(buffer)))){
-        v_err(bytes, __FILE__ " : " __LINE__ " read err", 1);
+        v_err(bytes, __FILE__ " : "   " read err", 1);
 
         //write the server the bytes
         write(transmit_fd, buffer, bytes);
@@ -152,7 +152,7 @@ int transmit_file(int transmit_fd, char * path, struct dirent * entry){
 
 int recv_file_contents(int recv_fd, struct file_transfer * ft){
     int fd = open(ft->path, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    v_err(fd, __FILE__ " : " __LINE__ " CREAT file failed", 0);
+    v_err(fd, __FILE__ " : "   " CREAT file failed", 0);
     
     int bytes_left = ft->size;
     
@@ -169,7 +169,7 @@ int recv_file_contents(int recv_fd, struct file_transfer * ft){
     //read from server stream
     while( (bytes = read(recv_fd, &buffer, bytes_to_read)) && bytes_left>0){
 
-        v_err( bytes, __FILE__ " : " __LINE__ " write err", 0);
+        v_err( bytes, __FILE__ " : "   " write err", 0);
 
         printf("    recieved %d bytes of %d \n", bytes, ft->size);
         
@@ -197,7 +197,7 @@ int recv_file(int recv_fd, struct file_transfer * ft){
     else if (ft->mode == TR_DIR){
         printf("creating directory: %s\n", ft->path);
         int r = mkdir(ft->path,0744);
-        v_err(r, __FILE__ " : " __LINE__ " mkdir failed", 0);
+        v_err(r, __FILE__ " : "   " mkdir failed", 0);
     }
 
     return 0;
@@ -210,7 +210,7 @@ File contents will also be sent with this fxn.*/
 int tree_transmit(char * path, int transmit_fd){
     DIR * d;
     d = opendir( path );
-    v_err(d==NULL?-1:0, __FILE__ " : " __LINE__ " could not open dir", 1);
+    v_err(d==NULL?-1:0, __FILE__ " : "   " could not open dir", 1);
 
     struct dirent * entry;
     struct stat * stat_buffer = malloc(sizeof(struct stat));
