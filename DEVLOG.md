@@ -168,6 +168,20 @@ Wrote apply_patch which will apply a modify patch to a string
 Did testing to verify it works
 1h
 
+### 2024-01-14 to 2024-01-17 - Working w Group
+Worked with Lenny to incorporate my diff.c code with his add/commit code
+Also fixed a minor bug on my part for diff.c for changes at the front of file
+40m per day
+
+### 2024-01-19 - Reading Lenny's code
+Trying to understand Lenny's code in order to work on revert
+Wrote some of the function
+1h
+
+### 2024-01-20 - Finished Revert
+Completed revert, did some testing as well
+1h
+
 ## EXAMPLE
 
 ### 2024-01-02 - Brief description
