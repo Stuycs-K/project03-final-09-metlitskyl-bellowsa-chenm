@@ -4,8 +4,8 @@ compile: dit server
 # FINAL OBJECTS
 
 #dit
-dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
-	@gcc -o dit -g dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
+dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o revert.o
+	@gcc -o dit -g dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o revert.o
 # Server
 server: server.o utils.o file_transfer.o networking.o user.o
 	@gcc -o server -g server.o utils.o file_transfer.o networking.o user.o
@@ -52,6 +52,9 @@ add.o: add.c utils.h patch.h diff.h build.h add.h status.h
 
 commit.o: commit.c utils.h patch.h diff.h commit.h
 	@gcc -c -g commit.c
+
+revert.o: utils.h diff.h build.h revert.c
+	@gcc -c -g revert.c
 
 build.o: build.c utils.h patch.h diff.h build.h status.h
 	@gcc -c -g build.c

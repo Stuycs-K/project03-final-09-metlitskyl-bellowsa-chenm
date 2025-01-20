@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 // #include "client_module.h"
 #include "build.h"
@@ -11,6 +10,7 @@
 #include "commit.h"
 #include "download.h"
 #include "push.h"
+#include "revert.h"
 
 #include "user.h"
 
@@ -83,6 +83,11 @@ int main(int argc, char * argv[]){
     }
     if(!strcmp(cmd, "status")){
         status("./");
+        exit(0);
+    }
+    
+    if (!strcmp(cmd, "revert")){
+        revert("./", atoi(argv[2]), argv[3]);
         exit(0);
     }
     

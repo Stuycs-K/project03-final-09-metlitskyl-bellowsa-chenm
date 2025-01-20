@@ -110,7 +110,7 @@ void add(char *tracked_dir, char *filename, int shouldCheckIfDeleted) {
     char filepath[MAX_FILEPATH] = "";
     strcat(filepath, tracked_dir);
     strcat(filepath, filename);
-
+    
     char dit_folder[MAX_FILEPATH] = "";
     char commit_folder[MAX_FILEPATH] = "";
     char staging_folder[MAX_FILEPATH] = "";
