@@ -37,8 +37,6 @@ int send_full_directory_contents(int transmit_fd, char * path){
 
 // recieves the full transmition from init of root to end signal
 int recv_full_directory_contents(int recv_fd, char * path){
-
-    printf("RECIVED PATH of %s\n", path);
     char old_path[1000];
     getcwd(old_path, sizeof(old_path));
 
@@ -48,7 +46,6 @@ int recv_full_directory_contents(int recv_fd, char * path){
     char wd[1000];
     
     getcwd(wd, sizeof(wd));
-    printf("CURRENT WD is %s\n\n", wd);
 
     while(1){
         struct file_transfer ft;
@@ -143,7 +140,7 @@ int transmit_file(int transmit_fd, char * path, struct dirent * entry){
     }
 
     if(ft.mode == TR_DIR){
-        printf("sent dir: %s\n", ft.path);
+        printf("sending dir called: %s\n", ft.path);
     }
 
     return 0;
@@ -157,8 +154,7 @@ int recv_file_contents(int recv_fd, struct file_transfer * ft){
     int bytes_left = ft->size;
     
     // init empty buffer and set to 0
-    char buffer[BUFFER_SIZE];
-    memset(buffer, 0, sizeof(buffer));
+    char buffer[BUFFER_SIZE] = "\0";
 
     //init byte return from read
     int bytes;
@@ -210,7 +206,7 @@ File contents will also be sent with this fxn.*/
 int tree_transmit(char * path, int transmit_fd){
     DIR * d;
     d = opendir( path );
-    v_err(d==NULL?-1:0, __FILE__ " : "   " could not open dir", 1);
+    v_err(d==NULL?-1:0, __FILE__ " : " " could not open dir", 1);
 
     struct dirent * entry;
     struct stat * stat_buffer = malloc(sizeof(struct stat));
