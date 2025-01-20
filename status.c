@@ -21,8 +21,6 @@ void status(char *tracked_dir){
             continue; // skip if file got deleted from dit tree
         }
 
-        printf("Checking |%s| for changes...\n", filenames_in_history[i]);
-
         char full_path_to_file[MAX_FILEPATH] = "";
         strcat(full_path_to_file, tracked_dir);
         strcat(full_path_to_file, filenames_in_history[i]); 
@@ -73,7 +71,7 @@ void status(char *tracked_dir){
     // check to see for additional files to see if touch patch is needed
     char **filenames_in_tracked_dir = calloc(MAX_FILES, sizeof(char *));
 
-    int num_of_files_in_tracked_dir = get_all_files_in_dir_and_subdirs(tracked_dir, filenames_in_tracked_dir);
+    int num_of_files_in_tracked_dir = get_all_files_in_dir_and_subdirs(tracked_dir, filenames_in_tracked_dir); // returns just the relative filenames within tracked_dir, not full path to it
 
     for (int i = 0; i < num_of_files_in_tracked_dir; i++){
         int try_to_find_index_in_history = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, filenames_in_tracked_dir[i]);
@@ -82,7 +80,7 @@ void status(char *tracked_dir){
             // printf("File |%s| DOES exist in git tree... ignoring...\n", filenames_in_tracked_dir[i]);
             continue;
         }
-        printf("File |%s| has been added.\n", filenames_in_tracked_dir[i]);
+        printf("File |%s%s| has been added.\n", tracked_dir, filenames_in_tracked_dir[i]);
     }
 }
 
