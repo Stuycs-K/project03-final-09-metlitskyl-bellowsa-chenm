@@ -82,7 +82,9 @@ time: 45min
 ### 2024-01-19 - refactor and ip
 isolated all functions into their own c/h files
 refactored ip system and user system to allow server customization
-time: 2hr
+created file_node recursive system
+worked on documentation
+time: 4hr
 
 ## Lenny
 

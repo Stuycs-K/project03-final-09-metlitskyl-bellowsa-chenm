@@ -160,37 +160,145 @@ void new_client_session(char ** argv, struct client_session * cs){
     }
 }
 
-int get_all_files_in_dir_and_subdirs(char* dir_path, char** filenames_in_tracked_dir){
-    // for now, just get_all_files_in_dir
 
-    DIR *commit_dir;
-    commit_dir = opendir(dir_path);
-    if (commit_dir == 0) {
-        err();
+struct file_node {
+    char name[1024];
+    struct file_node * next;
+};
+
+struct file_node * new_file_node(char * name, struct file_node * next){
+    struct file_node * new = calloc(1, sizeof(struct file_node));
+    strcpy(new->name, name);
+    new->next = next;
+}
+
+void free_file_node_list(struct file_node * root){
+    if(root){
+        free_file_node_list(root->next);
+        free(root);
     }
-    int num_files = 0;
+}
 
-    struct dirent *entry = NULL;
-    while ((entry = readdir(commit_dir))) {
-        if (entry->d_type != DT_REG) {
-            continue;
-        }
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-        filenames_in_tracked_dir[num_files] = calloc(strlen(entry->d_name) + 1, sizeof(char));
-        strncpy(filenames_in_tracked_dir[num_files], entry->d_name, strlen(entry->d_name));
-
-        num_files++;
-
-        if (num_files >= MAX_FILES){
-            printf("ERROR: MAX NUMBER OF FILES FOUND IN DIR!!\n");
-            exit(1);
+struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
+    DIR * d;
+    d = opendir(dir_path);
+    if(!d){
+      perror("no dir...");
+    }
+    struct dirent * entry = NULL;
+    while(entry = readdir(d)){
+        //not . or ..
+        if( strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..") ){
+            //whats the full path to file?
+            char next_path[1024];
+            sprintf(next_path, "%s/%s", dir_path, entry->d_name);
+            printf("%s\n", next_path);
+            //if DT_REG add it to list
+            if(entry -> d_type == DT_REG){
+                root = new_file_node(next_path, root);
+            }
+            //other wise check it out
+            else if(entry->d_type == DT_DIR){
+                root = get_all_in_dir(next_path, root);
+            }
         }
     }
 
-    return num_files;
+    return root;
+}
+
+void print_file_list(struct file_node * root){
+    for(struct file_node * f = root; f; f=f->next){
+        printf("%s\n", f->name);
+    }
+}
+
+
+// int main(int argc, char ** argv){
+//     struct file_node * root = NULL;
+//     root = get_all_in_dir(argv[1], root);
+//     print_file_list(root);
+// }
+
+int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
+    for (int i = 0; i < num_of_files_in_history; i++) {
+        if (strcmp(filename_list[i], search) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
+    for (int i = 0; i < num_of_files_in_history; i++) {
+        if (strcmp(filename_list[i], search) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+/*
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <time.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+struct file_node {
+    char name[1024];
+    struct file_node * next;
+};
+
+struct file_node * new_file_node(char * name, struct file_node * next){
+    struct file_node * new = calloc(1, sizeof(struct file_node));
+    strcpy(new->name, name);
+    new->next = next;
+}
+
+struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
+    DIR * d;
+    d = opendir(dir_path);
+    if(!d){
+      perror("no dir...");
+    }
+    struct dirent * entry = NULL;
+    while(entry = readdir(d)){
+        char next_path[1024];
+        sprintf(next_path, "%s/%s", dir_path, entry->d_name);
+        printf("%s\n", next_path);
+        if(entry -> d_type == DT_REG){
+            root = new_file_node(next_path, root);
+        }
+        else if(entry->d_type == DT_DIR 
+                && strcmp(entry->d_name, ".")
+                && strcmp(entry->d_name, "..")){
+            root = get_all_in_dir(next_path, root);
+        }
+    }
+
+    return root;
+}
+
+void print_file_list(struct file_node * root){
+    for(struct file_node * f = root; f; f=f->next){
+        printf("%s\n", f->name);
+    }
+}
+
+
+int main(int argc, char ** argv){
+    struct file_node * root = NULL;
+    root = get_all_in_dir(argv[1], root);
+    print_file_list(root);
 }
 
 int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
