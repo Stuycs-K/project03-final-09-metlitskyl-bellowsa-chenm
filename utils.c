@@ -160,6 +160,37 @@ void new_client_session(char ** argv, struct client_session * cs){
     }
 }
 
+
+struct file_node {
+    char name[1024];
+    struct file_node * next;
+};
+
+struct file_node * new_file_node(char * name, struct file_node * next){
+    struct file_node * new = calloc(1, sizeof(struct file_node));
+    strcpy(new->name, name);
+    new->next = next;
+}
+
+struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
+    DIR * d;
+    d = opendir(dir_path);
+    struct dirent * entry = NULL;
+    while(entry = readdir(d)){
+        char next_path[1024];
+        sprintf(next_path, "%s/%s", dir_path, entry->d_name);
+        if(entry -> d_type == DT_REG){
+            root = new_file_node(next_path, root);
+        }
+        else if(entry->d_name == DT_DIR){
+            root = get_all_in_dir(next_path, root);
+        }
+    }
+
+    return root;
+}
+
+
 int get_all_files_in_dir_and_subdirs(char* dir_path, char** filenames_in_tracked_dir){
     // for now, just get_all_files_in_dir
 
