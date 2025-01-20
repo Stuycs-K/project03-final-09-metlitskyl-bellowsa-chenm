@@ -36,7 +36,7 @@ void revert(char *tracked_dir, int commit_num, char *filename) {
     int res = write(out, str, strlen(str));//plus 1??
     
     //add
-    add(tracked_dir, filename);
+    add(tracked_dir, filename, 1);
     
     //commit
     commit(tracked_dir);

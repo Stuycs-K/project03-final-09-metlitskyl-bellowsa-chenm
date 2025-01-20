@@ -44,6 +44,9 @@ server.o: server.c utils.h file_transfer.h networking.h user.h
 clone.o: clone.c utils.h
 	@gcc -c -g clone.c
 
+diff.o: diff.c utils.h
+	@gcc -c -g diff.c
+
 patch.o: patch.c utils.h
 	@gcc -c -g patch.c
 
@@ -64,6 +67,7 @@ status.o: status.c utils.h patch.h diff.h status.h
 
 clean_f:
 	rm -rf .client_config
+	rm -rf server_data/
 clean_p:
 	rm -f dit server download commit clone add push client
 clean_o:
