@@ -22,10 +22,10 @@ client.o: client.c utils.h file_transfer.h networking.h user.h sound.h
 	gcc -c -g client.c
 
 # dit
-dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
-	gcc -o dit dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o
+dit: dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o revert.o
+	gcc -o dit dit.o utils.o file_transfer.o networking.o user.o sound.o build.o status.o add.o commit.o diff.o patch.o download.o push.o init.o revert.o
 
-dit.o: dit.c utils.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h download.h push.h init.h status.h
+dit.o: dit.c utils.h file_transfer.h networking.h user.h sound.h build.h add.h commit.h diff.h patch.h download.h push.h init.h status.h revert.h
 	gcc -c -g dit.c 
 
 download.o: utils.h file_transfer.h networking.h user.h sound.h download.c
@@ -70,6 +70,12 @@ commit.o: commit.c utils.h patch.h diff.h commit.h
 
 commit: patch.o utils.o diff.o commit.o
 	@gcc -o commit -g commit.o utils.o patch.o diff.o
+
+revert.o: utils.h diff.h build.h revert.c
+	@gcc -c -g revert.c
+
+revert: utils.o diff.o build.o revert.o
+	@gcc -o revert -g utils.o diff.o build.o revert.o
 #build
 build.o: build.c utils.h patch.h diff.h build.h status.h
 	@gcc -c -g build.c
