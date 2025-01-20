@@ -44,6 +44,8 @@ int server_action(int new_socket){
   //get a path var ready if needed
   char path[ (strlen(SERVER_DATA) + strlen(init.user.name) + strlen(init.repo_name)) * sizeof(char) ];
   
+  int success;
+
   //based on the init connection mode
   switch (init.mode){
     case TR_AINIT:
@@ -66,7 +68,8 @@ int server_action(int new_socket){
       printf("serving download from %s\n", path);
 
       
-      send_full_directory_contents(new_socket, ".dit");
+      success = send_full_directory_contents(new_socket, ".dit");
+
       break;
 
     case TR_RECV:
@@ -77,14 +80,29 @@ int server_action(int new_socket){
       printf("recieving push to %s\n", path);
 
       // recieve the push
-      recv_full_directory_contents(new_socket, path);
+      success = recv_full_directory_contents(new_socket, path);
+
+
       break;
     case TR_RINIT:
       printf("RECIEVED REPO INIT REQUEST\n------------------------------------\n\n");
       sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
       int r_mkdir = mkdir(path, 0744);
-      v_err(r_mkdir, __FILE__ " : "   " error initing repo, mkdir", 1);
+      success = r_mkdir;
+      v_err(r_mkdir, __FILE__ " : "   " error initing repo, mkdir", 0);
   }
+
+  // send back success value
+  int send = TR_FAIL;
+  if(success != -1){
+    printf("setting send to TR_SUCCESS\n");
+    send = TR_SUCCESS;
+  }
+  
+  write(new_socket, &send, sizeof(int));
+
+  printf("%s\n", send == TR_SUCCESS ? "CONNECTION WAS A SUCCESS" :  "CONNECTION WAS A FAILURE");
+
 }
 
 int main(int argc, char const* argv[]){

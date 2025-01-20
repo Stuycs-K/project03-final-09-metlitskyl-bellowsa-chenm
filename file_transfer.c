@@ -41,7 +41,7 @@ int recv_full_directory_contents(int recv_fd, char * path){
     getcwd(old_path, sizeof(old_path));
 
     int r = chdir(path);
-    v_err(r, __FILE__ " : "   " chdir err", 1);
+    if(v_err(r, __FILE__ " : "   " chdir err", 0) == -1){ return -1; };
 
     char wd[1000];
     
@@ -68,6 +68,7 @@ int recv_full_directory_contents(int recv_fd, char * path){
     }
 
     chdir(old_path);
+    return 0;
 }
 
 
@@ -121,6 +122,7 @@ int send_file_contents(int transmit_fd, struct file_transfer * ft){
         memset(buffer,0,sizeof(buffer));
     }
     close(fd);
+    return 0;
 }
 
 /*Transmit a file*/

@@ -22,6 +22,9 @@ struct file_transfer{
 #define TR_AINIT 7994
 #define TR_RINIT 6689
 
+#define TR_FAIL 45
+#define TR_SUCCESS 56
+
 // init connection struct
 struct ft_init{
     int mode;

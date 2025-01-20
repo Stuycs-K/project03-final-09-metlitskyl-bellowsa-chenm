@@ -47,8 +47,16 @@ int push(int argc, char * argv[]){
         kill(kidid, SIGKILL);
     }
 
+    int server_side_result;
+    read(cs->client_fd, &server_side_result, sizeof(int));
     close(cs->client_fd);
     free(cs);
-    printf("done!\n");
-    return 0;
+    if(server_side_result == TR_SUCCESS){
+        printf("\nServer sucessfully recived the push...\n");
+        exit(0);
+    }
+   
+    printf("FAILURE. Make sure you have inited this repo\n\n"
+            "    try: dit init && dit push...\n");
+    exit(1);
 }

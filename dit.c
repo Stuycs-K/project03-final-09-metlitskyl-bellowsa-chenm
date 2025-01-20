@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 
 // #include "client_module.h"
 #include "build.h"
@@ -19,6 +20,13 @@
 
 #define VERSION "v1.3"
 
+void sighandler(int signo){
+    if(signo == SIGPIPE){
+        printf("/n/nFAILURE. Make sure you have inited this repo\n\n"
+            "    try: dit init && dit push...\n");
+        exit(1);
+    }
+}
 void print_usage(){
     printf("usage: dit <command> [<args>] version: " VERSION "\n\n"
 
@@ -44,6 +52,7 @@ void print_usage(){
 }
 
 int main(int argc, char * argv[]){
+    signal(SIGPIPE, sighandler);
     if(argc == 1){
         print_usage();
         exit(0);
