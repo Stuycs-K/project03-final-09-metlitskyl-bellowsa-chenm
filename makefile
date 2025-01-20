@@ -47,7 +47,7 @@ clone.o: clone.c utils.h
 patch.o: patch.c utils.h
 	@gcc -c -g patch.c
 
-add.o: add.c utils.h patch.h diff.h build.h add.h
+add.o: add.c utils.h patch.h diff.h build.h add.h status.h
 	@gcc -c -g add.c
 
 commit.o: commit.c utils.h patch.h diff.h commit.h

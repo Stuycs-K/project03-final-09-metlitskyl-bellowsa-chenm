@@ -119,7 +119,9 @@ int get_files_in_tree(int max_commit_number, char *commit_folder, char **filenam
             }
 
             char patch_full_path[MAX_FILEPATH] = "";
-            sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+            strcat(patch_full_path, specific_commit_folder);
+            strcat(patch_full_path, "/");
+            strcat(patch_full_path, diff_entry->d_name);
 
             // patch name doesn't neccesarily have to be the file name (in case dups/nested)
             Patch *p = read_patch(patch_full_path);
