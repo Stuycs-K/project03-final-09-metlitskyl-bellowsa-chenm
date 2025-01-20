@@ -27,11 +27,11 @@ void revert(char *tracked_dir, int commit_num, char *filename) {
     
     //get original file from that commit num
     char *str = build_str(commit_num, commit_folder, filename);
-    printf("STR FROM THAT COMMIT NUM: %s\n", str);
+//    printf("STR FROM THAT COMMIT NUM: %s\n", str);
     
     //write str to current file
     int out = open(filepath, O_WRONLY | O_TRUNC, 0644);
-    printf("FILEPATH: %s\n", filepath);
+//    printf("FILEPATH: %s\n", filepath);
     
     int res = write(out, str, strlen(str));//plus 1??
     
