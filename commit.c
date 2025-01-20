@@ -10,7 +10,7 @@ void commit(char *tracked_dir) {
 
     int max_commit_number = get_max_commit_number(tracked_dir);
 
-    printf("Max Commit Number: %d\n", max_commit_number);
+    // printf("Max Commit Number: %d\n", max_commit_number);
 
     if (access(staging_folder, F_OK) != 0) {
         printf("Staging folder at |%s| does not exist.\n", staging_folder);
@@ -45,7 +45,7 @@ void commit(char *tracked_dir) {
         char new_commit_dir[MAX_FILEPATH] = "";
         strcat(new_commit_dir, commit_folder);
         strcat(new_commit_dir, new_commit_str);
-        printf("Commiting to |%s|\n", new_commit_dir);
+        // printf("Commiting to |%s|\n", new_commit_dir);
         // move staging patches to new commit folder
         int rename_status = rename(staging_folder, new_commit_dir);
         if (rename_status == -1) {
@@ -58,7 +58,7 @@ void commit(char *tracked_dir) {
             err();
         }
 
-        printf("Commit |%s| created successfully.\n", new_commit_str);
+        printf("Commit %s created successfully.\n", new_commit_str);
     } else {
         printf("Nothing to commit! Staging folder is empty!\n");
     }
