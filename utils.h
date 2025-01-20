@@ -106,4 +106,6 @@ void print_file_list(FileNode * root);
 
 int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search);
 
+int is_directory(char *path);
+
 #endif

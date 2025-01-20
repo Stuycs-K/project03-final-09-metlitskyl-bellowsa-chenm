@@ -17,8 +17,8 @@ void visualize_patch(Patch *patch) {
     printf("filepath: |%s|\n", patch->filepath);
     printf("mode: |%d|\n", patch->mode);
     if (patch->mode == MODE_MODIFY) {
-        printf("num pts: |%d|\n", patch->memory_size);
-        printf("Memory size: |%d|\n", patch->memory_size / sizeof(Point));
+        printf("num pts: |%ld|\n", patch->memory_size);
+        printf("Memory size: |%ld|\n", patch->memory_size / sizeof(Point));
         for (int i = 0; i < patch->memory_size / sizeof(Point); i++) {
             printf("|%d| |%d| |%c|\n", patch->pts[i].type, patch->pts[i].pos, patch->pts[i].ch);
         }

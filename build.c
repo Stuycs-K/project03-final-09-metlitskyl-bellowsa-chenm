@@ -33,7 +33,10 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
             }
 
             char patch_full_path[MAX_FILEPATH] = "";
-            sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+            strcat(patch_full_path, specific_commit_folder);
+            strcat(patch_full_path, "/");
+            strcat(patch_full_path, diff_entry->d_name);
+
 
             // patch name doesn't neccesarily have to be the file name (in case dups/nested)
             Patch *p = read_patch(patch_full_path);
@@ -84,9 +87,9 @@ void build(char *tracked_dir) {
         if (!does_file_still_exist_in_dit_tree[i]) {
             continue; // skip if file got deleted from dit tree
         }
-        printf("\nFILE |%s| still exists!\n", filenames_in_history[i]);
+        // printf("\nFile |%s| still exists by the head of the dit tree, so it needs to be built!\n", filenames_in_history[i]);
         char *built = build_str(max_commit_number, commit_folder, filenames_in_history[i]);
-        printf("Built str: |%s|\n", built);
+        // printf("Built str: |%s|\n", built);
 
         create_missing_dirs_to_place_file(tracked_dir, filenames_in_history[i]);
 

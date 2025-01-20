@@ -3,6 +3,7 @@
 #include "diff.h" // todo, make h file for matthew
 #include "patch.h"
 #include "utils.h"
+#include "status.h"
 #include <stdlib.h>
 
 void make_patch_name_safe(char *patchname){
@@ -174,7 +175,9 @@ void add(char *tracked_dir, char *filename) {
                 }
 
                 char patch_full_path[MAX_FILEPATH] = "";
-                sprintf(patch_full_path, "%s/%s", specific_commit_folder, diff_entry->d_name);
+                strcat(patch_full_path, specific_commit_folder);
+                strcat(patch_full_path, "/");
+                strcat(patch_full_path, diff_entry->d_name);
 
                 // patch name doesn't neccesarily have to be the file name (in case dups/nested)
                 Patch *p = read_patch(patch_full_path);
