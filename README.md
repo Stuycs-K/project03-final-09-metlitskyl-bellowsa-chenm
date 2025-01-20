@@ -48,3 +48,7 @@ To stage a file for commiting run `dit add <file>` (ie: `dit add test.txt`)
 To stage everything within a folder for commiting run `dit add <file>` (ie: `dit add .` or `dit add foo/`)
 
 To commit run `dit commit`
+
+To revert a file to an old commit run `dit revert <commit #> <file>`
+- note that this only works for specific files, not entire directory
+- also note this only works for files that existed in the old commit
