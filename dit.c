@@ -90,9 +90,9 @@ int main(int argc, char * argv[]){
         struct ft_init init_usr;
         new_ft_init(TR_AINIT, "", &user, &init_usr);
         write(client_fd, &init_usr, sizeof(struct ft_init));
-
         exit(0);
     }
     printf("cmd not found :(\n");
     exit(1);
 }
+
