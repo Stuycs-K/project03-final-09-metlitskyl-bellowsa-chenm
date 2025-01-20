@@ -74,7 +74,7 @@ int main(int argc, char * argv[]){
         exit(0);
     }
     if(!strcmp(cmd, "add")){
-        add("./", argv[2]);
+        add("./", argv[2], 1);
         exit(0);
     }
     if(!strcmp(cmd, "commit")){

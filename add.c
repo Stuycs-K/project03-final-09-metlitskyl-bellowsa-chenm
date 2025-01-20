@@ -36,24 +36,7 @@ void add_dir(char *tracked_dir, char *filename){
         strcat(full_path_to_file, filenames_in_history[i]); 
 
         if (access(full_path_to_file, F_OK) != 0) {
-            printf("File |%s| has been removed.\n", full_path_to_file);
-            printf("So going to MAKE A REMOVE PATCH\n");
-
-            // TODO: Pass this to dit add because (dit add DELETED_FILE) is supposed to work
-
-            Patch* delete_patch = create_patch(filenames_in_history[i], MODE_REMOVE, 0, NULL);
-
-            char patch_name[MAX_FILEPATH] = "";
-            strcat(patch_name, filenames_in_history[i]);
-            strcat(patch_name, ".patch");
-            make_patch_name_safe(patch_name);
-
-            char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
-            strcat(save_patch_to_saving_folder_path, staging_folder);
-            strcat(save_patch_to_saving_folder_path, patch_name);
-            printf("Trying to write patch to |%s|...\n", save_patch_to_saving_folder_path);
-            write_patch(save_patch_to_saving_folder_path, delete_patch);
-
+            add(tracked_dir, filenames_in_history[i], 0);
             continue;
         }
 
@@ -92,7 +75,7 @@ void add_dir(char *tracked_dir, char *filename){
             // printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
             continue;
         }
-        add(tracked_dir, filenames_in_history[i]);
+        add(tracked_dir, filenames_in_history[i], 1);
     }
 
     FileNode * root = NULL;
@@ -108,24 +91,14 @@ void add_dir(char *tracked_dir, char *filename){
             // printf("File |%s| DOES exist in git tree... ignoring...\n", proper_filename);
             continue;
         }
-        add(tracked_dir, proper_filename);
+        add(tracked_dir, proper_filename, 1);
     }
 }
 
-void add(char *tracked_dir, char *filename) {
+void add(char *tracked_dir, char *filename, int shouldCheckIfDeleted) {
     char filepath[MAX_FILEPATH] = "";
     strcat(filepath, tracked_dir);
     strcat(filepath, filename);
-
-    if (access(filepath, F_OK) != 0) {
-        printf("File at |%s| does not exist.\n", filepath);
-        exit(1);
-    }
-
-    if (is_directory(filepath)){
-        add_dir(tracked_dir, filename);
-        return;
-    }
 
     char dit_folder[MAX_FILEPATH] = "";
     char commit_folder[MAX_FILEPATH] = "";
@@ -133,6 +106,43 @@ void add(char *tracked_dir, char *filename) {
     populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
 
     int max_commit_number = get_max_commit_number(tracked_dir);
+
+    if (access(filepath, F_OK) != 0) {
+        if (shouldCheckIfDeleted){ // this check always runs UNLESS this came from "add ." which already ran it
+            char **filenames_in_history = calloc(MAX_FILES, sizeof(char *));
+            int *does_file_still_exist_in_dit_tree = calloc(MAX_FILES, sizeof(int));
+
+            int num_of_files_in_history = get_files_in_tree(max_commit_number, commit_folder, filenames_in_history, does_file_still_exist_in_dit_tree);
+
+            int try_to_find_index_in_history = find_index_in_filename_list(filenames_in_history, num_of_files_in_history, filename);
+            if (try_to_find_index_in_history == -1){
+                printf("Dit tree AND filesystem both have no recollection of |%s|. We cannot track what does not exist.\n", filepath);
+                exit(1);
+            }
+
+        }
+
+        Patch* delete_patch = create_patch(filename, MODE_REMOVE, 0, NULL);
+
+        char patch_name[MAX_FILEPATH] = "";
+        strcat(patch_name, filename);
+        strcat(patch_name, ".patch");
+        make_patch_name_safe(patch_name);
+
+        char save_patch_to_saving_folder_path[MAX_FILEPATH] = "";
+        strcat(save_patch_to_saving_folder_path, staging_folder);
+        strcat(save_patch_to_saving_folder_path, patch_name);
+        write_patch(save_patch_to_saving_folder_path, delete_patch);
+        printf("File |%s| was deleted, so wrote a remove patch to |%s|\n", filepath, save_patch_to_saving_folder_path);
+
+        return;
+    }
+
+    if (is_directory(filepath)){
+        add_dir(tracked_dir, filename);
+        return;
+    }
+
 
     int has_file_been_created_yet = 0; // false
     if (max_commit_number == -1) { // if no commits made yet, any "add" of a file must be of mode touch
