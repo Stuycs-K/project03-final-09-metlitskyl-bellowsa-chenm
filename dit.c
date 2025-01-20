@@ -72,6 +72,7 @@ int main(int argc, char * argv[]){
 
     if(!strcmp(cmd, "init") ){
         init(argc, argv);
+        push(argc, argv);
         exit(0);
     }
 
