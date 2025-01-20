@@ -199,12 +199,11 @@ FileNode * get_all_in_dir(char * dir_path, FileNode * root){
     }
     struct dirent * entry = NULL;
     while(entry = readdir(d)){
-        //not . or ..
-        if( strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..") ){
+        //not . or .. or .dit
+        if( strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..") && strcmp(entry->d_name, ".dit")){
             //whats the full path to file?
             char next_path[1024];
             sprintf(next_path, "%s/%s", dir_path, entry->d_name);
-            printf("%s\n", next_path);
             //if DT_REG add it to list
             if(entry -> d_type == DT_REG){
                 root = new_file_node(next_path, root);
@@ -234,79 +233,6 @@ int find_index_in_filename_list(char **filename_list, int num_of_files_in_histor
     }
     return -1;
 }
-
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <time.h>
-#include <sys/types.h>
-#include <dirent.h>
-
-
-FileNode {
-    char name[1024];
-    FileNode * next;
-};
-
-FileNode * new_file_node(char * name, FileNode * next){
-    FileNode * new = calloc(1, sizeof(FileNode));
-    strcpy(new->name, name);
-    new->next = next;
-}
-
-FileNode * get_all_in_dir(char * dir_path, FileNode * root){
-    DIR * d;
-    d = opendir(dir_path);
-    if(!d){
-      perror("no dir...");
-    }
-    struct dirent * entry = NULL;
-    while(entry = readdir(d)){
-        char next_path[1024];
-        sprintf(next_path, "%s/%s", dir_path, entry->d_name);
-        printf("%s\n", next_path);
-        if(entry -> d_type == DT_REG){
-            root = new_file_node(next_path, root);
-        }
-        else if(entry->d_type == DT_DIR 
-                && strcmp(entry->d_name, ".")
-                && strcmp(entry->d_name, "..")){
-            root = get_all_in_dir(next_path, root);
-        }
-    }
-
-    return root;
-}
-
-void print_file_list(FileNode * root){
-    for(FileNode * f = root; f; f=f->next){
-        printf("%s\n", f->name);
-    }
-}
-
-
-int main(int argc, char ** argv){
-    FileNode * root = NULL;
-    root = get_all_in_dir(argv[1], root);
-    print_file_list(root);
-}
-
-int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
-    for (int i = 0; i < num_of_files_in_history; i++) {
-        if (strcmp(filename_list[i], search) == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-*/
 
 
 int is_directory(char *path) {
