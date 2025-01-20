@@ -175,13 +175,14 @@ void new_client_session(char ** argv, struct client_session * cs){
 }
 
 
-
+// create a new struct file_node FileNode
 FileNode * new_file_node(char * name, FileNode * next){
     FileNode * new = calloc(1, sizeof(FileNode));
     strcpy(new->name, name);
     new->next = next;
 }
 
+//recursivly free a list of FileNode objects
 void free_file_node_list(FileNode * root){
     if(root){
         free_file_node_list(root->next);
@@ -189,6 +190,7 @@ void free_file_node_list(FileNode * root){
     }
 }
 
+// populate root with all files in directory (deep dive)
 FileNode * get_all_in_dir(char * dir_path, FileNode * root){
     DIR * d;
     d = opendir(dir_path);
@@ -216,19 +218,13 @@ FileNode * get_all_in_dir(char * dir_path, FileNode * root){
 
     return root;
 }
-
+// print out a fileNode list
 void print_file_list(FileNode * root){
     for(FileNode * f = root; f; f=f->next){
         printf("%s\n", f->name);
     }
 }
 
-
-// int main(int argc, char ** argv){
-//     FileNode * root = NULL;
-//     root = get_all_in_dir(argv[1], root);
-//     print_file_list(root);
-// }
 
 int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
     for (int i = 0; i < num_of_files_in_history; i++) {

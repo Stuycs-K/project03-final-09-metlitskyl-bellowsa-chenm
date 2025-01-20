@@ -65,9 +65,6 @@ build.o: build.c utils.h patch.h diff.h build.h status.h
 status.o: status.c utils.h patch.h diff.h status.h
 	@gcc -c -g status.c
 
-push.o: push.c utils.h
-	gcc -c -g push.c
-
 clean_f:
 	rm -rf .client_config
 clean_p:
