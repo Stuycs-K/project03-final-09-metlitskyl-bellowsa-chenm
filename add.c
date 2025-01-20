@@ -15,7 +15,6 @@ void make_patch_name_safe(char *patchname){
 }
 
 void add_dir(char *tracked_dir, char *filename){
-    printf("DIR ADD: |%s|\n", filename);
     char dit_folder[MAX_FILEPATH] = "";
     char commit_folder[MAX_FILEPATH] = "";
     char staging_folder[MAX_FILEPATH] = "";
@@ -93,8 +92,6 @@ void add_dir(char *tracked_dir, char *filename){
             // printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
             continue;
         }
-        printf("File |%s| has been modified.\n", full_path_to_file);
-        printf("So, going to dit add |%s|\n", filenames_in_history[i]);
         add(tracked_dir, filenames_in_history[i]);
     }
 
@@ -111,8 +108,6 @@ void add_dir(char *tracked_dir, char *filename){
             // printf("File |%s| DOES exist in git tree... ignoring...\n", proper_filename);
             continue;
         }
-        printf("File |%s%s| has been added.\n", tracked_dir, proper_filename);
-        printf("So, going to dit add |%s|\n", proper_filename);
         add(tracked_dir, proper_filename);
     }
 }
@@ -140,12 +135,10 @@ void add(char *tracked_dir, char *filename) {
     int max_commit_number = get_max_commit_number(tracked_dir);
 
     int has_file_been_created_yet = 0; // false
-    if (max_commit_number == -1) {
+    if (max_commit_number == -1) { // if no commits made yet, any "add" of a file must be of mode touch
         has_file_been_created_yet = 0;
-        printf("NO COMMITS MADE YET!\n");
-        printf("Therefore, making a patch commit\n");
     } else {
-        printf("Latest commit is: %d\n", max_commit_number);
+        // printf("Latest commit is: %d\n", max_commit_number);
 
         for (int i = 0; i <= max_commit_number; i++) {
             // this loop sees if the file has been net added or removed at the very present
@@ -195,11 +188,11 @@ void add(char *tracked_dir, char *filename) {
         }
     }
 
-    printf("HAS FILE BEEN CREATED YET: |%d|\n", has_file_been_created_yet);
+    // printf("HAS FILE BEEN CREATED YET IN THE DIT TREE: |%d|\n", has_file_been_created_yet);
 
     if (has_file_been_created_yet == 0) {
-        // make patch commit!
-        // therefore, this must be a patch commit
+        // make touch patch commit!
+        // therefore, this must be a touch patch commit
         // Step 1: Get str from file
         int in_file = open(filepath, O_RDONLY);
 
@@ -220,11 +213,10 @@ void add(char *tracked_dir, char *filename) {
         if (read_status == -1) {
             err();
         }
-        printf("Read file to buffer str: |%s|\n", str);
+        // printf("Read disk file to buffer str: |%s|\n", str);
         close(in_file);
 
         Patch *mypatch = create_patch(filename, MODE_TOUCH, strlen(str), (Point *)str); // do not do strlen() + 1 bc we want to exclude null byte
-        visualize_patch(mypatch);
         
         char patch_name[MAX_FILEPATH] = "";
         strcat(patch_name, filename);
@@ -235,14 +227,15 @@ void add(char *tracked_dir, char *filename) {
         strcat(patch_path, staging_folder);
         strcat(patch_path, patch_name);
 
-        printf("PATCH PATH: |%s|\n", patch_path);
+        // printf("TOUCH PATCH PATH: |%s|\n", patch_path);
         write_patch(patch_path, mypatch);
+        printf("File |%s| was added, so wrote a touch patch to |%s|\n", filepath, patch_path);
     } else {
-        printf("Modify patch: Need to build current file in memory!\n");
+        // printf("Modify patch: Need to build current file in memory!\n");
 
         char *built = build_str(max_commit_number, commit_folder, filename);
 
-        printf("\nLast version of file built up from .dit: |%s|\n\n", built);
+        // printf("\nLast version of file built up from .dit: |%s|\n\n", built);
 
         int current_file_with_users_changes = open(filepath, O_RDONLY);
         if (current_file_with_users_changes == -1) {
@@ -262,7 +255,7 @@ void add(char *tracked_dir, char *filename) {
             err();
         }
         close(current_file_with_users_changes);
-        printf("Current file on disk: |%s|\n\n", file_str);
+        // printf("Current file on disk: |%s|\n\n", file_str);
 
         // NOW COMPARE
         Patch *p_diff = diff(built, file_str, strlen(built), strlen(file_str));
@@ -270,10 +263,10 @@ void add(char *tracked_dir, char *filename) {
 
         // are there changes?
         if (p_diff->memory_size == 0) {
-            printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
+            // printf("THERE ARE NO CHANGES! NOTHING TO ADD...\n");
             return;
         }
-        printf("THERE ARE CHANGES!\n");
+        // printf("THERE ARE CHANGES!\n");
 
         char patch_name[MAX_FILEPATH] = "";
         strcat(patch_name, filename);
@@ -286,7 +279,9 @@ void add(char *tracked_dir, char *filename) {
         // printf("Trying to write patch to |%s|...\n", save_patch_to_saving_folder_path);
         write_patch(save_patch_to_saving_folder_path, p_diff);
 
-        printf("Wrote patch to : |%s|\n", save_patch_to_saving_folder_path);
+        // printf("Wrote patch to : |%s|\n", save_patch_to_saving_folder_path);
+        
+        printf("File |%s| was modified, so wrote a modify patch to |%s|\n", filepath, save_patch_to_saving_folder_path);
 
         // debug and verify
         // visualize_patch(p_diff);
