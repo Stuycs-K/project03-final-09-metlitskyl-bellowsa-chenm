@@ -97,7 +97,7 @@ int get_max_commit_number(char *tracked_dir) {
     char staging_folder[MAX_FILEPATH] = "";
     populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
 
-    printf("Tracked Dit Folder : |%s|\n", tracked_dir);
+    // printf("Tracked Dit Folder : |%s|\n", tracked_dir);
 
     // 2. go through git tree commits folder
 
@@ -158,4 +158,46 @@ void new_client_session(char ** argv, struct client_session * cs){
         new_ft_init(TR_AINIT, "", &cs->user, &init_usr);
         write(cs->client_fd, &init_usr, sizeof(struct ft_init));
     }
+}
+
+int get_all_files_in_dir_and_subdirs(char* dir_path, char** filenames_in_tracked_dir){
+    // for now, just get_all_files_in_dir
+
+    DIR *commit_dir;
+    commit_dir = opendir(dir_path);
+    if (commit_dir == 0) {
+        err();
+    }
+    int num_files = 0;
+
+    struct dirent *entry = NULL;
+    while ((entry = readdir(commit_dir))) {
+        if (entry->d_type != DT_REG) {
+            continue;
+        }
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        filenames_in_tracked_dir[num_files] = calloc(strlen(entry->d_name) + 1, sizeof(char));
+        strncpy(filenames_in_tracked_dir[num_files], entry->d_name, strlen(entry->d_name));
+
+        num_files++;
+
+        if (num_files >= MAX_FILES){
+            printf("ERROR: MAX NUMBER OF FILES FOUND IN DIR!!\n");
+            exit(1);
+        }
+    }
+
+    return num_files;
+}
+
+int find_index_in_filename_list(char **filename_list, int num_of_files_in_history, char *search) {
+    for (int i = 0; i < num_of_files_in_history; i++) {
+        if (strcmp(filename_list[i], search) == 0) {
+            return i;
+        }
+    }
+    return -1;
 }
