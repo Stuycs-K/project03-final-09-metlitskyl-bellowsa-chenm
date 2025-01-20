@@ -37,6 +37,8 @@ void print_usage(){
            "    commit: renames staging folder to commit id\n"
            "    build: takes already downloaded .dit and builds files\n\n"
            
+           "configure: \n"
+           "    user\n\n"
            );
 
 }
