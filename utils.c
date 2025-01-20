@@ -187,16 +187,20 @@ struct file_node * get_all_in_dir(char * dir_path, struct file_node * root){
     }
     struct dirent * entry = NULL;
     while(entry = readdir(d)){
-        char next_path[1024];
-        sprintf(next_path, "%s/%s", dir_path, entry->d_name);
-        printf("%s\n", next_path);
-        if(entry -> d_type == DT_REG){
-            root = new_file_node(next_path, root);
-        }
-        else if(entry->d_type == DT_DIR 
-                && strcmp(entry->d_name, ".")
-                && strcmp(entry->d_name, "..")){
-            root = get_all_in_dir(next_path, root);
+        //not . or ..
+        if( strcmp(entry->d_name, ".") && strcmp(entry->d_name, "..") ){
+            //whats the full path to file?
+            char next_path[1024];
+            sprintf(next_path, "%s/%s", dir_path, entry->d_name);
+            printf("%s\n", next_path);
+            //if DT_REG add it to list
+            if(entry -> d_type == DT_REG){
+                root = new_file_node(next_path, root);
+            }
+            //other wise check it out
+            else if(entry->d_type == DT_DIR){
+                root = get_all_in_dir(next_path, root);
+            }
         }
     }
 
