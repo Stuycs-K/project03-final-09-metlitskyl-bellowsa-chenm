@@ -67,14 +67,6 @@ char *build_str(int max_commit_number, char *commit_folder, char *filename) { //
     return str;
 }
 
-int find_index_in_filename_list(char **filename_list, int max_num_files, char *search) {
-    for (int i = 0; i < max_num_files; i++) {
-        if (strcmp(filename_list[i], search) == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
 
 void build(char *tracked_dir) {
     char dit_folder[MAX_FILEPATH] = "";

@@ -97,7 +97,7 @@ int get_max_commit_number(char *tracked_dir) {
     char staging_folder[MAX_FILEPATH] = "";
     populate_dit_folders(tracked_dir, dit_folder, commit_folder, staging_folder);
 
-    printf("Tracked Dit Folder : |%s|\n", tracked_dir);
+    // printf("Tracked Dit Folder : |%s|\n", tracked_dir);
 
     // 2. go through git tree commits folder
 
