@@ -1,10 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Vh67aNdh)
+
 # DIT: DIY-GIT
 
 ### LAMB: L(enny)A(bel)M(atthew)B
 
 Lenny, Abel, Matthew
-       
+
 ### Project Description:
 
 Implementation of git:
@@ -17,14 +18,14 @@ Recurisvely track and find file names and track them for changes from a store ca
 Sockets with a server to up and down checkpoints/changes/commits/whatever.
 
 Explain what is this project.
-  
+
 ### Instructions:
 
 #### setup server
 
 Take note of the public ip address of the server (if you are uncertain of how to do this, run `curl -4 ifconfig.co` which will print the server ip address.) you will later need this ip address to connect to your server from another computer. Ensure that the server and the clinet will be able to connect. On Stuy machines, this means that both the server and the clinet need to be stuy cs lab machines with ip adresses of `149.89.161.1<computer #>`.
 
-Run `make server` to create the server program. Then run `./server` to run the server. This server will act as the remote storage system for the dit repo's that will be created. 
+Run `make server` to create the server program. Then run `./server` to run the server. This server will act as the remote storage system for the dit repo's that will be created.
 
 After you have completed the setup server stage, the server should be displaying the message `establishing connection to client... `.
 
@@ -40,6 +41,10 @@ To pull from a repo, cd into the repo and then run either `dit pull` or `dit dow
 
 To push your .dit directory run `dit push`
 
-To stage a file for commiting run `dit add <file>`
+To see what changes have been made in your .dit directory, run `dit status`
+
+To stage a file for commiting run `dit add <file>` (ie: `dit add test.txt`)
+
+To stage everything within a folder for commiting run `dit add <file>` (ie: `dit add .` or `dit add foo/`)
 
 To commit run `dit commit`
