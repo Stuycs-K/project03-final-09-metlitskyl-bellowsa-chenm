@@ -40,20 +40,13 @@ This project will behave very similarly to git-hub. DIT will be used to store wo
 ## CONSTRUCTING INTO FINAL FILE(Lenny)
 
 
-## TRACKING DIFF, REVERT (Mathew)
+## TRACKING DIFF, REVERT (Matthew)
 - use the Myer's diff algorithm to find differences and modification in files
-- reconstruct strings using the resulting patch of the diff algorithm
-- implement the revert feature that reverts files back to a specific commit
 
-A description of your technical design. This should include:
-   
-How you will be using the topics covered in class in the project.
-     
-How you are breaking down the project and who is responsible for which parts.
+- reconstruct strings using the resulting patch of the diff algorithm
   
-What data structures you will be using and how.
-     
-What algorithms and /or data structures you will be using, and how.
+- implement the `revert` feature that reverts files back to a specific commit
+
     
 # Intended pacing:
 
