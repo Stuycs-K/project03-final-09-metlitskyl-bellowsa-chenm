@@ -37,10 +37,14 @@ This project will behave very similarly to git-hub. DIT will be used to store wo
 
 - server adds/overwrites previous files
 
-## TRACKING DIFF (Lenny)
+## CONSTRUCTING INTO FINAL FILE(Lenny)
 
 
-## CONSTRUCTING INTO FINAL FILE (Mathew)
+## TRACKING DIFF, REVERT (Mathew)
+- use the Myer's diff algorithm to find differences and modification in files
+- reconstruct strings using the resulting patch of the diff algorithm
+- implement the revert feature that reverts files back to a specific commit
+
 A description of your technical design. This should include:
    
 How you will be using the topics covered in class in the project.
