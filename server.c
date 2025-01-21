@@ -87,7 +87,7 @@ int server_action(int new_socket){
     case TR_RINIT:
       printf("RECIEVED REPO INIT REQUEST\n------------------------------------\n\n");
       sprintf(path, "%s/%s/%s/", SERVER_DATA, init.user.name, init.repo_name);
-      // int r_mkdir = mkdir(path, 0744);
+      int r_mkdir = mkdir(path, 0744);
       int r_mkdir = 0;
       success = r_mkdir;
       v_err(r_mkdir, __FILE__ " : "   " error initing repo, mkdir", 0);
