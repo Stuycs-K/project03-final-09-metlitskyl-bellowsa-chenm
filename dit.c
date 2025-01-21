@@ -22,7 +22,7 @@
 
 void sighandler(int signo){
     if(signo == SIGPIPE){
-        printf("/n/nFAILURE. Make sure you have inited this repo\n\n"
+        printf("\n\nFAILURE. Make sure you have inited this repo\n\n"
             "    try: dit init && dit push...\n");
         exit(1);
     }
@@ -43,6 +43,8 @@ void print_usage(){
            "version control: \n"
            "    add: creates patch for specific file in staging folder\n"
            "    commit: renames staging folder to commit id\n"
+           "    revert\n"
+           "    status\n"
            "    build: takes already downloaded .dit and builds files\n\n"
            
            "configure: \n"
