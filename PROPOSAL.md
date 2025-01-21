@@ -58,3 +58,13 @@ What algorithms and /or data structures you will be using, and how.
 # Intended pacing:
 
 A timeline with expected completion dates of parts of the project.
+
+Organize specific commands and decide who does what 1/07
+
+Complete file transfer 1/15
+Complete diff algo 1/13
+Complete outline for patches, then add/commit 1/13
+
+Glue every component together 1/17
+
+Refine everything and fix/report any lasting bugs 1/20
