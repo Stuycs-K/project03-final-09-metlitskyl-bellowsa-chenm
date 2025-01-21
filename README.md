@@ -8,20 +8,18 @@
 
 Lenny, Abel, Matthew
 
-### Project Description:
-
-Implementation of git (diy-git):
+### Project Description: Implementation of GIT
 
 Use diffs to track changes from a base of an empty string.
 Implement [Myers diff algorithims](https://ably.com/blog/practical-guide-to-diff-algorithms) to track changes from a previous version (from a base of an empty string).
 
-Recurisvely track and find file names and track them for changes from a store cache in .diy
+Allows user to track file status (has a fille been modified/created/deleted), stage changes, commit changes, revert changes.
 
-Use networking and sockets to recursivly transmit directories from client to server and server to client in pull/push exchanges.
+Use networking and sockets to recursivly transmit directories from client to server and server to client in pull/push exchanges. Build a full repositiory with just from the changes and commits within a .dit
 
 ### Instructions:
 
-#### setup server
+#### (Prelimanary) Server Setup
 
 Take note of the public ip address of the server (if you are uncertain of how to do this, run `curl -4 ifconfig.co` which will print the server ip address.) you will later need this ip address to connect to your server from another computer. Ensure that the server and the clinet will be able to connect. On Stuy machines, this means that both the server and the clinet need to be stuy cs lab machines with ip adresses of `149.89.161.1<computer #>`.
 
@@ -29,7 +27,7 @@ Run `make server` to create the server program. Then run `./server` to run the s
 
 After you have completed the setup server stage, the server should be displaying the message `establishing connection to client... `.
 
-#### use on client
+#### Client Use
 
 First make the dit program by running `make dit`. When complete, you should see a program called dit. If you wish to alias dit run `alias dit=<PATH TO DIT PROGRAM>`. For the rest of the documentation, it will be assumed that you aliased the path to the dit program as dit. If you did not, replace `dit` with `<PATH TO DIT PROGRAM>` in the following instruction.
 
