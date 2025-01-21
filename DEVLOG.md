@@ -129,7 +129,7 @@ rm patch removes a file, errors if does not exist
 TODO: Modify patch DELETIONS need to also be implemented. Same logic/test case
 abt 1h
 
-# 2024-01-13 - Begin dit add & dit build
+### 2024-01-13 - Begin dit add & dit build
 - Make touch patches create file with CONTENTS
 - Build structure of .dit folder (/commits/0, /commits/1, /commits/2 etc )
 - When adding (proposing a stage) a file, see if it any previous commits have touchd this file
@@ -142,50 +142,65 @@ abt 4h
 ### 2024-01-06 - Planning
 
 Planned project and decided on its structure with @Abel and @Lenny
+
 40m during class
 
 ### 2024-01-07 - Exploration!
 
 Fiddled around with diff command and explored .git folder for inspiration
+
 20m
 
 ### 2024-01-08 - Patch planning
 
 Worked with @Lenny to figure out how to format a patch struct and its members
+
 Researched the Myer's diff algorithm from its original paper
 1h
 
 ### 2024-01-09 - Prelim Diff Draft
 Wrote a preliminary diff draft according to its original impl on paper
+
 Still working on tracking the edits
+
 1h
 
 ### 2024-01-10 - Refining Diff
 Using debug statements to figure out how to backtrack the changes to file
+
 40min
 
 ### 2024-01-11 to 2024-01-12 - Tracing point updates
 Figured out how to properly backtrack edits
+
 Reformatted how patches are going to be stored/handled
+
 1h
 
 ### 2024-01-13 - Applying point updates
 Wrote apply_patch which will apply a modify patch to a string
+
 Did testing to verify it works
+
 1h
 
 ### 2024-01-14 to 2024-01-17 - Working w Group
 Worked with Lenny to incorporate my diff.c code with his add/commit code
+
 Also fixed a minor bug on my part for diff.c for changes at the front of file
+
 40m per day
 
 ### 2024-01-19 - Reading Lenny's code
 Trying to understand Lenny's code in order to work on revert
-Wrote some of the function
+
+Wrote some of the revert function
+
 1h
 
 ### 2024-01-20 - Finished Revert
 Completed revert, did some testing as well
+
 1h
 
 ## EXAMPLE
