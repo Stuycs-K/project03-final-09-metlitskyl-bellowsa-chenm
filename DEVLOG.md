@@ -85,6 +85,12 @@ refactored ip system and user system to allow server customization
 created file_node recursive system
 worked on documentation
 time: 4hr
+### 2024-01-20 - refactor and bug fixes and documentation and video
+improved documentation, err handling, strange lingering bugs
+finished man pages
+built video
+solved bugs related to init with add. directories present.
+time: 4hr
 
 ## Lenny
 
