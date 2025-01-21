@@ -8,16 +8,14 @@ Lenny, Abel, Matthew
 
 ### Project Description:
 
-Implementation of git:
+Implementation of git (diy-git):
 
-use diff to track changes from a base of an empty string.
+Use diffs to track changes from a base of an empty string.
 Implement [Myers diff algorithims](https://ably.com/blog/practical-guide-to-diff-algorithms) to track changes from a previous version (from a base of an empty string).
 
 Recurisvely track and find file names and track them for changes from a store cache in .diy
 
-Sockets with a server to up and down checkpoints/changes/commits/whatever.
-
-Explain what is this project.
+Use networking and sockets to recursivly transmit directories from client to server and server to client in pull/push exchanges. 
 
 ### Instructions:
 
@@ -52,3 +50,6 @@ To commit run `dit commit`
 To revert a file to an old commit run `dit revert <commit #> <file>`
 - note that this only works for specific files, not entire directory
 - also note this only works for files that existed in the old commit
+
+### Bugs
+- Ocationally, you may need to run `dit push`, `dit pull`, or `dit init` several times. We are not sure why this occurs and it only occurs when lenny runs the server and Abel runs the client. This error results in failure messages or incomplete file transfers. If you encounter this error, try either picking a different lab machine to use as your server or using a different series of user acounts.

@@ -33,22 +33,22 @@ void print_usage(){
            "These are common dit commands used in various situations:\n\n"
 
            "create a repo to push to: \n"
-           "    init\n"
-           "    download\n"
-           "    pull\n\n"
+           "    init: create a new repo on local and on server\n"
+           "    download: download and replace .dit directory from server\n"
+           "    pull: download and replace .dit directory and dit build\n\n"
 
            "remote (pull and push files from server): \n"
-           "    push\n\n"
+           "    push: push .dit directory to server\n\n"
 
            "version control: \n"
            "    add: creates patch for specific file in staging folder\n"
            "    commit: renames staging folder to commit id\n"
-           "    revert\n"
-           "    status\n"
+           "    revert: revert to a pervious commit -- syntax dit revert <commit #> <filename>\n"
+           "    status: show what files have had changes\n"
            "    build: takes already downloaded .dit and builds files\n\n"
            
            "configure: \n"
-           "    user\n\n"
+           "    user: if not created, create .client_config directory. Overwrite user with new user config. Create user on remote.\n\n"
            );
 
 }
